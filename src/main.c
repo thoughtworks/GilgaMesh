@@ -1,21 +1,9 @@
-#include <stdlib.h>
-#include <nrf_soc.h>
-#include <app_error.h>
-#include <softdevice_handler.h>
-#include <app_timer.h>
-#include <malloc.h>
-#include <logger.h>
-#include <led.h>
 #include <main.h>
 
 static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
 static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;
 static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
-static app_timer_id_t mainTimerMsId;
-uint32_t timeSinceLastBlink = 0;
-uint16_t timeSinceLastEvent = 0;
-uint16_t timeBetweenBlinks = 2000;
 
 //***** Node* node = NULL;
 
@@ -36,7 +24,7 @@ int main(void)
 
 	//***** new Testing();
 
-	initTimers();
+	timer_initialize();
 
 
 	while (true)
@@ -54,10 +42,7 @@ int main(void)
 			}
 
 			else if (err == NRF_ERROR_NOT_FOUND) {
-        if (timeSinceLastEvent > 0) {
-          handleTimerTick();
-          timeSinceLastEvent = 0;
-        }
+        timer_tick_handler();
 
 				err = sd_app_evt_wait();
 				APP_ERROR_CHECK(err);
@@ -71,21 +56,6 @@ int main(void)
 		} while (true);
 	}
 }
-
-
-void handleTimerTick()
-{
-  //For now, just make the LEDs blink purple every 2 seconds
-  if (timeSinceLastBlink % timeBetweenBlinks == 0){
-    led_red_on();
-    led_blue_on();
-    timeSinceLastBlink = 0;
-  } else {
-    led_red_off();
-    led_blue_off();
-  }
-}
-
 
 void sys_evt_dispatch(uint32_t sys_evt)
 {
@@ -168,24 +138,4 @@ void bleDispatchEventHandler(ble_evt_t * bleEvent)
   //Call an event handler of some kind...
 
 	log("EVENTS: End of event");
-}
-
-
-void ble_timer_dispatch(void * p_context)
-{
-  timeSinceLastEvent += ATTR_TIMER_TICK_MS;
-  timeSinceLastBlink += ATTR_TIMER_TICK_MS;
-}
-
-
-void initTimers(void){
-	uint32_t err = 0;
-
-	APP_TIMER_INIT(ATTR_TIMER_PRESCALER, ATTR_TIMER_COUNT, ATTR_TIMER_QUEUE_LENGTH, false);
-
-	err = app_timer_create(&mainTimerMsId, APP_TIMER_MODE_REPEATED, ble_timer_dispatch);
-  APP_ERROR_CHECK(err);
-
-	err = app_timer_start(mainTimerMsId, APP_TIMER_TICKS(ATTR_TIMER_TICK_MS, ATTR_TIMER_PRESCALER), NULL);
-  APP_ERROR_CHECK(err);
 }

@@ -12,6 +12,10 @@ static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
 static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;
 static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
+static app_timer_id_t mainTimerMsId;
+uint32_t timeSinceLastBlink = 0;
+uint16_t timeSinceLastEvent = 0;
+uint16_t timeBetweenBlinks = 2000;
 
 //***** Node* node = NULL;
 
@@ -32,8 +36,7 @@ int main(void)
 
 	//***** new Testing();
 
-	//Start Timers
-	//***** initTimers();
+	initTimers();
 
 
 	while (true)
@@ -42,22 +45,19 @@ int main(void)
 		//***** Terminal::PollUART();
 
 		do {
-
 			sizeOfCurrentEvent = sizeOfEvent;
 			err = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
 
-			if (err == NRF_SUCCESS)
-			{
+			if (err == NRF_SUCCESS) {
 				log("EVENT: --- EVENT_HANDLER %d -----", currentEvent->header.evt_id);
 				bleDispatchEventHandler(currentEvent);
 			}
 
 			else if (err == NRF_ERROR_NOT_FOUND) {
-				//if (node && node->passsedTimeSinceLastTimerHandler > 0) {
-					//node->TimerTickHandler(node->passsedTimeSinceLastTimerHandler);
-					//timerEventDispatch(node->passsedTimeSinceLastTimerHandler, node->appTimerMs);
-					//node->passsedTimeSinceLastTimerHandler = 0;
-				//}
+        if (timeSinceLastEvent > 0) {
+          handleTimerTick();
+          timeSinceLastEvent = 0;
+        }
 
 				err = sd_app_evt_wait();
 				APP_ERROR_CHECK(err);
@@ -73,20 +73,25 @@ int main(void)
 }
 
 
-//Dispatches system events
+void handleTimerTick()
+{
+  //For now, just make the LEDs blink purple every 2 seconds
+  if (timeSinceLastBlink % timeBetweenBlinks == 0){
+    led_red_on();
+    led_blue_on();
+    timeSinceLastBlink = 0;
+  } else {
+    led_red_off();
+    led_blue_off();
+  }
+}
+
+
 void sys_evt_dispatch(uint32_t sys_evt)
 {
-	//Hand system events to the pstorage library
-    pstorage_sys_event_handler(sys_evt);
-
-    //Dispatch system events to all modules
-	//for(int i=0; i<MAX_MODULE_COUNT; i++){
-		//if(node != NULL && node->activeModules[i] != NULL && node->activeModules[i]->configurationPointer->moduleActive){
-			//node->activeModules[i]->SystemEventHandler(sys_evt);
-		//}
-	//}
-
+  pstorage_sys_event_handler(sys_evt);
 }
+
 
 void bleInit(void){
 	uint32_t err = 0;
@@ -115,7 +120,6 @@ void bleInit(void){
 }
 
 
-//The app_error handler is called by all APP_ERROR_CHECK functions
 void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p_file_name)
 {
 	//We want to debug DEADBEEF => Endless loop.
@@ -125,42 +129,33 @@ void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p
 		}
 	}
 
-	//Output Error message to UART
 	if(error_code != NRF_SUCCESS){
 		const char* error_string = getNrfErrorString(error_code);
 		log("ERROR: ERROR CODE %d: %s, in file %s@%d", error_code, error_string, p_file_name, line_num);
 	}
 
-	//Invalid states are bad and should be debugged, but should not necessarily
-	//Break the program every time they happen.
-	//FIXME: must not ever happen, so fix that
 	if (error_code == NRF_ERROR_INVALID_STATE){
      NVIC_SystemReset();
 		return;
 	}
 
-	//NRF_ERROR_BUSY is not an error(tm)
-	//FIXME: above statement is not true
 	if (error_code == NRF_ERROR_BUSY) {
     NVIC_SystemReset();
 		return;
 	}
 
-    NVIC_SystemReset();
+  NVIC_SystemReset();
 }
 
-//Called when the softdevice crashes
+
 void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
 {
-	//Does not produce interesting filename,....
-    app_error_handler(0xDEADBEEF, 0, NULL);
+  app_error_handler(0xDEADBEEF, 0, NULL);
 }
 
-//This is, where the program will get stuck in the case of a Hard fault
 void HardFault_Handler(void)
 {
-	for (;;)
-	{
+	for (;;){
 		// Endless debugger loop
 	}
 }
@@ -175,48 +170,22 @@ void bleDispatchEventHandler(ble_evt_t * bleEvent)
 	log("EVENTS: End of event");
 }
 
-/********** C++ stuff, haven't converted yet
 
-//### TIMERS ##############################################################
-static app_timer_id_t mainTimerMsId; // Main timer
-
-//Called by the app_timer module
-static void ble_timer_dispatch(void * p_context)
+void ble_timer_dispatch(void * p_context)
 {
-    UNUSED_PARAMETER(p_context);
-
-    //We just increase the time that has passed since the last handler
-    //And call the timer from our main event handling queue
-    node->passsedTimeSinceLastTimerHandler += Config->mainTimerTickMs;
-
-    //Timer handlers are called from the main event handling queue and from timerEventDispatch
+  timeSinceLastEvent += ATTR_TIMER_TICK_MS;
+  timeSinceLastBlink += ATTR_TIMER_TICK_MS;
 }
 
-//This function is called from the main event handling
-static void timerEventDispatch(u16 passedTime, u32 appTimer){
-	//Dispatch event to all modules
-	for(int i=0; i<MAX_MODULE_COUNT; i++){
-		if(node != NULL && node->activeModules[i] != 0  && node->activeModules[i]->configurationPointer->moduleActive){
-			node->activeModules[i]->TimerEventHandler(passedTime, appTimer);
-		}
-	}
-}
 
-//Starts an application timer
 void initTimers(void){
-	u32 err = 0;
+	uint32_t err = 0;
 
-	APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_MAX_TIMERS, APP_TIMER_OP_QUEUE_SIZE, false);
+	APP_TIMER_INIT(ATTR_TIMER_PRESCALER, ATTR_TIMER_COUNT, ATTR_TIMER_QUEUE_LENGTH, false);
 
 	err = app_timer_create(&mainTimerMsId, APP_TIMER_MODE_REPEATED, ble_timer_dispatch);
-    APP_ERROR_CHECK(err);
+  APP_ERROR_CHECK(err);
 
-	err = app_timer_start(mainTimerMsId, APP_TIMER_TICKS(Config->mainTimerTickMs, APP_TIMER_PRESCALER), NULL);
-    APP_ERROR_CHECK(err);
+	err = app_timer_start(mainTimerMsId, APP_TIMER_TICKS(ATTR_TIMER_TICK_MS, ATTR_TIMER_PRESCALER), NULL);
+  APP_ERROR_CHECK(err);
 }
-
-*/
-
-/**
- *@}
- **/

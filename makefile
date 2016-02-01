@@ -82,6 +82,7 @@ C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/hal/nrf_delay.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/pstorage/pstorage.c
 C_SOURCE_FILES += $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_handler.c
 C_SOURCE_FILES += ./src/logger.c
+C_SOURCE_FILES += ./src/led.c
 C_SOURCE_FILES += ./src/main.c
 
 # includes common to all targets

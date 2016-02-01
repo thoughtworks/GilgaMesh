@@ -5,6 +5,7 @@
 #include <app_timer.h>
 #include <malloc.h>
 #include <logger.h>
+#include <led.h>
 #include <main.h>
 
 static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
@@ -34,12 +35,14 @@ int main(void)
 	//Start Timers
 	//***** initTimers();
 
+
 	while (true)
 	{
 		uint32_t err = NRF_ERROR_NOT_FOUND;
 		//***** Terminal::PollUART();
 
 		do {
+
 			sizeOfCurrentEvent = sizeOfEvent;
 			err = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
 

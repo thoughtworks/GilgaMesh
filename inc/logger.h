@@ -18,8 +18,8 @@ typedef enum {NO_ERROR, COMMAND_NOT_FOUND, ARGUMENTS_WRONG} UartErrorType;
 void log_f(bool printLine, const char* file, int32_t line, const char* message, ...);
 void uart_error_f(UartErrorType type);
 
-	//The Logger implements the Terminal Listener
-	//bool TerminalCommandHandler(string commandName, vector<string> commandArgs);
+//The Logger implements the Terminal Listener
+//bool TerminalCommandHandler(string commandName, vector<string> commandArgs);
 
 //Functions for resolving error codes
 const char* getNrfErrorString(uint32_t nrfErrorCode);

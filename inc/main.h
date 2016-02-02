@@ -1,12 +1,14 @@
 #pragma once
 
-#include <ble.h>
 #include <stdlib.h>
 #include <nrf_soc.h>
+#include <nrf_delay.h>
 #include <app_error.h>
 #include <softdevice_handler.h>
 #include <malloc.h>
+#include <mesh.h>
 #include <logger.h>
+#include <terminal.h>
 #include <timer.h>
 
 #define ATTR_TABLE_MAX_SIZE 0x200

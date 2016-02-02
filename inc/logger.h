@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #define TRACE_BUFFER_SIZE 500
 
@@ -45,15 +46,5 @@ const char* getPstorageStatusErrorString(uint16_t operationCode);
 
 #endif
 
-
-#ifdef ENABLE_LOGGING
-
 #define trace(message, ...) log_f(false, __FILE_S__, __LINE__, message, ##__VA_ARGS__)
 #define log(message, ...) log_f(true, __FILE_S__, __LINE__, message, ##__VA_ARGS__)
-
-#else //ENABLE_LOGGING
-
-#define trace(...) do{}while(0)
-#define log(...) do{}while(0)
-
-#endif //ENABLE_LOGGING

@@ -1,0 +1,5 @@
+w4 4001e504 1
+loadbin "../s130_nrf51_1.0.0/s130_nrf51_1.0.0_softdevice.hex" 0
+r
+g
+exit

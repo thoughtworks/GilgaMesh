@@ -147,30 +147,9 @@ void HardFault_Handler(void)
 
 void bleDispatchEventHandler(ble_evt_t * bleEvent)
 {
-  uint16_t eventId = bleEvent->header.evt_id;
+  if (bleEvent->header.evt_id != BLE_GAP_EVT_ADV_REPORT) return;
 
-  if (eventId == BLE_GAP_EVT_ADV_REPORT){
-    // Flash blue for now so that we know we received an event
-    led_blue_on();
-    nrf_delay_us(50000);
-    led_blue_off();
-
-    // Something is advertising to us! We should connect to it.
-    // At some point we should check to make sure it's a valid adv packet. We'll do that later.
-
-    ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
-
-    if (adv_report.dlen == sizeof(advertisingData)){
-      advertisingData* adv_data = (advertisingData *)adv_report.data;
-
-      if (adv_data->length == MESH_NAME_SIZE) {
-
-        if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) == 0){
-          log("ADV_REPORT_EVENT: I found a friend for %s!", MESH_NAME);
-          // next step is to form a connection
-        }
-      }
-    }
-
+  if (should_connect_to_advertiser(bleEvent->evt.gap_evt.params.adv_report)){
+    // next step is to form a connection
   }
 }

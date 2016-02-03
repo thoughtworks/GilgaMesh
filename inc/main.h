@@ -4,7 +4,6 @@
 #include <malloc.h>
 
 #include <nrf_soc.h>
-#include <nrf_delay.h>
 #include <app_error.h>
 #include <softdevice_handler.h>
 

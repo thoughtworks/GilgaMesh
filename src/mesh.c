@@ -43,6 +43,24 @@ void mesh_stop_advertising(void)
 }
 
 
+bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
+{
+  advertisingData* adv_data = (advertisingData *)adv_report.data;
+
+  if (adv_report.dlen != sizeof(advertisingData))return false;
+  if (adv_data->length != MESH_NAME_SIZE) return false;
+  if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
+
+  // Flash blue for now so that we know we found a possible connection
+  led_blue_on();
+  nrf_delay_us(50000);
+  led_blue_off();
+
+  log("ADV_REPORT_EVENT: I found a friend for %s!", MESH_NAME);
+  return true;
+}
+
+
 void mesh_start_scanning(void)
 {
   uint32_t err;

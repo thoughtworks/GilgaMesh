@@ -83,6 +83,25 @@ void ble_initialize(void){
 
   err = sd_power_mode_set(NRF_POWER_MODE_LOWPWR);
   APP_ERROR_CHECK(err);
+
+
+  ble_gap_conn_sec_mode_t secPermissionOpen;
+  BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
+
+  err = sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, strlen(MESH_NAME));
+  APP_ERROR_CHECK(err);
+
+  err = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER);
+  APP_ERROR_CHECK(err);
+
+  ble_gap_conn_params_t gapConnectionParams;
+  memset(&gapConnectionParams, 0, sizeof(gapConnectionParams));
+  gapConnectionParams.min_conn_interval = ATTR_MESH_CONNECTION_INTERVAL;
+  gapConnectionParams.max_conn_interval = ATTR_MESH_CONNECTION_INTERVAL;
+  gapConnectionParams.slave_latency = 0;
+  gapConnectionParams.conn_sup_timeout = ATTR_MESH_CONNECTION_TIMEOUT;
+  err = sd_ble_gap_ppcp_set(&gapConnectionParams);
+  APP_ERROR_CHECK(err);
 }
 
 
@@ -129,14 +148,29 @@ void HardFault_Handler(void)
 void bleDispatchEventHandler(ble_evt_t * bleEvent)
 {
   uint16_t eventId = bleEvent->header.evt_id;
-  log("EVENTS: ----- BLE EVENT %s (%d) -----", getBleEventNameString(eventId), eventId);
 
-  // Flash blue for now so that we know we received an event
-  led_blue_on();
-  nrf_delay_us(50000);
-  led_blue_off();
+  if (eventId == BLE_GAP_EVT_ADV_REPORT){
+    // Flash blue for now so that we know we received an event
+    led_blue_on();
+    nrf_delay_us(50000);
+    led_blue_off();
 
-  //Call an event handler of some kind...
+    // Something is advertising to us! We should connect to it.
+    // At some point we should check to make sure it's a valid adv packet. We'll do that later.
 
-  log("EVENTS: End of event");
+    ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
+
+    if (adv_report.dlen == sizeof(advertisingData)){
+      advertisingData* adv_data = (advertisingData *)adv_report.data;
+
+      if (adv_data->length == MESH_NAME_SIZE) {
+
+        if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) == 0){
+          log("ADV_REPORT_EVENT: I found a friend for %s!", MESH_NAME);
+          // next step is to form a connection
+        }
+      }
+    }
+
+  }
 }

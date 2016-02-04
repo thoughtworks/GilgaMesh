@@ -19,6 +19,9 @@ int main(void)
 
   timer_initialize();
 
+  //Turn all LEDs off
+  led_white_off();
+
   start_scanning();
   start_advertising();
 

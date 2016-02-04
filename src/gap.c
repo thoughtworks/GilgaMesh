@@ -10,7 +10,8 @@ const ble_gap_conn_params_t meshConnectionParams =
 
 const ble_gap_adv_params_t meshAdvertisingParams =
 {
-  BLE_GAP_ADV_TYPE_ADV_SCAN_IND,       //type
+  BLE_GAP_ADV_TYPE_ADV_IND,            //type
+  //BLE_GAP_ADV_TYPE_ADV_SCAN_IND,       //type
   0,                                   //p_peer_addr
   BLE_GAP_ADV_FP_ANY,                  //fp
   0,                                   //p_whitelist
@@ -69,11 +70,6 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
   if (adv_data->length != MESH_NAME_SIZE) return false;
   if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
 
-  // Flash blue for now so that we know we found a possible connection
-  led_blue_on();
-  nrf_delay_us(50000);
-  led_blue_off();
-
   return true;
 }
 
@@ -98,14 +94,28 @@ void stop_scanning(void)
 
 void handle_gap_event(ble_evt_t * bleEvent)
 {
-  if (bleEvent->header.evt_id != BLE_GAP_EVT_ADV_REPORT) return;
+  if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
+    //log("GAP: I received an advertisement. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
+    ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
 
-  ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
+    if (should_connect_to_advertiser(adv_report)){
+      uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
+      APP_ERROR_CHECK(err);
 
-  if (should_connect_to_advertiser(adv_report)){
-    uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
-    APP_ERROR_CHECK(err);
+      // Glow blue for now so that we know we're connected
+      led_blue_on();
 
-    log("GAP: Connected to the mesh!");
+      log("GAP: Connected to the mesh!");
+    }
+
+  } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
+    if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_PERIPH){
+      log("GAP: I am connected as a PERIPHERAL device. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
+    } else if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_CENTRAL){
+      log("GAP: I am connected as a CENTRAL device. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
+    }
+
+  } else {
+    log("GAP: I received an unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));
   }
 }

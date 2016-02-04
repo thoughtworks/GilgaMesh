@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # Firmware build
 #
-# Selectable build options 
+# Selectable build options
 #------------------------------------------------------------------------------
 TARGET_BOARD         ?= BOARD_PCA10031
 
@@ -12,16 +12,16 @@ TARGET_BOARD         ?= BOARD_PCA10031
 SDK_BASE      := $(HOME)/nrf/sdk/nrf_sdk_9_0
 COMPONENTS    := $(SDK_BASE)/components
 TEMPLATE_PATH := $(COMPONENTS)/toolchain/gcc
-EHAL_PATH     := $(HOME)/nrf/sdk/ehal_latest
+EHAL_PATH     := ./deploy/sdk/EHAL
 LINKER_SCRIPT := ./linker/gcc_nrf51_s130_32kb.ld
 OUTPUT_NAME   := MeshyMesh
-JLINK	      := jlinkexe
+JLINK         := jlinkexe
 
 OS := $(shell uname -s)
 ifeq ($(OS),Darwin)
-  JLINK 	:= jlinkexe
+  JLINK := jlinkexe
 else
-  JLINK		:= jlink
+  JLINK := jlink
 endif
 
 
@@ -43,7 +43,7 @@ endif
 
 # echo suspend
 ifeq ("$(VERBOSE)","1")
-  NO_ECHO := 
+  NO_ECHO :=
 else
   NO_ECHO := @
 endif
@@ -56,7 +56,6 @@ endif
 
 # Toolchain commands
 CC       := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-gcc"
-CPP      := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-g++"
 OBJCOPY  := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy"
 SIZE     := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size"
 MK       := mkdir
@@ -130,12 +129,12 @@ else
 endif
 
 CFLAGS += -mcpu=cortex-m0
-CFLAGS += -mthumb 
+CFLAGS += -mthumb
 CFLAGS += -Og
 CFLAGS += -fmessage-length=0
-CFLAGS += -fsigned-char 
-CFLAGS += -ffunction-sections 
-CFLAGS += -fdata-sections 
+CFLAGS += -fsigned-char
+CFLAGS += -ffunction-sections
+CFLAGS += -fdata-sections
 CFLAGS += -flto
 CFLAGS += -fno-move-loop-invariants
 CFLAGS += -Wextra
@@ -170,7 +169,7 @@ LDFLAGS += -fno-move-loop-invariants
 LDFLAGS += -Wextra
 LDFLAGS += -g3
 LDFLAGS += -T$(LINKER_SCRIPT)
-LDFLAGS += -Xlinker 
+LDFLAGS += -Xlinker
 LDFLAGS += --gc-sections
 LDFLAGS += -Wl,-Map,"_build/MeshyMesh.map"
 LDFLAGS += --specs=nano.specs
@@ -189,7 +188,7 @@ TIMESTAMP := $(shell date +'%s')
 
 vpath %.c $(C_PATHS)
 
-OBJECTS = $(C_OBJECTS) 
+OBJECTS = $(C_OBJECTS)
 
 all: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_NAME).elf
@@ -255,4 +254,3 @@ clean:
 
 cleanobj:
 	$(RM) $(BUILD_DIRECTORIES)/*.o
-

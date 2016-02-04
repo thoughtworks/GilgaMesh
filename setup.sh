@@ -55,6 +55,7 @@ wget -O $DEPLOY_RESOURCES/sdk/nRF51_SDK_9.0.0_2e23562.zip https://developer.nord
 ## should check checksum
 unzip $DEPLOY_RESOURCES/sdk/nRF51_SDK_9.0.0_2e23562.zip -d $DEPLOY_RESOURCES/sdk/nrf_sdk_9_0
 rm $DEPLOY_RESOURCES/sdk/nRF51_SDK_9.0.0_2e23562.zip
+git clone https://github.com/I-SYST/EHAL $DEPLOY_RESOURCES/sdk/EHAL
 
 ### BELOW DOES NOT YET WORK ###
 

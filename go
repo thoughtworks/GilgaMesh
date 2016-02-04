@@ -2,11 +2,14 @@
 
 set -e
 
-JLINK=$HOME/nrf/tools/jlink
-JLINKGDBSERVER=/usr/local/bin/jlinkgdbserver
-GCC_ARM_SIZE=/usr/local/gcc-arm-none-eabi-4_9-2015q2/bin/arm-none-eabi-size
-GDB_ARM_MAC=$HOME/nrf/sdk/gcc_arm_embedded_4_9_mac/bin/arm-none-eabi-gdb
-GDB_ARM_LINUX=$HOME/nrf/sdk/gcc_arm_embedded_4_9_linux/bin/arm-none-eabi-gdb
+JLINK=/usr/local/bin/JLinkExe
+#JLINKGDBSERVER=/usr/local/bin/jlinkgdbserver
+GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
+GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
+GDB_ARM_MAC=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-gdb
+
+#currently not supported until tested
+#GDB_ARM_LINUX=$HOME/nrf/sdk/gcc_arm_embedded_4_9_linux/bin/arm-none-eabi-gdb
 
 function compile {
     make clean && make

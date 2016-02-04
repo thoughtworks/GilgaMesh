@@ -72,7 +72,6 @@ C_SOURCE_FILES += $(EHAL_PATH)/ARM/Nordic/nRF51/src/Vectors_nRF51.c
 C_SOURCE_FILES += $(COMPONENTS)/libraries/timer/app_timer.c
 C_SOURCE_FILES += $(COMPONENTS)/libraries/util/app_util_platform.c
 C_SOURCE_FILES += $(COMPONENTS)/libraries/gpiote/app_gpiote.c
-#C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/uart/app_uart.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/gpiote/nrf_drv_gpiote.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/common/nrf_drv_common.c
 C_SOURCE_FILES += $(COMPONENTS)/ble/ble_radio_notification/ble_radio_notification.c

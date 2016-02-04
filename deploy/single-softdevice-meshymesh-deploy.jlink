@@ -6,7 +6,7 @@ g
 device nrf51822
 speed 1000
 r
-loadfile _build/FruityMesh.hex
+loadfile _build/MeshyMesh.hex
 r
 g
 exit

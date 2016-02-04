@@ -20,10 +20,11 @@ function compile-deploy {
     deploy-to-many
 }
 
+# Must have multiple devices connected
 function deploy-to-many {
     NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l) - 1`
     for i in $(seq 0 $NUMBER_OF_DEVICES); do
-        echo $i | $JLINK deploy/single-fruitymesh-softdevice-deploy.jlink
+        echo $i | $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
     done
 }
 

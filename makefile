@@ -14,7 +14,7 @@ COMPONENTS    := $(SDK_BASE)/components
 TEMPLATE_PATH := $(COMPONENTS)/toolchain/gcc
 EHAL_PATH     := $(HOME)/nrf/sdk/ehal_latest
 LINKER_SCRIPT := ./linker/gcc_nrf51_s130_32kb.ld
-OUTPUT_NAME   := FruityMesh
+OUTPUT_NAME   := MeshyMesh
 JLINK	      := jlinkexe
 
 OS := $(shell uname -s)
@@ -89,7 +89,6 @@ C_SOURCE_FILES += ./src/main.c
 
 # includes common to all targets
 
-#fruity
 INC_PATHS += -I./inc
 INC_PATHS += -I./config
 
@@ -173,7 +172,7 @@ LDFLAGS += -g3
 LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -Xlinker 
 LDFLAGS += --gc-sections
-LDFLAGS += -Wl,-Map,"_build/FruityMesh.map"
+LDFLAGS += -Wl,-Map,"_build/MeshyMesh.map"
 LDFLAGS += --specs=nano.specs
 
 LIBS += -L$(EHAL_PATH)/ARM/src
@@ -209,9 +208,6 @@ all: $(BUILD_DIRECTORIES) $(OBJECTS)
 
 debug : all
 release : all
-
-flash: all
-	$(JLINK) deploy/upload_fruitymesh.jlink
 
 # Create build directories
 $(BUILD_DIRECTORIES):

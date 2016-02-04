@@ -25,11 +25,13 @@ typedef struct
 } advertisingData;
 
 extern const ble_gap_conn_params_t meshConnectionParams;
+extern const ble_gap_adv_params_t meshAdvertisingParams;
 extern const ble_gap_scan_params_t meshScanningParams;
 
-void mesh_start_advertising(void);
-void mesh_stop_advertising(void);
-bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report);
+void start_advertising(void);
+void stop_advertising(void);
 
-void mesh_start_scanning(void);
-void mesh_stop_scanning(void);
+void start_scanning(void);
+void stop_scanning(void);
+
+void handle_gap_event(ble_evt_t * bleEvent);

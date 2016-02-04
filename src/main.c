@@ -19,8 +19,8 @@ int main(void)
 
   timer_initialize();
 
-  mesh_start_scanning();
-  mesh_start_advertising();
+  start_scanning();
+  start_advertising();
 
 
   while (true)
@@ -33,7 +33,7 @@ int main(void)
       err = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
 
       if (err == NRF_SUCCESS) {
-        bleDispatchEventHandler(currentEvent);
+        handle_gap_event(currentEvent);
       }
 
       else if (err == NRF_ERROR_NOT_FOUND) {
@@ -136,20 +136,5 @@ void HardFault_Handler(void)
 {
   for (;;){
     // Endless debugger loop
-  }
-}
-
-
-void bleDispatchEventHandler(ble_evt_t * bleEvent)
-{
-  if (bleEvent->header.evt_id != BLE_GAP_EVT_ADV_REPORT) return;
-
-  ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
-
-  if (should_connect_to_advertiser(adv_report)){
-    uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
-    APP_ERROR_CHECK(err);
-
-    log("MESH: I'm connected!");
   }
 }

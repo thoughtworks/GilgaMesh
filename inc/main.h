@@ -7,7 +7,7 @@
 #include <app_error.h>
 #include <softdevice_handler.h>
 
-#include <mesh.h>
+#include <gap.h>
 #include <logger.h>
 #include <terminal.h>
 #include <timer.h>

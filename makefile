@@ -60,7 +60,6 @@ OBJCOPY  := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-objcopy"
 SIZE     := "$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size"
 MK       := mkdir
 RM       := rm -rf
-CP       := cp
 
 # function for removing duplicates in a list
 remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
@@ -74,11 +73,10 @@ C_SOURCE_FILES += $(COMPONENTS)/libraries/gpiote/app_gpiote.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/gpiote/nrf_drv_gpiote.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/common/nrf_drv_common.c
 C_SOURCE_FILES += $(COMPONENTS)/ble/ble_radio_notification/ble_radio_notification.c
-C_SOURCE_FILES += ./src/nrf/simple_uart.c
-C_SOURCE_FILES += ./src/nrf/pn532.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/hal/nrf_delay.c
 C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/pstorage/pstorage.c
 C_SOURCE_FILES += $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_handler.c
+C_SOURCE_FILES += ./src/nrf/simple_uart.c
 C_SOURCE_FILES += ./src/logger.c
 C_SOURCE_FILES += ./src/led.c
 C_SOURCE_FILES += ./src/gap.c
@@ -94,7 +92,6 @@ INC_PATHS += -I./config
 #arm GCC
 
 #nordic nrf51
-INC_PATHS += -I$(COMPONENTS)/drivers_nrf/twi_master
 INC_PATHS += -I$(COMPONENTS)/ble/ble_radio_notification
 INC_PATHS += -I$(COMPONENTS)/ble/ble_services/ble_dfu
 INC_PATHS += -I$(COMPONENTS)/ble/common

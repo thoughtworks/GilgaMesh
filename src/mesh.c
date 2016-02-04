@@ -1,5 +1,23 @@
 #include <mesh.h>
 
+const ble_gap_conn_params_t meshConnectionParams =
+{
+  ATTR_MESH_CONNECTION_INTERVAL,       //min_conn_interval
+  ATTR_MESH_CONNECTION_INTERVAL,       //max_conn_interval
+  0,                                   //slave_latency
+  ATTR_MESH_CONNECTION_TIMEOUT         //conn_sup_timeout
+};
+
+const ble_gap_scan_params_t meshScanningParams =
+{
+  0,                                   //active
+  0,                                   //selective
+  0,                                   //p_whitelist
+  ATTR_MESH_SCANNING_INTERVAL,         //interval
+  ATTR_MESH_SCANNING_INTERVAL,         //window
+  0                                    //timeout
+};
+
 
 void mesh_start_advertising(void)
 {
@@ -63,17 +81,7 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
 
 void mesh_start_scanning(void)
 {
-  uint32_t err;
-  ble_gap_scan_params_t scanningParams;
-
-  scanningParams.active = 0;
-  scanningParams.selective = 0;
-  scanningParams.p_whitelist = 0;
-  scanningParams.interval = MSEC_TO_UNITS(100, UNIT_0_625_MS);
-  scanningParams.window = MSEC_TO_UNITS(40, UNIT_0_625_MS);
-  scanningParams.timeout = 0;
-
-  err = sd_ble_gap_scan_start(&scanningParams);
+  uint32_t err = sd_ble_gap_scan_start(&meshScanningParams);
   APP_ERROR_CHECK(err);
 
   log("NODE: Scanning started");

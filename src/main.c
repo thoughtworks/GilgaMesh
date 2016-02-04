@@ -94,13 +94,7 @@ void ble_initialize(void){
   err = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER);
   APP_ERROR_CHECK(err);
 
-  ble_gap_conn_params_t gapConnectionParams;
-  memset(&gapConnectionParams, 0, sizeof(gapConnectionParams));
-  gapConnectionParams.min_conn_interval = ATTR_MESH_CONNECTION_INTERVAL;
-  gapConnectionParams.max_conn_interval = ATTR_MESH_CONNECTION_INTERVAL;
-  gapConnectionParams.slave_latency = 0;
-  gapConnectionParams.conn_sup_timeout = ATTR_MESH_CONNECTION_TIMEOUT;
-  err = sd_ble_gap_ppcp_set(&gapConnectionParams);
+  err = sd_ble_gap_ppcp_set(&meshConnectionParams);
   APP_ERROR_CHECK(err);
 }
 
@@ -145,11 +139,17 @@ void HardFault_Handler(void)
   }
 }
 
+
 void bleDispatchEventHandler(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id != BLE_GAP_EVT_ADV_REPORT) return;
 
-  if (should_connect_to_advertiser(bleEvent->evt.gap_evt.params.adv_report)){
-    // next step is to form a connection
+  ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
+
+  if (should_connect_to_advertiser(adv_report)){
+    uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
+    APP_ERROR_CHECK(err);
+
+    log("MESH: I'm connected!");
   }
 }

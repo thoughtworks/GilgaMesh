@@ -33,11 +33,11 @@ function deploy-to-many {
 }
 
 function deploy-to-device-i-choose {
-    $JLINK deploy/single-fruitymesh-softdevice-deploy.jlink
+    $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
 }
 
 function size {
-    $GCC_ARM_SIZE _build/FruityMesh.elf
+    $GCC_ARM_SIZE _build/MeshyMesh.elf
 }
 
 function debug {

@@ -9,10 +9,10 @@ TARGET_BOARD         ?= BOARD_PCA10031
 # Define relative paths to SDK components
 #------------------------------------------------------------------------------
 
-SDK_BASE      := $(HOME)/nrf/sdk/nrf_sdk_9_0
+SDK_BASE      := ./deploy/sdk/nrf_sdk_9_0
 COMPONENTS    := $(SDK_BASE)/components
 TEMPLATE_PATH := $(COMPONENTS)/toolchain/gcc
-EHAL_PATH     := ./deploy/sdk/EHAL
+EHAL_PATH     := ./deploy/EHAL
 LINKER_SCRIPT := ./linker/gcc_nrf51_s130_32kb.ld
 OUTPUT_NAME   := MeshyMesh
 JLINK         := jlinkexe
@@ -30,16 +30,18 @@ endif
 #------------------------------------------------------------------------------
 
 export OUTPUT_NAME
-export GNU_INSTALL_ROOT
+#export GNU_INSTALL_ROOT
+GNU_INSTALL_ROOT := ./deploy/gcc-arm-none-eabi/
+GNU_VERSION      := 5.2.1
+GNU_PREFIX       := arm-none-eabi
+#ifeq ($(OS),Windows_NT)
+#  include $(TEMPLATE_PATH)/Makefile.windows
+#else
+#  include $(TEMPLATE_PATH)/Makefile.posix
+#endif
 
 MAKEFILE_NAME := $(MAKEFILE_LIST)
-MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) ) 
-
-ifeq ($(OS),Windows_NT)
-  include $(TEMPLATE_PATH)/Makefile.windows
-else
-  include $(TEMPLATE_PATH)/Makefile.posix
-endif
+MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) )
 
 # echo suspend
 ifeq ("$(VERBOSE)","1")

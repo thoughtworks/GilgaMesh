@@ -5,3 +5,4 @@ deploy/gcc-arm-none-eabi/
 deploy/jlink/
 deploy/sdk/
 deploy/softdevice/
+deploy/EHAL/

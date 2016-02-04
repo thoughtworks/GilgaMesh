@@ -15,12 +15,16 @@ function compile {
     make clean && make
 }
 
-function compile-deploy {
+function compile-deploy-all {
     compile
     deploy-to-many
 }
 
-# Must have multiple devices connected
+function compile-deploy-one {
+    compile
+    echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
+}
+
 function deploy-to-many {
     NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l) - 1`
     for i in $(seq 0 $NUMBER_OF_DEVICES); do
@@ -82,7 +86,8 @@ function helptext {
     echo ""
     echo "Available commands are:"
     echo "    c                 Compile current code"
-    echo "    cd                Compile and deploy current code to all connected devices"
+    echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
+    echo "    cd1               Compile and deploy current code to one device"
     echo "    s <device file>      Open screen terminal to specified device at baudrate 38400 (Requires screen to be installed)"
     echo "    m <device file>      Open minicom terminal to specified device at baudrate 38400 (Requires minicom to be installed)"
     echo ""
@@ -96,7 +101,9 @@ function helptext {
 case "$1" in
     c) compile
     ;;
-    cd) compile-deploy
+    cd) compile-deploy-all
+    ;;
+    cd1) compile-deploy-one
     ;;
     d1) deploy-to-device-i-choose
     ;;

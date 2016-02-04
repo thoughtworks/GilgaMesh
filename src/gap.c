@@ -95,14 +95,13 @@ void stop_scanning(void)
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
-    //log("GAP: I received an advertisement. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
     ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
 
     if (should_connect_to_advertiser(adv_report)){
       uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
       APP_ERROR_CHECK(err);
 
-      // Glow blue for now so that we know we're connected
+      // TEMPORARY: Glow blue for now so that we know we're connected
       led_blue_on();
 
       log("GAP: Connected to the mesh!");

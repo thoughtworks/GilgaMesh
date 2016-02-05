@@ -1,0 +1,1 @@
+alias ackl="ack --ignore-dir={deploy/sdk,deploy/EHAL}"

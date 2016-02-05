@@ -3,7 +3,7 @@
 set -e
 
 JLINK=/usr/local/bin/JLinkExe
-#JLINKGDBSERVER=/usr/local/bin/jlinkgdbserver
+JLINKGDBSERVER=/usr/local/bin/jlinkgdbserver
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
 GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
 GDB_ARM_MAC=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-gdb

@@ -15,15 +15,6 @@ TEMPLATE_PATH := $(COMPONENTS)/toolchain/gcc
 EHAL_PATH     := ./deploy/EHAL
 LINKER_SCRIPT := ./linker/gcc_nrf51_s130_32kb.ld
 OUTPUT_NAME   := MeshyMesh
-JLINK         := jlinkexe
-
-OS := $(shell uname -s)
-ifeq ($(OS),Darwin)
-  JLINK := jlinkexe
-else
-  JLINK := jlink
-endif
-
 
 #------------------------------------------------------------------------------
 # Proceed cautiously beyond this point.  Little should change.

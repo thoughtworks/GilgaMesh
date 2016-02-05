@@ -11,7 +11,6 @@ const ble_gap_conn_params_t meshConnectionParams =
 const ble_gap_adv_params_t meshAdvertisingParams =
 {
   BLE_GAP_ADV_TYPE_ADV_IND,            //type
-  //BLE_GAP_ADV_TYPE_ADV_SCAN_IND,       //type
   0,                                   //p_peer_addr
   BLE_GAP_ADV_FP_ANY,                  //fp
   0,                                   //p_whitelist
@@ -100,19 +99,23 @@ void handle_gap_event(ble_evt_t * bleEvent)
     if (should_connect_to_advertiser(adv_report)){
       uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
       APP_ERROR_CHECK(err);
-
-      // TEMPORARY: Glow blue for now so that we know we're connected
-      led_blue_on();
-
-      log("GAP: Connected to the mesh!");
     }
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
     if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_PERIPH){
-      log("GAP: I am connected as a PERIPHERAL device. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
+      //we are the peripheral, we need to add a central connection
+      set_central_connection(bleEvent->evt.gap_evt.params.connected.peer_addr);
+
     } else if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_CENTRAL){
-      log("GAP: I am connected as a CENTRAL device. Conn handle is %u", bleEvent->evt.gap_evt.conn_handle);
+      //we are the central, we need to add a peripheral connection
+      set_peripheral_connection(bleEvent->evt.gap_evt.params.connected.peer_addr);
     }
+
+  } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
+    log("GAP: I've been disconnected! Drat!");
+    //later we should clear the stored connection, but for now we'll just turn LEDs off
+    led_red_off();
+    led_green_off();
 
   } else {
     log("GAP: I received an unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

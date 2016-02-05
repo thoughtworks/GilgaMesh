@@ -11,12 +11,8 @@ int main(void)
   uint32_t err;
 
   terminal_initialize();
-
+  connections_initialize();
   ble_initialize();
-  //***** Storage::getInstance();
-
-  //***** new Testing();
-
   timer_initialize();
 
   //Turn all LEDs off

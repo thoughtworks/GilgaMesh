@@ -9,6 +9,7 @@
 #include <ble_gap.h>
 
 #include <logger.h>
+#include <connection.h>
 
 #define MESH_NAME                      "MeshyMesh"
 #define MESH_NAME_SIZE                 9

@@ -33,6 +33,50 @@ const ble_gap_scan_params_t meshScanningParams =
   0                                    //timeout
 };
 
+void sys_evt_dispatch(uint32_t sys_evt)
+{
+  pstorage_sys_event_handler(sys_evt);
+}
+
+void ble_initialize(void){
+  uint32_t err = 0;
+
+  log("NODE: Initializing Softdevice");
+
+  err = softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, NULL);
+  APP_ERROR_CHECK(err);
+
+  err = softdevice_sys_evt_handler_set(sys_evt_dispatch);
+  APP_ERROR_CHECK(err);
+
+  ble_enable_params_t bleSdEnableParams;
+  memset(&bleSdEnableParams, 0, sizeof(bleSdEnableParams));
+  bleSdEnableParams.gatts_enable_params.attr_tab_size = ATTR_TABLE_MAX_SIZE;
+  bleSdEnableParams.gatts_enable_params.service_changed = IS_SRVC_CHANGED_CHARACT_PRESENT;
+
+  err = sd_ble_enable(&bleSdEnableParams);
+  APP_ERROR_CHECK(err);
+
+  err = sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
+  APP_ERROR_CHECK(err);
+
+  err = sd_power_mode_set(NRF_POWER_MODE_LOWPWR);
+  APP_ERROR_CHECK(err);
+
+
+  ble_gap_conn_sec_mode_t secPermissionOpen;
+  BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
+
+  err = sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, strlen(MESH_NAME));
+  APP_ERROR_CHECK(err);
+
+  err = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER);
+  APP_ERROR_CHECK(err);
+
+  err = sd_ble_gap_ppcp_set(&meshConnectionParams);
+  APP_ERROR_CHECK(err);
+}
+
 
 void start_advertising(void)
 {

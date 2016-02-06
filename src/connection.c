@@ -16,9 +16,6 @@ void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddr
   } else {
     log("CONNECTION: I am connected to a CENTRAL device.");
     set_connection(&activeConnections->central, connectionHandle, deviceAddress, CENTRAL);
-
-    //If the green LED is on, we are connected as a peripheral device
-    led_green_on();
   }
 }
 
@@ -35,9 +32,6 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 
       log("Starting scanning again...");
       start_scanning();
-
-      //If the red LED is on, we are connected as a central device
-      led_red_on();
 
       break;
     }
@@ -56,6 +50,8 @@ void set_connection(connection *localConnection, uint16_t connectionHandle, ble_
   memcpy(&localConnection->connectionHandle, &connectionHandle, sizeof(connectionHandle));
   localConnection->type = type;
   localConnection->active = true;
+
+  handle_connection_change();
 }
 
 
@@ -64,14 +60,12 @@ connection* find_active_connection(uint16_t connectionHandle)
   connection *central = &activeConnections->central;
   log("Looking at central conn. Handle is %u. We're looking for handle %u.", central->connectionHandle, connectionHandle);
   if (central->active && central->connectionHandle == connectionHandle){
-    led_green_off();
     return central;
   }
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     connection *peripheral = &activeConnections->peripheral[i];
     log("Looking at peripheral conn. Handle is %u. We're looking for handle %u.", peripheral->connectionHandle, connectionHandle);
     if (peripheral->active && peripheral->connectionHandle == connectionHandle){
-      led_red_off();
       return peripheral;
     }
   }
@@ -85,6 +79,10 @@ void unset_connection(uint16_t connectionHandle)
   if (conn != NULL){
     log("CONNECTION: Disconnected from device with connection handle %u", connectionHandle);
     memset(conn, 0, sizeof(connection));
+
+    handle_connection_change();
+    start_advertising();
+    start_scanning();
 
   } else {
     log("We didn't find a matching connection! That SUCKS.");
@@ -107,4 +105,35 @@ void print_all_connections()
   print_connection_status(&activeConnections->peripheral[0], "PERIPHERAL #1");
   print_connection_status(&activeConnections->peripheral[1], "PERIPHERAL #2");
   print_connection_status(&activeConnections->peripheral[2], "PERIPHERAL #3");
+}
+
+
+bool central_connection_active()
+{
+  return activeConnections->central.active;
+}
+
+
+bool peripheral_connections_active()
+{
+  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+    if (activeConnections->peripheral[i].active) return true;
+  }
+  return false;
+}
+
+
+void handle_connection_change()
+{
+  if (central_connection_active()){
+    led_green_on();
+  } else {
+    led_green_off();
+  }
+
+  if (peripheral_connections_active()){
+    led_red_on();
+  } else {
+    led_red_off();
+  }
 }

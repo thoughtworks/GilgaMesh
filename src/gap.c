@@ -29,7 +29,7 @@ const ble_gap_scan_params_t meshScanningParams =
   0,                                   //selective
   0,                                   //p_whitelist
   ATTR_MESH_SCANNING_INTERVAL,         //interval
-  ATTR_MESH_SCANNING_INTERVAL,         //window
+  ATTR_MESH_SCANNING_WINDOW,           //window
   0                                    //timeout
 };
 
@@ -104,18 +104,19 @@ void handle_gap_event(ble_evt_t * bleEvent)
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
     if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_PERIPH){
       //we are the peripheral, we need to add a central connection
-      set_central_connection(bleEvent->evt.gap_evt.params.connected.peer_addr);
+      set_central_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);
+      print_all_connections();
 
     } else if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_CENTRAL){
       //we are the central, we need to add a peripheral connection
-      set_peripheral_connection(bleEvent->evt.gap_evt.params.connected.peer_addr);
+      set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);
+      print_all_connections();
     }
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
-    log("GAP: I've been disconnected! Drat!");
-    //later we should clear the stored connection, but for now we'll just turn LEDs off
-    led_red_off();
-    led_green_off();
+    log("GAP: Received a disconnection event with connection handle %u", bleEvent->evt.gap_evt.conn_handle);
+    unset_connection(bleEvent->evt.gap_evt.conn_handle);
+    print_all_connections();
 
   } else {
     log("GAP: I received an unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

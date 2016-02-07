@@ -43,38 +43,29 @@ void ble_initialize(void){
 
   log("NODE: Initializing Softdevice");
 
-  err = softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, NULL);
-  APP_ERROR_CHECK(err);
+  EC(softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, NULL));
 
-  err = softdevice_sys_evt_handler_set(sys_evt_dispatch);
-  APP_ERROR_CHECK(err);
+  EC(softdevice_sys_evt_handler_set(sys_evt_dispatch));
 
   ble_enable_params_t bleSdEnableParams;
   memset(&bleSdEnableParams, 0, sizeof(bleSdEnableParams));
   bleSdEnableParams.gatts_enable_params.attr_tab_size = ATTR_TABLE_MAX_SIZE;
   bleSdEnableParams.gatts_enable_params.service_changed = IS_SRVC_CHANGED_CHARACT_PRESENT;
 
-  err = sd_ble_enable(&bleSdEnableParams);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_enable(&bleSdEnableParams));
 
-  err = sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
-  APP_ERROR_CHECK(err);
+  EC(sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE));
 
-  err = sd_power_mode_set(NRF_POWER_MODE_LOWPWR);
-  APP_ERROR_CHECK(err);
-
+  EC(sd_power_mode_set(NRF_POWER_MODE_LOWPWR));
 
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  err = sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, strlen(MESH_NAME));
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, strlen(MESH_NAME)));
 
-  err = sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
-  err = sd_ble_gap_ppcp_set(&meshConnectionParams);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_ppcp_set(&meshConnectionParams));
 }
 
 
@@ -86,11 +77,9 @@ void start_advertising(void)
   adv_data.length = MESH_NAME_SIZE;
   memcpy(adv_data.meshName, MESH_NAME, MESH_NAME_SIZE);
 
-  err = sd_ble_gap_adv_data_set(&adv_data, sizeof(adv_data), NULL, 0);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_adv_data_set(&adv_data, sizeof(adv_data), NULL, 0));
 
-  err = sd_ble_gap_adv_start(&meshAdvertisingParams);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
 
   log("GAP: Advertising started");
 }
@@ -98,8 +87,7 @@ void start_advertising(void)
 
 void stop_advertising(void)
 {
-  uint32_t err = sd_ble_gap_adv_stop();
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_adv_stop());
 
   log("GAP: Advertising stopped");
 }
@@ -119,8 +107,7 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
 
 void start_scanning(void)
 {
-  uint32_t err = sd_ble_gap_scan_start(&meshScanningParams);
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_scan_start(&meshScanningParams));
 
   log("GAP: Scanning started");
 }
@@ -128,8 +115,7 @@ void start_scanning(void)
 
 void stop_scanning(void)
 {
-  uint32_t err = sd_ble_gap_scan_stop();
-  APP_ERROR_CHECK(err);
+  EC(sd_ble_gap_scan_stop());
 
   log("GAP: Scanning stopped");
 }
@@ -141,8 +127,7 @@ void handle_gap_event(ble_evt_t * bleEvent)
     ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
 
     if (should_connect_to_advertiser(adv_report)){
-      uint32_t err = sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams);
-      APP_ERROR_CHECK(err);
+      EC(sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams));
     }
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){

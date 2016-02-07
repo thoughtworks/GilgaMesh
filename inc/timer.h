@@ -2,6 +2,7 @@
 
 #include <app_timer.h>
 #include <led.h>
+#include <error.h>
 
 #define ATTR_TIMER_TICK_MS 200
 #define ATTR_TIMER_COUNT 1

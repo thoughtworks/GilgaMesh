@@ -5,7 +5,6 @@ uint16_t timeSinceLastHandlerCalled = 0;
 uint32_t timeSinceLastBlink = 0;
 uint16_t timeBetweenBlinks = 2000;
 
-
 void ble_timer_dispatch(void * p_context)
 {
     timeSinceLastHandlerCalled += ATTR_TIMER_TICK_MS;
@@ -18,11 +17,9 @@ void timer_initialize(void){
 
     APP_TIMER_INIT(ATTR_TIMER_PRESCALER, ATTR_TIMER_COUNT, ATTR_TIMER_QUEUE_LENGTH, false);
 
-    err = app_timer_create(&mainTimerMsId, APP_TIMER_MODE_REPEATED, ble_timer_dispatch);
-    APP_ERROR_CHECK(err);
+    EC(app_timer_create(&mainTimerMsId, APP_TIMER_MODE_REPEATED, ble_timer_dispatch));
 
-    err = app_timer_start(mainTimerMsId, APP_TIMER_TICKS(ATTR_TIMER_TICK_MS, ATTR_TIMER_PRESCALER), NULL);
-    APP_ERROR_CHECK(err);
+    EC(app_timer_start(mainTimerMsId, APP_TIMER_TICKS(ATTR_TIMER_TICK_MS, ATTR_TIMER_PRESCALER), NULL));
 }
 
 

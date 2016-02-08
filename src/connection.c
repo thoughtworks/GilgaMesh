@@ -22,24 +22,16 @@ void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddr
 
 void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
 {
-  bool addedConnection = false;
-
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     if (!activeConnections->peripheral[i].active){
       log("CONNECTION: I am connected to a PERIPHERAL device (slot #%d).", (i + 1));
       set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
-      addedConnection = true;
-
-      start_scanning();
-
-      break;
+      return;
     }
   }
 
-  if (!addedConnection){
-    // Need better error handling for this...
-    log("CONNECTION: Attempt to add peripheral connection, but no slots are free!");
-  }
+  // Need better error handling for this...
+  log("CONNECTION: Attempt to add peripheral connection, but no slots are free!");
 }
 
 
@@ -94,20 +86,20 @@ connection* find_active_connection_by_address(ble_gap_addr_t address)
 }
 
 
-void unset_connection(uint16_t connectionHandle)
+ConnectionType unset_connection(uint16_t connectionHandle)
 {
   connection *lostConnection = find_active_connection(connectionHandle);
   if (lostConnection != NULL){
     log("CONNECTION: Disconnected from device with connection handle %u", connectionHandle);
-    if (lostConnection->type == CENTRAL){
-      start_advertising();
-    }
 
+    ConnectionType lostConnectionType = lostConnection->type;
     memset(lostConnection, 0, sizeof(connection));
     handle_connection_change();
 
+    return lostConnectionType;
   } else {
     log("We didn't find a matching connection! That SUCKS.");
+    return INVALID;
   }
 }
 

@@ -147,12 +147,16 @@ void handle_gap_event(ble_evt_t * bleEvent)
     } else if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_CENTRAL){
       //we are the central, we need to add a peripheral connection
       set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);
+      start_scanning();
       print_all_connections();
     }
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
     log("GAP: Received a disconnection event with connection handle %u", bleEvent->evt.gap_evt.conn_handle);
-    unset_connection(bleEvent->evt.gap_evt.conn_handle);
+    ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
+    if (lostConnectionType == CENTRAL){
+      start_advertising();
+    }
     print_all_connections();
 
   } else {

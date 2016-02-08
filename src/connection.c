@@ -70,6 +70,30 @@ connection* find_active_connection(uint16_t connectionHandle)
 }
 
 
+bool addresses_match(ble_gap_addr_t address1, ble_gap_addr_t address2)
+{
+  if (address1.addr_type != address2.addr_type) return false;
+  if (memcmp(&address1.addr, &address2.addr, sizeof(address1.addr)) != 0) return false;
+  return true;
+}
+
+
+connection* find_active_connection_by_address(ble_gap_addr_t address)
+{
+  connection *central = &activeConnections->central;
+  if (central->active && addresses_match(central->address, address)){
+    return central;
+  }
+  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+    connection *peripheral = &activeConnections->peripheral[i];
+    if (peripheral->active && addresses_match(peripheral->address, address)){
+      return peripheral;
+    }
+  }
+  return NULL;
+}
+
+
 void unset_connection(uint16_t connectionHandle)
 {
   connection *lostConnection = find_active_connection(connectionHandle);
@@ -91,9 +115,9 @@ void unset_connection(uint16_t connectionHandle)
 void print_connection_status(connection *conn, uint8_t* name)
 {
   log("[%s] This connection is active: %u", name, conn->active);
-//  log("[%s] Event connection handle is %u", name, conn->connectionHandle);
-//  uint8_t *addr = &conn->address.addr;
-//  log("[%s] Peer address is: %u %u %u %u %u %u", name, *addr, *addr+1, *addr+2, *addr+3, *addr+4, *addr+5);
+  log("[%s] Event connection handle is %u", name, conn->connectionHandle);
+  uint8_t *addr = &conn->address.addr;
+  log("[%s] Peer address is: %u %u %u %u %u %u", name, *addr, *addr+1, *addr+2, *addr+3, *addr+4, *addr+5);
 }
 
 

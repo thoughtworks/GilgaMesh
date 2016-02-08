@@ -101,6 +101,8 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
   if (adv_data->length != MESH_NAME_SIZE) return false;
   if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
 
+  if (find_active_connection_by_address(adv_report.peer_addr) != NULL) return false;
+
   return true;
 }
 
@@ -131,6 +133,12 @@ void handle_gap_event(ble_evt_t * bleEvent)
     }
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
+
+    if (find_active_connection_by_address(bleEvent->evt.gap_evt.params.connected.peer_addr) != NULL){
+      log("CONNECTION: we are already connected to this node, so disconnecting now...");
+      EC(sd_ble_gap_disconnect(bleEvent->evt.gap_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    }
+
     if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_PERIPH){
       //we are the peripheral, we need to add a central connection
       set_central_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);

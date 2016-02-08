@@ -9,6 +9,7 @@
 #include <app_error.h>
 #include <ble.h>
 #include <ble_gap.h>
+#include <ble_hci.h>
 
 #include <logger.h>
 #include <connection.h>

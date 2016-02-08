@@ -82,6 +82,7 @@ C_SOURCE_FILES += ./src/main.c
 # includes common to all targets
 
 INC_PATHS += -I./inc
+INC_PATHS += -I./inc/nrf
 INC_PATHS += -I./config
 
 #arm GCC

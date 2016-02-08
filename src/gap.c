@@ -110,7 +110,6 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
 void start_scanning(void)
 {
   EC(sd_ble_gap_scan_start(&meshScanningParams));
-
   log("GAP: Scanning started");
 }
 
@@ -118,46 +117,60 @@ void start_scanning(void)
 void stop_scanning(void)
 {
   EC(sd_ble_gap_scan_stop());
-
   log("GAP: Scanning stopped");
+}
+
+
+void handle_advertising_report_event(ble_gap_evt_adv_report_t advertisingParams)
+{
+  if (should_connect_to_advertiser(advertisingParams)){
+    EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshScanningParams, &meshConnectionParams));
+  }
+}
+
+
+void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t connectionParams)
+{
+  if (find_active_connection_by_address(connectionParams.peer_addr) != NULL){
+    log("CONNECTION: we are already connected to this node, so disconnecting now...");
+    EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+  }
+
+  if (connectionParams.role == BLE_GAP_ROLE_PERIPH){
+    //we are the peripheral, we need to add a central connection
+    set_central_connection(connectionHandle, connectionParams.peer_addr);
+    print_all_connections();
+
+  } else if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
+    //we are the central, we need to add a peripheral connection
+    set_peripheral_connection(connectionHandle, connectionParams.peer_addr);
+    start_scanning();
+    print_all_connections();
+  }
+}
+
+
+void handle_disconnection_event(uint8_t connectionHandle)
+{
+  log("GAP: Received a disconnection event with connection handle %u", connectionHandle);
+  ConnectionType lostConnectionType = unset_connection(connectionHandle);
+  if (lostConnectionType == CENTRAL){
+    start_advertising();
+  }
+  print_all_connections();
 }
 
 
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
-    ble_gap_evt_adv_report_t adv_report = bleEvent->evt.gap_evt.params.adv_report;
-
-    if (should_connect_to_advertiser(adv_report)){
-      EC(sd_ble_gap_connect(&adv_report.peer_addr, &meshScanningParams, &meshConnectionParams));
-    }
+    handle_advertising_report_event(bleEvent->evt.gap_evt.params.adv_report);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
-
-    if (find_active_connection_by_address(bleEvent->evt.gap_evt.params.connected.peer_addr) != NULL){
-      log("CONNECTION: we are already connected to this node, so disconnecting now...");
-      EC(sd_ble_gap_disconnect(bleEvent->evt.gap_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
-    }
-
-    if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_PERIPH){
-      //we are the peripheral, we need to add a central connection
-      set_central_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);
-      print_all_connections();
-
-    } else if (bleEvent->evt.gap_evt.params.connected.role == BLE_GAP_ROLE_CENTRAL){
-      //we are the central, we need to add a peripheral connection
-      set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected.peer_addr);
-      start_scanning();
-      print_all_connections();
-    }
+    handle_connection_event(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
-    log("GAP: Received a disconnection event with connection handle %u", bleEvent->evt.gap_evt.conn_handle);
-    ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
-    if (lostConnectionType == CENTRAL){
-      start_advertising();
-    }
-    print_all_connections();
+    handle_disconnection_event(bleEvent->evt.gap_evt.conn_handle);
 
   } else {
     log("GAP: I received an unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

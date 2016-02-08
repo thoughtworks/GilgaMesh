@@ -30,7 +30,6 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
       set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
       addedConnection = true;
 
-      log("Starting scanning again...");
       start_scanning();
 
       break;
@@ -58,13 +57,11 @@ void set_connection(connection *localConnection, uint16_t connectionHandle, ble_
 connection* find_active_connection(uint16_t connectionHandle)
 {
   connection *central = &activeConnections->central;
-  log("Looking at central conn. Handle is %u. We're looking for handle %u.", central->connectionHandle, connectionHandle);
   if (central->active && central->connectionHandle == connectionHandle){
     return central;
   }
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     connection *peripheral = &activeConnections->peripheral[i];
-    log("Looking at peripheral conn. Handle is %u. We're looking for handle %u.", peripheral->connectionHandle, connectionHandle);
     if (peripheral->active && peripheral->connectionHandle == connectionHandle){
       return peripheral;
     }
@@ -75,14 +72,15 @@ connection* find_active_connection(uint16_t connectionHandle)
 
 void unset_connection(uint16_t connectionHandle)
 {
-  connection *conn = find_active_connection(connectionHandle);
-  if (conn != NULL){
+  connection *lostConnection = find_active_connection(connectionHandle);
+  if (lostConnection != NULL){
     log("CONNECTION: Disconnected from device with connection handle %u", connectionHandle);
-    memset(conn, 0, sizeof(connection));
+    if (lostConnection->type == CENTRAL){
+      start_advertising();
+    }
 
+    memset(lostConnection, 0, sizeof(connection));
     handle_connection_change();
-    start_advertising();
-    start_scanning();
 
   } else {
     log("We didn't find a matching connection! That SUCKS.");
@@ -93,9 +91,9 @@ void unset_connection(uint16_t connectionHandle)
 void print_connection_status(connection *conn, uint8_t* name)
 {
   log("[%s] This connection is active: %u", name, conn->active);
-  log("[%s] Event connection handle is %u", name, conn->connectionHandle);
-  uint8_t *addr = &conn->address.addr;
-  log("[%s] Peer address is: %u %u %u %u %u %u", name, *addr, *addr+1, *addr+2, *addr+3, *addr+4, *addr+5);
+//  log("[%s] Event connection handle is %u", name, conn->connectionHandle);
+//  uint8_t *addr = &conn->address.addr;
+//  log("[%s] Peer address is: %u %u %u %u %u %u", name, *addr, *addr+1, *addr+2, *addr+3, *addr+4, *addr+5);
 }
 
 

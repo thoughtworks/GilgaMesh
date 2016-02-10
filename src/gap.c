@@ -88,7 +88,6 @@ void start_advertising(void)
 void stop_advertising(void)
 {
   EC(sd_ble_gap_adv_stop());
-
   log("GAP: Advertising stopped");
 }
 
@@ -132,21 +131,22 @@ void handle_advertising_report_event(ble_gap_evt_adv_report_t advertisingParams)
 void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t connectionParams)
 {
   if (find_active_connection_by_address(connectionParams.peer_addr) != NULL){
-    log("CONNECTION: we are already connected to this node, so disconnecting now...");
+    // we are already connected to this node, so "undo" this connection event
     EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    return;
   }
 
   if (connectionParams.role == BLE_GAP_ROLE_PERIPH){
     //we are the peripheral, we need to add a central connection
     set_central_connection(connectionHandle, connectionParams.peer_addr);
-    print_all_connections();
 
   } else if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
     //we are the central, we need to add a peripheral connection
     set_peripheral_connection(connectionHandle, connectionParams.peer_addr);
     start_scanning();
-    print_all_connections();
   }
+
+  print_all_connections();
 }
 
 
@@ -173,6 +173,6 @@ void handle_gap_event(ble_evt_t * bleEvent)
     handle_disconnection_event(bleEvent->evt.gap_evt.conn_handle);
 
   } else {
-    log("GAP: I received an unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));
+    log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));
   }
 }

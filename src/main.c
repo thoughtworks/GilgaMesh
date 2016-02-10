@@ -10,6 +10,7 @@ int main(void)
   terminal_initialize();
   connections_initialize();
   ble_initialize();
+  gatt_initialize();
   timer_initialize();
 
   //Turn all LEDs off

@@ -72,6 +72,7 @@ C_SOURCE_FILES += $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_
 C_SOURCE_FILES += ./src/nrf/simple_uart.c
 C_SOURCE_FILES += ./src/connection.c
 C_SOURCE_FILES += ./src/gap.c
+C_SOURCE_FILES += ./src/gatt.c
 C_SOURCE_FILES += ./src/led.c
 C_SOURCE_FILES += ./src/logger.c
 C_SOURCE_FILES += ./src/terminal.c

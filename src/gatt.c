@@ -1,6 +1,8 @@
 #include <gatt.h>
 
 
+ble_gatts_char_handles_t characteristicHandles;
+
 void gatt_initialize()
 {
   ble_uuid_t serviceUUID;
@@ -54,7 +56,6 @@ void gatt_initialize()
   characteristicAttribute.init_offs = 0;
   characteristicAttribute.max_len = FOO_CHARACTERISTIC_MAX_LENGTH;
 
-  ble_gatts_char_handles_t characteristicHandles;
   memset(&characteristicHandles, 0, sizeof(characteristicHandles));
 
   log("GATT: Adding a characteristic");
@@ -63,3 +64,20 @@ void gatt_initialize()
   //log("GATT: Adding a descriptor");
   //EC(sd_ble_gatts_descriptor_add(stuff));
 }
+
+void write_value(uint16_t connectionHandle)
+{
+  uint8_t message = 7;
+
+  ble_gattc_write_params_t writeParams;
+  memset(&writeParams, 0, sizeof(writeParams));
+  writeParams.write_op = BLE_GATT_OP_WRITE_CMD;
+  writeParams.flags = BLE_GATT_EXEC_WRITE_FLAG_PREPARED_WRITE;
+  writeParams.handle = characteristicHandles.value_handle;
+  writeParams.p_value = &message;
+  writeParams.len = sizeof(message);
+
+  EC(sd_ble_gattc_write(connectionHandle, &writeParams));
+}
+
+

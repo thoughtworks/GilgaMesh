@@ -1,6 +1,5 @@
 #include <connection.h>
 
-
 void connections_initialize()
 {
   activeConnections = calloc(1, sizeof(connections));
@@ -58,7 +57,7 @@ connection* find_active_connection(uint16_t connectionHandle)
       return peripheral;
     }
   }
-  return NULL;
+  return 0;
 }
 
 
@@ -82,14 +81,14 @@ connection* find_active_connection_by_address(ble_gap_addr_t address)
       return peripheral;
     }
   }
-  return NULL;
+  return 0;
 }
 
 
 ConnectionType unset_connection(uint16_t connectionHandle)
 {
   connection *lostConnection = find_active_connection(connectionHandle);
-  if (lostConnection != NULL){
+  if (lostConnection != 0){
     log("CONNECTION: Disconnected from device with connection handle %u", connectionHandle);
 
     ConnectionType lostConnectionType = lostConnection->type;
@@ -104,21 +103,66 @@ ConnectionType unset_connection(uint16_t connectionHandle)
 }
 
 
-void print_connection_status(connection *conn, uint8_t* name)
+#define INT_DIGITS 19/* enough for 64 bit integer */
+
+char *itoa(uint8_t i)
 {
-  log("[%s] This connection is active: %u", name, conn->active);
-  log("[%s] Event connection handle is %u", name, conn->connectionHandle);
-  uint8_t *addr = &conn->address.addr;
-  log("[%s] Peer address is: %u %u %u %u %u %u", name, *addr, *addr+1, *addr+2, *addr+3, *addr+4, *addr+5);
+  /* Room for INT_DIGITS digits, - and '\0' */
+  static char buf[INT_DIGITS + 2];
+  char *p = buf + INT_DIGITS + 1;/* points to terminating '\0' */
+  if (i >= 0) {
+    do {
+      *--p = '0' + (i % 10);
+      i /= 10;
+    } while (i != 0);
+    return p;
+  }
+  else {/* i < 0 */
+    do {
+      *--p = '0' - (i % 10);
+      i /= 10;
+    } while (i != 0);
+    *--p = '-';
+  }
+  return p;
+}
+
+
+char* get_connection_info(connection *conn, uint8_t* name, char* connectionInfo)
+{
+  if (conn->active){
+    uint8_t *addr = &conn->address.addr;
+    strcpy(connectionInfo, "\n\r   [");
+    strcat(connectionInfo, name);
+    strcat(connectionInfo, "] ");
+    strcat(connectionInfo, itoa(*addr));
+    strcat(connectionInfo, " ");
+    strcat(connectionInfo, itoa(*addr+1));
+    strcat(connectionInfo, " ");
+    strcat(connectionInfo, itoa(*addr+2));
+    strcat(connectionInfo, " ");
+    strcat(connectionInfo, itoa(*addr+3));
+    strcat(connectionInfo, " ");
+    strcat(connectionInfo, itoa(*addr+4));
+    strcat(connectionInfo, " ");
+    strcat(connectionInfo, itoa(*addr+5));
+    strcat(connectionInfo, "\0");
+    return connectionInfo;
+  } else {
+    strcpy(connectionInfo, " ");
+    return connectionInfo;
+  }
 }
 
 
 void print_all_connections()
 {
-  print_connection_status(&activeConnections->central, "CENTRAL");
-  print_connection_status(&activeConnections->peripheral[0], "PERIPHERAL #1");
-  print_connection_status(&activeConnections->peripheral[1], "PERIPHERAL #2");
-  print_connection_status(&activeConnections->peripheral[2], "PERIPHERAL #3");
+  char centralInfo[50], peripheral1Info[50], peripheral2Info[50], peripheral3Info[50];
+  log("CONNECTION: Details have changed: %s%s%s%s",
+      get_connection_info(&activeConnections->central, "CENTRAL", centralInfo),
+      get_connection_info(&activeConnections->peripheral[0], "PERIPHERAL", peripheral1Info),
+      get_connection_info(&activeConnections->peripheral[1], "PERIPHERAL", peripheral2Info),
+      get_connection_info(&activeConnections->peripheral[2], "PERIPHERAL", peripheral3Info));
 }
 
 

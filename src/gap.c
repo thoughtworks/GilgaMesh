@@ -144,6 +144,9 @@ void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t c
     //we are the central, we need to add a peripheral connection
     set_peripheral_connection(connectionHandle, connectionParams.peer_addr);
     start_scanning();
+
+    log("GAP: Writing to our peripheral...");
+    write_value(connectionHandle);
   }
 
   print_all_connections();
@@ -161,6 +164,13 @@ void handle_disconnection_event(uint8_t connectionHandle)
 }
 
 
+void handle_write_event(ble_gatts_evt_write_t writeParams)
+{
+  log("GATT: Received some data: %d", writeParams.data[0]);
+  // now that we've received data from our central, we pass it on to all of our peripherals
+}
+
+
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
@@ -171,6 +181,12 @@ void handle_gap_event(ble_evt_t * bleEvent)
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
     handle_disconnection_event(bleEvent->evt.gap_evt.conn_handle);
+
+  } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
+    // no need to handle this, we don't care
+
+  } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
+    handle_write_event(bleEvent->evt.gatts_evt.params.write);
 
   } else {
     log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

@@ -16,7 +16,7 @@ typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 typedef struct
 {
   bool active;
-  uint16_t connectionHandle;
+  uint16_t handle;
   ConnectionType type;
   ble_gap_addr_t address;
 } connection;

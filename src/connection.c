@@ -39,7 +39,7 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 void set_connection(connection *localConnection, uint16_t connectionHandle, ble_gap_addr_t deviceAddress, ConnectionType type)
 {
   memcpy(&localConnection->address, &deviceAddress, sizeof(deviceAddress));
-  memcpy(&localConnection->connectionHandle, &connectionHandle, sizeof(connectionHandle));
+  memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
   localConnection->type = type;
   localConnection->active = true;
 
@@ -50,12 +50,12 @@ void set_connection(connection *localConnection, uint16_t connectionHandle, ble_
 connection* find_active_connection(uint16_t connectionHandle)
 {
   connection *central = &activeConnections->central;
-  if (central->active && central->connectionHandle == connectionHandle){
+  if (central->active && central->handle == connectionHandle){
     return central;
   }
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     connection *peripheral = &activeConnections->peripheral[i];
-    if (peripheral->active && peripheral->connectionHandle == connectionHandle){
+    if (peripheral->active && peripheral->handle == connectionHandle){
       return peripheral;
     }
   }
@@ -104,7 +104,7 @@ ConnectionType unset_connection(uint16_t connectionHandle)
 
 #define INT_DIGITS 19/* enough for 64 bit integer */
 
-char *itoa(uint8_t i)
+char *itoa(uint16_t i)
 {
   /* Room for INT_DIGITS digits, - and '\0' */
   static char buf[INT_DIGITS + 2];
@@ -127,21 +127,37 @@ char *itoa(uint8_t i)
 }
 
 
-char* get_connection_info(connection *conn, uint8_t* name, char* connectionInfo)
+char* get_connection_type_name(connection *conn)
+{
+  switch (conn->type)
+  {
+    case CENTRAL:
+      return "CENTRAL";
+    case PERIPHERAL:
+      return "PERIPHERAL";
+    default:
+      return "INVALID";
+  }
+}
+
+
+char* get_connection_info(connection *conn, char* result)
 {
   if (conn->active){
     uint8_t *addr = &conn->address.addr;
-    strcpy(connectionInfo, "\n\r   [");
-    strcat(connectionInfo, name);
-    strcat(connectionInfo, "]");
+    strcpy(result, "\n\r   [");
+    strcat(result, get_connection_type_name(conn));
+    strcat(result, "] [");
+    strcat(result, itoa(conn->handle));
+    strcat(result, "]");
     for (int i = 0; i < 6; i++){
-      strcat(strcat(connectionInfo, " "), itoa(*addr+i));
+      strcat(strcat(result, " "), itoa((uint16_t)*addr+i));
     }
-    strcat(connectionInfo, "\0");
+    strcat(result, "\0");
   } else {
-    strcpy(connectionInfo, " ");
+    strcpy(result, " ");
   }
-  return connectionInfo;
+  return result;
 }
 
 
@@ -150,10 +166,10 @@ void print_all_connections()
   char centralInfo[50], peripheral1Info[50], peripheral2Info[50], peripheral3Info[50];
   log("Connection details have changed:\n\r   Family ID: %u %s%s%s%s",
       familyId,
-      get_connection_info(&activeConnections->central, "CENTRAL", centralInfo),
-      get_connection_info(&activeConnections->peripheral[0], "PERIPHERAL", peripheral1Info),
-      get_connection_info(&activeConnections->peripheral[1], "PERIPHERAL", peripheral2Info),
-      get_connection_info(&activeConnections->peripheral[2], "PERIPHERAL", peripheral3Info));
+      get_connection_info(&activeConnections->central, centralInfo),
+      get_connection_info(&activeConnections->peripheral[0], peripheral1Info),
+      get_connection_info(&activeConnections->peripheral[1], peripheral2Info),
+      get_connection_info(&activeConnections->peripheral[2], peripheral3Info));
 }
 
 
@@ -176,12 +192,12 @@ uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCo
 {
   *connectionCount = 0;
   if (central_connection_active()){
-    handles[*connectionCount] = activeConnections->central.connectionHandle;
+    handles[*connectionCount] = activeConnections->central.handle;
     (*connectionCount)++;
   }
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     if (activeConnections->peripheral[i].active){
-      handles[*connectionCount] = activeConnections->peripheral[i].connectionHandle;
+      handles[*connectionCount] = activeConnections->peripheral[i].handle;
       (*connectionCount)++;
     }
   }

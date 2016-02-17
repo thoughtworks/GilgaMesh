@@ -3,10 +3,13 @@
 #include <stdbool.h>
 
 #include <ble_gap.h>
+#include <nrf_soc.h>
 
 #include <logger.h>
 
+#define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3
+#define ATTR_MAX_CONNECTIONS           ATTR_MAX_CENTRAL_CONNS + ATTR_MAX_PERIPHERAL_CONNS
 
 typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
@@ -25,6 +28,8 @@ typedef struct
 } connections;
 
 
+uint16_t nodeId;
+uint32_t familyId;
 connections *activeConnections;
 
 void connections_initialize(void);
@@ -33,3 +38,4 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
+bool peripheral_connections_active(void);

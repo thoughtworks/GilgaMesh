@@ -2,7 +2,11 @@
 
 void connections_initialize()
 {
+  nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
+  familyId = nodeId << 16;
   activeConnections = calloc(1, sizeof(connections));
+
+  log("NodeId: %d, familyId: %u", nodeId, familyId);
 }
 
 
@@ -13,7 +17,6 @@ void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddr
     log("CONNECTION: Attempt to add central connection, but no slots are free!");
 
   } else {
-    log("CONNECTION: I am connected to a CENTRAL device.");
     set_connection(&activeConnections->central, connectionHandle, deviceAddress, CENTRAL);
   }
 }
@@ -23,7 +26,6 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 {
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     if (!activeConnections->peripheral[i].active){
-      log("CONNECTION: I am connected to a PERIPHERAL device (slot #%d).", (i + 1));
       set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
       return;
     }
@@ -89,15 +91,12 @@ ConnectionType unset_connection(uint16_t connectionHandle)
 {
   connection *lostConnection = find_active_connection(connectionHandle);
   if (lostConnection != 0){
-    log("CONNECTION: Disconnected from device with connection handle %u", connectionHandle);
-
     ConnectionType lostConnectionType = lostConnection->type;
     memset(lostConnection, 0, sizeof(connection));
     handle_connection_change();
 
     return lostConnectionType;
   } else {
-    log("We didn't find a matching connection! That SUCKS.");
     return INVALID;
   }
 }
@@ -134,31 +133,23 @@ char* get_connection_info(connection *conn, uint8_t* name, char* connectionInfo)
     uint8_t *addr = &conn->address.addr;
     strcpy(connectionInfo, "\n\r   [");
     strcat(connectionInfo, name);
-    strcat(connectionInfo, "] ");
-    strcat(connectionInfo, itoa(*addr));
-    strcat(connectionInfo, " ");
-    strcat(connectionInfo, itoa(*addr+1));
-    strcat(connectionInfo, " ");
-    strcat(connectionInfo, itoa(*addr+2));
-    strcat(connectionInfo, " ");
-    strcat(connectionInfo, itoa(*addr+3));
-    strcat(connectionInfo, " ");
-    strcat(connectionInfo, itoa(*addr+4));
-    strcat(connectionInfo, " ");
-    strcat(connectionInfo, itoa(*addr+5));
+    strcat(connectionInfo, "]");
+    for (int i = 0; i < 6; i++){
+      strcat(strcat(connectionInfo, " "), itoa(*addr+i));
+    }
     strcat(connectionInfo, "\0");
-    return connectionInfo;
   } else {
     strcpy(connectionInfo, " ");
-    return connectionInfo;
   }
+  return connectionInfo;
 }
 
 
 void print_all_connections()
 {
   char centralInfo[50], peripheral1Info[50], peripheral2Info[50], peripheral3Info[50];
-  log("CONNECTION: Details have changed: %s%s%s%s",
+  log("Connection details have changed:\n\r   Family ID: %u %s%s%s%s",
+      familyId,
       get_connection_info(&activeConnections->central, "CENTRAL", centralInfo),
       get_connection_info(&activeConnections->peripheral[0], "PERIPHERAL", peripheral1Info),
       get_connection_info(&activeConnections->peripheral[1], "PERIPHERAL", peripheral2Info),
@@ -180,6 +171,21 @@ bool peripheral_connections_active()
   return false;
 }
 
+
+uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount)
+{
+  *connectionCount = 0;
+  if (central_connection_active()){
+    handles[*connectionCount] = activeConnections->central.connectionHandle;
+    (*connectionCount)++;
+  }
+  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+    if (activeConnections->peripheral[i].active){
+      handles[*connectionCount] = activeConnections->peripheral[i].connectionHandle;
+      (*connectionCount)++;
+    }
+  }
+}
 
 void handle_connection_change()
 {

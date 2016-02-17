@@ -41,9 +41,9 @@ void sys_evt_dispatch(uint32_t sys_evt)
 void ble_initialize(void){
   uint32_t err = 0;
 
-  log("NODE: Initializing Softdevice");
+  log("Initializing Softdevice");
 
-  EC(softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, NULL));
+  EC(softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, 0));
 
   EC(softdevice_sys_evt_handler_set(sys_evt_dispatch));
 
@@ -74,21 +74,24 @@ void start_advertising(void)
   uint32_t err;
 
   advertisingData adv_data;
-  adv_data.length = MESH_NAME_SIZE;
+  adv_data.meshNameLength = MESH_NAME_SIZE;
   memcpy(adv_data.meshName, MESH_NAME, MESH_NAME_SIZE);
+  adv_data.familyIdLength = sizeof(familyId);
+  adv_data.familyIdParts[0] = (uint16_t) (familyId >> 16);
+  adv_data.familyIdParts[1] = (uint16_t) (familyId & 0x0000FFFF);
 
-  EC(sd_ble_gap_adv_data_set(&adv_data, sizeof(adv_data), NULL, 0));
+  EC(sd_ble_gap_adv_data_set(&adv_data, sizeof(adv_data), 0, 0));
 
   EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
 
-  log("GAP: Advertising started");
+  log("Advertising started");
 }
 
 
 void stop_advertising(void)
 {
   EC(sd_ble_gap_adv_stop());
-  log("GAP: Advertising stopped");
+  log("Advertising stopped");
 }
 
 
@@ -97,10 +100,14 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
   advertisingData* adv_data = (advertisingData *)adv_report.data;
 
   if (adv_report.dlen != sizeof(advertisingData))return false;
-  if (adv_data->length != MESH_NAME_SIZE) return false;
+  if (adv_data->meshNameLength != MESH_NAME_SIZE) return false;
   if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
 
-  if (find_active_connection_by_address(adv_report.peer_addr) != NULL) return false;
+  uint32_t advertiserFamilyId = (adv_data->familyIdParts[0] << 16) | adv_data->familyIdParts[1];
+  log("Received advertisement from node with familyId %u", advertiserFamilyId);
+  if (advertiserFamilyId == familyId) return false;
+
+  log("familyIds don't match, so we should connect...");
 
   return true;
 }
@@ -109,14 +116,22 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
 void start_scanning(void)
 {
   EC(sd_ble_gap_scan_start(&meshScanningParams));
-  log("GAP: Scanning started");
+  log("Scanning started");
 }
 
 
 void stop_scanning(void)
 {
   EC(sd_ble_gap_scan_stop());
-  log("GAP: Scanning stopped");
+  log("Scanning stopped");
+}
+
+
+void update_family_id_for_all_connections()
+{
+  familyId++;
+  log("Updated family id to %u", familyId);
+  update_family();
 }
 
 
@@ -130,9 +145,9 @@ void handle_advertising_report_event(ble_gap_evt_adv_report_t advertisingParams)
 
 void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t connectionParams)
 {
-  if (find_active_connection_by_address(connectionParams.peer_addr) != NULL){
+  if (find_active_connection_by_address(connectionParams.peer_addr) != 0){
     // we are already connected to this node, so "undo" this connection event
-    EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    //EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
     return;
   }
 
@@ -144,18 +159,18 @@ void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t c
     //we are the central, we need to add a peripheral connection
     set_peripheral_connection(connectionHandle, connectionParams.peer_addr);
     start_scanning();
-
-    log("GAP: Writing to our peripheral...");
-    write_value(connectionHandle);
   }
 
   print_all_connections();
+
+  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
+    update_family_id_for_all_connections();
+  }
 }
 
 
 void handle_disconnection_event(uint8_t connectionHandle)
 {
-  log("GAP: Received a disconnection event with connection handle %u", connectionHandle);
   ConnectionType lostConnectionType = unset_connection(connectionHandle);
   if (lostConnectionType == CENTRAL){
     start_advertising();
@@ -164,10 +179,32 @@ void handle_disconnection_event(uint8_t connectionHandle)
 }
 
 
-void handle_write_event(ble_gatts_evt_write_t writeParams)
+void handle_write_event(ble_evt_t * bleEvent)
 {
-  log("GATT: Received some data: %d", writeParams.data[0]);
-  // now that we've received data from our central, we pass it on to all of our peripherals
+  uint8_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+
+  uint32_t *newFamilyId = (uint32_t *) bleEvent->evt.gatts_evt.params.write.data;
+  log("***** RECEIVED New family id: %u", *newFamilyId);
+
+  if (*newFamilyId == familyId){
+    //we are already connected to this family! we should disconnect
+    log("we received our own family Id from a current connection! Disconnecting...");
+    EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    return;
+  }
+
+  familyId = *newFamilyId;
+
+  // now that we've received data, we propagate it through the mesh
+  uint8_t connectionCount;
+  uint16_t connectionHandles[4];
+  get_active_connection_handles(connectionHandles, &connectionCount);
+  for (int i = 0; i < connectionCount; i++){
+    if (connectionHandle != connectionHandles[i]){ //don't resend to the node who sent it
+      log("Passing on familyId %u to connection handle %u", familyId, connectionHandles[i]);
+      write_value(connectionHandles[i], &familyId, sizeof(familyId));
+    }
+  }
 }
 
 
@@ -186,7 +223,7 @@ void handle_gap_event(ble_evt_t * bleEvent)
     // no need to handle this, we don't care
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
-    handle_write_event(bleEvent->evt.gatts_evt.params.write);
+    handle_write_event(bleEvent);
 
   } else {
     log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

@@ -11,6 +11,7 @@
 #include <ble_gap.h>
 #include <ble_hci.h>
 
+#include <gatt.h>
 #include <logger.h>
 #include <connection.h>
 #include <error.h>
@@ -26,8 +27,10 @@
 
 typedef struct
 {
-  uint8_t length;
+  uint8_t meshNameLength;
   uint8_t meshName[MESH_NAME_SIZE];
+  uint8_t familyIdLength;
+  uint16_t familyIdParts[2];
 } advertisingData;
 
 extern const ble_gap_conn_params_t meshConnectionParams;

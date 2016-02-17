@@ -38,4 +38,5 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
+bool central_connection_active(void);
 bool peripheral_connections_active(void);

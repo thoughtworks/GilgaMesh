@@ -127,37 +127,49 @@ void stop_scanning(void)
 }
 
 
+void update_family_id(newFamilyId)
+{
+  if (!central_connection_active()) stop_advertising();
+
+  familyId = newFamilyId;
+  log("Updated family id to %u", familyId);
+
+  if (!central_connection_active()) start_advertising();
+}
+
+
 void update_family_id_for_all_connections()
 {
-  familyId++;
-  log("Updated family id to %u", familyId);
+  update_family_id(familyId + 1);
   update_family();
 }
 
 
-void handle_advertising_report_event(ble_gap_evt_adv_report_t advertisingParams)
+void handle_advertising_report_event(ble_evt_t * bleEvent)
 {
+  ble_gap_evt_adv_report_t advertisingParams = bleEvent->evt.gap_evt.params.adv_report;
   if (should_connect_to_advertiser(advertisingParams)){
     EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshScanningParams, &meshConnectionParams));
   }
 }
 
 
-void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t connectionParams)
+void handle_connection_event(ble_evt_t * bleEvent)
 {
+  ble_gap_evt_connected_t connectionParams = bleEvent->evt.gap_evt.params.connected;
   if (find_active_connection_by_address(connectionParams.peer_addr) != 0){
     // we are already connected to this node, so "undo" this connection event
-    //EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    EC(sd_ble_gap_disconnect(bleEvent->evt.gap_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
     return;
   }
 
   if (connectionParams.role == BLE_GAP_ROLE_PERIPH){
     //we are the peripheral, we need to add a central connection
-    set_central_connection(connectionHandle, connectionParams.peer_addr);
+    set_central_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
 
   } else if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
     //we are the central, we need to add a peripheral connection
-    set_peripheral_connection(connectionHandle, connectionParams.peer_addr);
+    set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
     start_scanning();
   }
 
@@ -169,9 +181,9 @@ void handle_connection_event(uint8_t connectionHandle, ble_gap_evt_connected_t c
 }
 
 
-void handle_disconnection_event(uint8_t connectionHandle)
+void handle_disconnection_event(ble_evt_t * bleEvent)
 {
-  ConnectionType lostConnectionType = unset_connection(connectionHandle);
+  ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
   if (lostConnectionType == CENTRAL){
     start_advertising();
   }
@@ -193,7 +205,7 @@ void handle_write_event(ble_evt_t * bleEvent)
     return;
   }
 
-  familyId = *newFamilyId;
+  update_family_id(*newFamilyId);
 
   // now that we've received data, we propagate it through the mesh
   uint8_t connectionCount;
@@ -211,16 +223,13 @@ void handle_write_event(ble_evt_t * bleEvent)
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
-    handle_advertising_report_event(bleEvent->evt.gap_evt.params.adv_report);
+    handle_advertising_report_event(bleEvent);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
-    handle_connection_event(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gap_evt.params.connected);
+    handle_connection_event(bleEvent);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
-    handle_disconnection_event(bleEvent->evt.gap_evt.conn_handle);
-
-  } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
-    // no need to handle this, we don't care
+    handle_disconnection_event(bleEvent);
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
     handle_write_event(bleEvent);

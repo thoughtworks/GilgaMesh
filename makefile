@@ -3,7 +3,7 @@
 #
 # Selectable build options
 #------------------------------------------------------------------------------
-TARGET_BOARD         ?= BOARD_PCA10031
+TARGET_BOARD         ?= BOARD_PCA10028
 
 #------------------------------------------------------------------------------
 # Define relative paths to SDK components
@@ -97,6 +97,7 @@ INC_PATHS += -I$(COMPONENTS)/libraries/timer
 INC_PATHS += -I$(COMPONENTS)/libraries/button
 INC_PATHS += -I$(COMPONENTS)/libraries/util
 INC_PATHS += -I$(COMPONENTS)/libraries/gpiote
+INC_PATHS += -I$(COMPONENTS)/libraries/bootloader_dfu
 INC_PATHS += -I$(COMPONENTS)/softdevice/common/softdevice_handler
 INC_PATHS += -I$(COMPONENTS)/softdevice/s130/headers
 INC_PATHS += -I$(COMPONENTS)/toolchain

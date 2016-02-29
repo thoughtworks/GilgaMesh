@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <pca10028.h>
+#include <boards.h>
 #include "nrf.h"
 
 #define LED_RED    BSP_LED_0_MASK

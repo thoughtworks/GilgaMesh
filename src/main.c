@@ -2,7 +2,6 @@
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
-
 int main(void)
 {
   uint32_t error_code;
@@ -18,6 +17,10 @@ int main(void)
 
   start_scanning();
   start_advertising();
+
+#ifdef DFU_DEBUG
+  enter_dfu();
+#endif // DFU_DEBUG
 
   while (true)
   {

@@ -13,3 +13,4 @@
 #include <terminal.h>
 #include <timer.h>
 #include <error.h>
+#include <dfu.h>

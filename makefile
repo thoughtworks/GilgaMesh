@@ -78,6 +78,7 @@ C_SOURCE_FILES += ./src/logger.c
 C_SOURCE_FILES += ./src/terminal.c
 C_SOURCE_FILES += ./src/timer.c
 C_SOURCE_FILES += ./src/error.c
+C_SOURCE_FILES += ./src/dfu.c
 C_SOURCE_FILES += ./src/main.c
 
 # includes common to all targets
@@ -136,6 +137,7 @@ CFLAGS += -Wextra
 CFLAGS += -g3
 CFLAGS += -DBLE_STACK_SUPPORT_REQD
 CFLAGS += $(DEBUG_FLAGS)
+CFLAGS += $(DFU_DEBUG_FLAGS)
 CFLAGS += -D$(TARGET_BOARD)
 CFLAGS += -DNRF51
 CFLAGS += -D__need___va_list

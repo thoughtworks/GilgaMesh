@@ -107,7 +107,7 @@ function helptext {
     echo "    minprog           Show the code minimization progression"
     echo ""
     echo "Available boards are:"
-    echo "    PCA10028(defualt) PCA10031 PCA10036 ARS100748 BLE400"
+    echo "    PCA10028(default) PCA10031 PCA10036 BLE400"
 }
 
 case "$1" in

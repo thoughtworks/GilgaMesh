@@ -1,0 +1,13 @@
+si SWD
+speed 1000
+device nrf51822
+#selemu USB
+w4 4001e504 1
+loadbin "../s130_nrf51_1.0.0/s130_nrf51_1.0.0_softdevice.hex" 0
+r
+g
+r
+loadfile _build/MeshyMesh.hex
+r
+g
+exit

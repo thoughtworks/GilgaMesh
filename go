@@ -8,12 +8,13 @@ GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
 GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
 GDB_ARM_MAC=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-gdb
 NUM_CPUS=${NUM_CPUS:=1}
+BOARD=${BOARD:=PCA10028}
 
 #currently not supported until tested
 #GDB_ARM_LINUX=$HOME/nrf/sdk/gcc_arm_embedded_4_9_linux/bin/arm-none-eabi-gdb
 
 function compile {
-    make clean && make -j $NUM_CPUS
+    make clean && TARGET_BOARD=BOARD_$BOARD make -j $NUM_CPUS
 }
 
 function compile-deploy-all {
@@ -89,12 +90,13 @@ function mterm {
 }
 
 function helptext {
-    echo "Usage: ./go <command>"
+    echo "Usage: BOARD=TYPE ./go <command>"
     echo ""
     echo "Available commands are:"
     echo "    c                 Compile current code"
     echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
     echo "    cd1               Compile and deploy current code to one device"
+    echo "    cds               Compile and deploy current code to one device via swd"
     echo "    s <device file>      Open screen terminal to specified device at baudrate 38400 (Requires screen to be installed)"
     echo "    m <device file>      Open minicom terminal to specified device at baudrate 38400 (Requires minicom to be installed)"
     echo ""
@@ -103,6 +105,9 @@ function helptext {
     echo "    size              Show the size of the currently compiled firmware"
     echo "    debug             Setup jlinkgdbserver and start gdb"
     echo "    minprog           Show the code minimization progression"
+    echo ""
+    echo "Available boards are:"
+    echo "    PCA10028(defualt) PCA10031 PCA10036 ARS100748 BLE400"
 }
 
 case "$1" in

@@ -7,12 +7,13 @@ JLINKGDBSERVER=/usr/local/bin/jlinkgdbserver
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
 GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
 GDB_ARM_MAC=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-gdb
+NUM_CPUS=${NUM_CPUS:=1}
 
 #currently not supported until tested
 #GDB_ARM_LINUX=$HOME/nrf/sdk/gcc_arm_embedded_4_9_linux/bin/arm-none-eabi-gdb
 
 function compile {
-    make clean && make
+    make clean && make -j $NUM_CPUS
 }
 
 function compile-deploy-all {
@@ -24,6 +25,12 @@ function compile-deploy-one {
     compile
     echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
 }
+
+function compile-deploy-one-swd {
+    compile
+    echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy-swd.jlink
+}
+
 
 function deploy-to-many {
     NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l) - 1`
@@ -104,6 +111,8 @@ case "$1" in
     cd) compile-deploy-all
     ;;
     cd1) compile-deploy-one
+    ;;
+    cds) compile-deploy-one-swd
     ;;
     d1) deploy-to-device-i-choose
     ;;

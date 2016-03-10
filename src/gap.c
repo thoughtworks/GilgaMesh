@@ -1,5 +1,4 @@
 #include <gap.h>
-#include <ble_gap.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -190,22 +189,71 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
   print_all_connections();
 }
 
+void setFamilyID(ble_evt_t * bleEvent) {
+	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
+	log("***** RECEIVED New family id: %u", req->familyID);
+
+	if (req->familyID == familyId){
+	  //we are already connected to this family! we should disconnect
+	  log("we received our own family Id from a current connection! Disconnecting...");
+	  EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+	  return;
+	}
+
+  update_and_propagate_family_id(req->familyID, connectionHandle);
+}
 
 void handle_write_event(ble_evt_t * bleEvent)
 {
   uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 
-  uint32_t *newFamilyId = (uint32_t *) bleEvent->evt.gatts_evt.params.write.data;
-  log("Received new family id %u from connection %u", *newFamilyId, connectionHandle);
+  BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
 
-  if (*newFamilyId == familyId){
-    //we are already connected to this family! we should disconnect
-    log("we received our own family Id from a current connection! Disconnecting...");
-    EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
-    return;
-  }
+  char ps[7];
+  memset(ps, 0, 7);
+  memcpy(ps, head->password, 6);
+  log("connect handle:%d;password:%s；op:%d", connectionHandle, ps, bleEvent->evt.gatts_evt.params.write.op);
 
-  update_and_propagate_family_id(*newFamilyId, connectionHandle);
+  // check password
+  //  if (head->password) {
+  //  	  BleMessageResult result;
+  //  	  result.errorCode = AN ERROR;
+  //  	  write_value(connectionHandle, &result, sizeof(result));
+  //  	  return;
+  //  }
+
+  switch (head->messageType) {
+    case QueryVersion: { // should return the version of current application.now it is test code
+  	  static uint8_t verErrorCode = 1;
+  	  log("QueryVersion");
+  	  BleMessageQueryVersionRsp result;
+  	  result.result.errorCode = verErrorCode;
+  	  verErrorCode++;
+  	  result.version = 100 - verErrorCode;
+  	  memset(head, 99, sizeof(head));
+  	  write_value(connectionHandle, &result, sizeof(result));
+    }
+  	  break;
+    case StartDFU: { // reboot the device into dfu mode
+  	  log("StartDFU");
+  	  BleMessageStartDFURsp result;
+  	  result.result.errorCode = 0;
+  	  write_value(connectionHandle, &result, sizeof(result));
+
+  		// Now the device will reboot to bootloader
+  	  	sd_power_gpregret_clr(0xFF);
+  	  	sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
+  	  	NVIC_SystemReset();
+    }
+  	  break;
+    case SetFamilyID:
+    	setFamilyID(bleEvent);
+    	break;
+    default:
+  	  log("unknown message type:%d", head->messageType);
+  	  break;
+    }
 }
 
 

@@ -84,7 +84,12 @@ void propagate_family_id(uint16_t originHandle)
   for (int i = 0; i < connectionCount; i++){
     if (originHandle != connectionHandles[i]){ //don't resend to the node who sent it
       log("Sending familyId %u to connection handle %u", familyId, connectionHandles[i]);
-      write_value(connectionHandles[i], &familyId, sizeof(familyId));
+
+      BleMessageSetFamilyIDReq request;
+      memset(&request, 0, sizeof(request));
+      request.familyID = familyId;
+      request.head.messageType = SetFamilyID;
+      write_value(connectionHandles[i], (uint8_t *)&request, sizeof(request));
     }
   }
 }

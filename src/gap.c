@@ -223,7 +223,8 @@ void handle_write_event(ble_evt_t * bleEvent)
   //  if (head->password) {
   //  	  BleMessageResult result;
   //  	  result.errorCode = AN ERROR;
-  //  	  write_value(connectionHandle, &result, sizeof(result));
+  //  	  result.sessionID = head->sessionID;
+  //  	  write_rsp(connectionHandle, &result, sizeof(result));
   //  	  return;
   //  }
 
@@ -232,9 +233,10 @@ void handle_write_event(ble_evt_t * bleEvent)
   	  static uint8_t verErrorCode = 1;
   	  BleMessageQueryVersionRsp result;
   	  result.result.errorCode = verErrorCode;
+  	  result.result.sessionID = head->sessionID;
   	  verErrorCode++;
   	  result.version = 100 - verErrorCode;
-  	  log("QueryVersion with result:%d,%d", result.result.errorCode, result.version);
+  	  log("QueryVersion with result:%d,%d;session:%d", result.result.errorCode, result.version, head->sessionID);
 
   	  write_rsp(connectionHandle, &result, sizeof(result));
     }

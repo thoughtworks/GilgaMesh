@@ -204,16 +204,20 @@ void setFamilyID(ble_evt_t * bleEvent) {
   update_and_propagate_family_id(req->familyID, connectionHandle);
 }
 
+
+extern ble_gatts_char_handles_t characteristicHandles;
+
 void handle_write_event(ble_evt_t * bleEvent)
 {
-  uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+  uint16_t connectionHandle = bleEvent->evt.gatts_evt.conn_handle;
 
   BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
 
   char ps[7];
   memset(ps, 0, 7);
   memcpy(ps, head->password, 6);
-  log("connect handle:%d;password:%s；op:%d", connectionHandle, ps, bleEvent->evt.gatts_evt.params.write.op);
+  log("connect handle:%d;password:%s；op:%d;charUUID:%d", connectionHandle, ps,
+		  bleEvent->evt.gatts_evt.params.write.op, characteristicHandles.value_handle);
 
   // check password
   //  if (head->password) {
@@ -226,25 +230,23 @@ void handle_write_event(ble_evt_t * bleEvent)
   switch (head->messageType) {
     case QueryVersion: { // should return the version of current application.now it is test code
   	  static uint8_t verErrorCode = 1;
-  	  log("QueryVersion");
   	  BleMessageQueryVersionRsp result;
   	  result.result.errorCode = verErrorCode;
   	  verErrorCode++;
   	  result.version = 100 - verErrorCode;
-  	  memset(head, 99, sizeof(head));
-  	  write_value(connectionHandle, &result, sizeof(result));
+  	  log("QueryVersion with result:%d,%d", result.result.errorCode, result.version);
+
+  	  write_rsp(connectionHandle, &result, sizeof(result));
     }
   	  break;
     case StartDFU: { // reboot the device into dfu mode
   	  log("StartDFU");
   	  BleMessageStartDFURsp result;
   	  result.result.errorCode = 0;
-  	  write_value(connectionHandle, &result, sizeof(result));
-
-  		// Now the device will reboot to bootloader
-  	  	sd_power_gpregret_clr(0xFF);
-  	  	sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
-  	  	NVIC_SystemReset();
+      // Now the device will reboot to bootloader
+  	  sd_power_gpregret_clr(0xFF);
+  	  sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
+  	  NVIC_SystemReset();
     }
   	  break;
     case SetFamilyID:

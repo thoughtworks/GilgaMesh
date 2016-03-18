@@ -30,6 +30,7 @@ void gatt_initialize()
   characteristicMetadata.char_props.write = 1;
   characteristicMetadata.char_props.write_wo_resp = 1;
   characteristicMetadata.char_props.notify = 0;
+
   characteristicMetadata.p_char_user_desc = FOO_CHARACTERISTIC_DESCRIPTION;
   characteristicMetadata.char_user_desc_size = sizeof(FOO_CHARACTERISTIC_DESCRIPTION);
   characteristicMetadata.char_user_desc_max_size = sizeof(FOO_CHARACTERISTIC_DESCRIPTION);
@@ -62,6 +63,7 @@ void gatt_initialize()
   EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
 }
 
+
 void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
 {
   ble_gattc_write_params_t writeParams;
@@ -73,6 +75,23 @@ void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
   writeParams.p_value = data;
 
   EC(sd_ble_gattc_write(connectionHandle, &writeParams));
+}
+
+
+void write_rsp(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
+{
+	log("GATT: sd_ble_gatts_value_set");
+	ble_gatts_value_t gatts_value;
+
+	// Initialize value struct.
+	memset(&gatts_value, 0, sizeof(gatts_value));
+
+	gatts_value.len     = dataLength;
+	gatts_value.offset  = 0;
+	gatts_value.p_value = data;
+
+	// Update database
+	EC(sd_ble_gatts_value_set(connectionHandle, characteristicHandles.value_handle, &gatts_value));
 }
 
 

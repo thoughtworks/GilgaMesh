@@ -232,11 +232,12 @@ void handle_write_event(ble_evt_t * bleEvent)
     case QueryVersion: { // should return the version of current application.now it is test code
   	  static uint8_t verErrorCode = 1;
   	  BleMessageQueryVersionRsp result;
-  	  result.result.errorCode = verErrorCode;
+  	  result.result.errorCode = 0;
   	  result.result.sessionID = head->sessionID;
   	  verErrorCode++;
-  	  result.version = 100 - verErrorCode;
-  	  log("QueryVersion with result:%d,%d;session:%d", result.result.errorCode, result.version, head->sessionID);
+  	  result.versionMain = APP_VERSION_MAIN;
+  	  result.versionSub = APP_VERSION_SUB;
+  	  log("QueryVersion with result:%d,%d;session:%d", result.result.errorCode, result.versionMain, head->sessionID);
 
   	  write_rsp(connectionHandle, &result, sizeof(result));
     }

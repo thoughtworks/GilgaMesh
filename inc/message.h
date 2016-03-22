@@ -26,7 +26,8 @@ typedef struct {
 
 typedef struct {
 	BleMessageResult result;
-	uint8_t version;
+	uint8_t versionMain;
+	uint8_t versionSub;
 }__attribute__ ((packed))  BleMessageQueryVersionRsp;
 
 // DFU Update Message

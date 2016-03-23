@@ -7,18 +7,74 @@ SET(TARGET_BOARD       BOARD_PCA10028)
 
 # set compiler and paths
 CMAKE_FORCE_C_COMPILER(${DEPLOY_PATH}/gcc-arm-none-eabi/bin/arm-none-eabi-gcc GNU)
+SET(TOOLS_PATH              ${DEPLOY_PATH}/gcc-arm-none-eabi/bin)
 SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_9_0)
 SET(COMPONENTS              ${SDK_BASE}/components)
 SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 SET(LINKER_SCRIPT           ${LINKER_PATH}/gcc_nrf51_s130_32kb.ld)
+SET(COMPILER_PATH           ${DEPLOY_PATH}/gcc-arm-none-eabi/)
+SET(OUTPUT_FILE_NAME        MeshyMesh)
+find_program(LINKER ${TOOLS_PATH}/arm-none-eabi-ld)
+find_program(OBJCOPY ${TOOLS_PATH}/arm-none-eabi-objcopy)
+find_program(SIZE ${TOOLS_PATH}/arm-none-eabi-size)
+find_program(GDB ${TOOLS_PATH}/arm-none-eabi-gdb)
+find_program(OBJDUMP ${TOOLS_PATH}/arm-none-eabi-objdump)
+find_program(NM ${TOOLS_PATH}/arm-none-eabi-nm)
+find_program(GCOV ${TOOLS_PATH}/arm-none-eabi-gcov)
+find_program(GPROF ${TOOLS_PATH}/arm-none-eabi-gprof)
+find_program(STRIP ${TOOLS_PATH}/arm-none-eabi-strip)
+find_program(AS ${TOOLS_PATH}/arm-none-eabi-as)
+find_program(READELF ${TOOLS_PATH}/arm-none-eabi-readelf)
 
 # set compiler options
 SET(CMAKE_C_FLAGS_DEBUG "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -D DEBUG -g -O0 -D${TARGET_BOARD} -DNRF51 -D__need___va_list -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
-SET(CMAKE_C_FLAGS_RELEASE  "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -D NDEBUG -O3 -D${TARGET_BOARD} -DNRF51 -D__need___va_list -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
+SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -D DEBUG -g -O0 -D${TARGET_BOARD} -DNRF51 -D__need___va_list -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
+SET(CMAKE_C_FLAGS_RELEASE "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -D NDEBUG -O3 -D${TARGET_BOARD} -DNRF51 -D__need___va_list -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
+SET(CMAKE_C_FLAGS_MINSIZEREL "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -D NDEBUG -Os -D${TARGET_BOARD} -DNRF51 -D__need___va_list -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
 
 # set linker options
 SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 SET(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -flto -fno-move-loop-invariants -Wextra -g3 -T${LINKER_SCRIPT} -Xlinker --gc-sections -Wl,-Map,\"${CMAKE_BINARY_DIR}/MeshyMesh.map\" --specs=nano.specs -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug -lCMSIS")
+
+# generate outputs macro
+macro(GEN_OUTPUTS target)
+    get_filename_component(name ${target} NAME_WE)
+    #copy elf and map to build output
+    add_custom_command(
+        OUTPUT ${name}_copy DEPENDS ${target}
+        COMMAND cp ${target} ${BUILD_PATH}/${target}
+        COMMAND cp ${CMAKE_BINARY_DIR}/${name}.map ${BUILD_PATH}/${name}.map
+    )
+    add_custom_command(
+        OUTPUT ${name}.size DEPENDS ${target}
+        COMMAND ${SIZE} ${target}
+        COMMAND ${SIZE} --format=berkeley ${target} > ${BUILD_PATH}/${name}.size
+    )
+    #generate .bin
+    add_custom_command(
+        OUTPUT ${OUTPUT_FILE_NAME}.bin DEPENDS ${target}
+        COMMAND ${OBJCOPY} -O binary ${target} ${BUILD_PATH}/${name}.bin
+    )
+    #generate .hex
+    add_custom_command(
+        OUTPUT ${OUTPUT_FILE_NAME}.hex DEPENDS ${target}
+        COMMAND ${OBJCOPY} -O ihex ${target} ${BUILD_PATH}/${name}.hex
+    )
+    #generate .dump
+    add_custom_command(
+        OUTPUT ${name}.dump DEPENDS ${target}
+        COMMAND ${OBJDUMP} -DSC ${target} > ${BUILD_PATH}/${name}.dump
+    )
+    #generate .header
+    add_custom_command(
+        OUTPUT ${name}.header DEPENDS ${target}
+        COMMAND ${READELF} -h ${target} > ${BUILD_PATH}/${name}.header
+    )
+    add_custom_target(
+        ${name}_outputs ALL DEPENDS ${name}_copy ${name}.size ${name}.bin ${name}.hex ${name}.header #${name}.dump
+    )
+
+endmacro(GEN_OUTPUTS)
 
 # includes common to all targets
 
@@ -73,6 +129,7 @@ list(APPEND MeshyMesh_SOURCES "error.c")
 list(APPEND MeshyMesh_SOURCES "dfu.c")
 list(APPEND MeshyMesh_SOURCES "main.c")
 
-# main executable
-add_executable(MeshyMesh.elf ${MeshyMesh_SOURCES})
+# main ELF executable
+add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES})
+GEN_OUTPUTS(${OUTPUT_FILE_NAME}.elf)
 

@@ -5,3 +5,5 @@ get_filename_component(BUILD_PATH _build/${CMAKE_BUILD_TYPE} ABSOLUTE)
 
 project(MeshyMesh)
 add_subdirectory(src)
+add_subdirectory(${DEPLOY_PATH}/gtest)
+add_subdirectory(tests)

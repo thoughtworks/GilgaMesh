@@ -6,6 +6,7 @@ DEPLOY_RESOURCES=deploy
 SDK=deploy/sdk
 SOFTDEVICE_LOCATION=deploy/softdevice/
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi
+GTEST=deploy/gtest
 
 function reset-workspace {
     rm -fr $DEPLOY_RESOURCES/jlink $SDK $DEPLOY_RESOURCES/softdevice $DEPLOY_RESOURCES/EHAL $GCC_ARM_TOOLCHAIN
@@ -25,15 +26,15 @@ esac
 # ******************************* #
 mkdir $DEPLOY_RESOURCES/jlink
 wget --post-data="agree=1&confirm=yes" "https://www.segger.com/jlink-software.html?step=1&file=JLinkMacOSX_502f" -O $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V502f.pkg
-## should check checksum
+# should check checksum
 open $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V502f.pkg
 
 # ********************* #
 # * GCC ARM Toolchain * #
 # ********************* #
 mkdir $GCC_ARM_TOOLCHAIN
-## should check checksum
-## should get the latest gcc-arm-none-eabi
+# should check checksum
+# should get the latest gcc-arm-none-eabi
 wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2
 tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2
 mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4/* $GCC_ARM_TOOLCHAIN
@@ -64,6 +65,12 @@ cd $SDK/nrf_sdk_9_0 && wget -qO- https://devzone.nordicsemi.com/attachment/a7a81
 cd -
 BAD_CONFIG_FILE=$SDK/nrf_sdk_9_0/components/drivers_nrf/config/nrf_drv_config.h
 cp $DEPLOY_RESOURCES/nrf_drv_config.h.fix $BAD_CONFIG_FILE
+
+# ******************************* #
+# * Google test and Google Mock * #
+# ******************************* #
+mkdir $GTEST
+git clone https://github.com/google/googletest.git $GTEST
 
 ### BELOW DOES NOT YET WORK ###
 

@@ -1,4 +1,6 @@
-//
-// Created by sampo on 3/24/16.
-//
+#include <gtest/gtest.h>
+
+TEST(Example, TestOne) {
+    EXPECT_TRUE(true);
+}
 

@@ -1,0 +1,6 @@
+*
+!Debug
+!Release
+!RelWithDebInfo
+!MinSizeRel
+!.gitignore

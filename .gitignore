@@ -1,8 +1,9 @@
-_build/
 .DS_Store
 */.DS_Store
 deploy/gcc-arm-none-eabi/
+.idea/
 deploy/jlink/
 deploy/sdk/
 deploy/softdevice/
 deploy/EHAL/
+deploy/cmocka/

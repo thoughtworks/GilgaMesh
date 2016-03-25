@@ -10,7 +10,7 @@ endif()
 
 project(MeshyMesh)
 
-if(IS_TEST_BUILD AND UNIX) #build tests
+if(IS_TEST_BUILD AND LINUX) #build tests on linux
     add_subdirectory(tests)
 else() #build for real hardware
     add_subdirectory(src)

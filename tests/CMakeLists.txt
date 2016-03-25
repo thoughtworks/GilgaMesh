@@ -17,7 +17,9 @@ endmacro(GEN_OUTPUTS)
 include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 add_executable(RunUnitTests
-               unit/GapTest.c)
+               unit/GapTest.c
+               unit/GattTest.c
+               unit/RunTests.c)
 
 target_link_libraries(RunUnitTests cmocka)
 GEN_OUTPUTS(RunUnitTests)

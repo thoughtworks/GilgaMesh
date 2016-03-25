@@ -13,7 +13,7 @@ static void dummyTestTwo(void **state) {
     assert_false(false);
 }
 
-int RunGapTest(void) {
+int RunGattTest(void) {
     const struct CMUnitTest tests[] = {
         // list test functions here
         cmocka_unit_test(dummyTestOne),
@@ -21,5 +21,5 @@ int RunGapTest(void) {
     };
 
     //set test suite name here
-    return cmocka_run_group_tests_name("GapTest", tests, NULL, NULL);
+    return cmocka_run_group_tests_name("GattTest", tests, NULL, NULL);
 }

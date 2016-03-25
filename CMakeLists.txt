@@ -3,15 +3,14 @@ get_filename_component(DEPLOY_PATH deploy ABSOLUTE)
 get_filename_component(LINKER_PATH linker ABSOLUTE)
 get_filename_component(BUILD_PATH _build/${CMAKE_BUILD_TYPE} ABSOLUTE)
 
+#add a variable to tell Linux from OSX
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 
 project(MeshyMesh)
 
-#for now unit testing is only supported on Linux (tested on Ubuntu 16.04 MATE)
-#this is because of problems compiling the google test framework on OSX (to be resolved)
-if(IS_TEST_BUILD AND LINUX)
+if(IS_TEST_BUILD AND UNIX) #build tests
     add_subdirectory(tests)
 else() #build for real hardware
     add_subdirectory(src)

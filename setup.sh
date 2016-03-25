@@ -6,7 +6,7 @@ DEPLOY_RESOURCES=deploy
 SDK=deploy/sdk
 SOFTDEVICE_LOCATION=deploy/softdevice/
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi
-GTEST=deploy/gtest
+CMOCKA=deploy/cmocka
 
 function reset-workspace {
     rm -fr $DEPLOY_RESOURCES/jlink $SDK $DEPLOY_RESOURCES/softdevice $DEPLOY_RESOURCES/EHAL $GCC_ARM_TOOLCHAIN
@@ -66,11 +66,23 @@ cd -
 BAD_CONFIG_FILE=$SDK/nrf_sdk_9_0/components/drivers_nrf/config/nrf_drv_config.h
 cp $DEPLOY_RESOURCES/nrf_drv_config.h.fix $BAD_CONFIG_FILE
 
-# ******************************* #
-# * Google test and Google Mock * #
-# ******************************* #
-mkdir $GTEST
-git clone https://github.com/google/googletest.git $GTEST
+# ************************* #
+# * cmocka test framework * #
+# ************************* #
+mkdir $CMOCKA
+wget -O $CMOCKA/cmocka-1.0.1.tar.xz https://cmocka.org/files/1.0/cmocka-1.0.1.tar.xz
+tar -C $CMOCKA -xvf $CMOCKA/cmocka-1.0.1.tar.xz
+mv $CMOCKA/cmocka-1.0.1/* $CMOCKA
+mv $CMOCKA/cmocka-1.0.1/.[!.]* $CMOCKA
+rmdir $CMOCKA/cmocka-1.0.1
+rm $CMOCKA/cmocka-1.0.1.tar.xz
+mkdir $CMOCKA/build
+cd $CMOCKA/build
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ..
+make
+echo 'Installing cmocka test framework libraries under /usr/lib'
+sudo make install
+cd -
 
 ### BELOW DOES NOT YET WORK ###
 

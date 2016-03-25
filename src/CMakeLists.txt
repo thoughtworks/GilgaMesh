@@ -1,4 +1,9 @@
-# enable cross compile
+#set common variables
+SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_9_0)
+SET(COMPONENTS              ${SDK_BASE}/components)
+SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
+
+# cross compiling configuration
 SET(CMAKE_SYSTEM_NAME Generic)
 include(CMakeForceCompiler)
 
@@ -8,9 +13,6 @@ SET(TARGET_BOARD       BOARD_PCA10028)
 # set compiler and paths
 CMAKE_FORCE_C_COMPILER(${DEPLOY_PATH}/gcc-arm-none-eabi/bin/arm-none-eabi-gcc GNU)
 SET(TOOLS_PATH              ${DEPLOY_PATH}/gcc-arm-none-eabi/bin)
-SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_9_0)
-SET(COMPONENTS              ${SDK_BASE}/components)
-SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 SET(LINKER_SCRIPT           ${LINKER_PATH}/gcc_nrf51_s130_32kb.ld)
 SET(COMPILER_PATH           ${DEPLOY_PATH}/gcc-arm-none-eabi/)
 SET(OUTPUT_FILE_NAME        MeshyMesh)
@@ -35,6 +37,7 @@ SET(CMAKE_C_FLAGS_MINSIZEREL "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fs
 # set linker options
 SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 SET(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -flto -fno-move-loop-invariants -Wextra -g3 -T${LINKER_SCRIPT} -Xlinker --gc-sections -Wl,-Map,\"${CMAKE_BINARY_DIR}/MeshyMesh.map\" --specs=nano.specs -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug -lCMSIS")
+
 
 # generate outputs macro
 macro(GEN_OUTPUTS target)
@@ -129,7 +132,6 @@ list(APPEND MeshyMesh_SOURCES "error.c")
 list(APPEND MeshyMesh_SOURCES "dfu.c")
 list(APPEND MeshyMesh_SOURCES "main.c")
 
-# main ELF executable
 add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES})
 GEN_OUTPUTS(${OUTPUT_FILE_NAME}.elf)
 

@@ -8,11 +8,11 @@ if(UNIX AND NOT APPLE)
 endif()
 
 project(MeshyMesh)
-add_subdirectory(src)
 
-#for now unit testing if only supported on Linux (tested on Ubuntu 16.04 MATE)
+#for now unit testing is only supported on Linux (tested on Ubuntu 16.04 MATE)
 #this is because of problems compiling the google test framework on OSX (to be resolved)
-if(LINUX)
-    add_subdirectory(${DEPLOY_PATH}/gtest)
+if(IS_TEST_BUILD AND LINUX)
     add_subdirectory(tests)
+else() #build for real hardware
+    add_subdirectory(src)
 endif()

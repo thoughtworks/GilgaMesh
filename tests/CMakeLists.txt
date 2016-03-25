@@ -14,12 +14,10 @@ macro(GEN_OUTPUTS target)
     )
 endmacro(GEN_OUTPUTS)
 
-include_directories(${CMAKE_SOURCE_DIR}/inc ${DEPLOY_PATH}/gtest/googlemock/include ${DEPLOY_PATH}/gtest/googletest/include)
+include_directories(${CMAKE_SOURCE_DIR}/inc)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+add_executable(RunUnitTests
+               unit/GapTest.c)
 
-add_executable(RunIntegrationTests
-               integration/GapTest.cpp)
-
-target_link_libraries(RunIntegrationTests gmock gmock_main)
-GEN_OUTPUTS(RunIntegrationTests)
+target_link_libraries(RunUnitTests cmocka)
+GEN_OUTPUTS(RunUnitTests)

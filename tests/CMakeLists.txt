@@ -14,6 +14,10 @@ macro(GEN_OUTPUTS target)
     )
 endmacro(GEN_OUTPUTS)
 
+#set compiler and linker options
+SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -g3 -Og -fvar-tracking -fprofile-arcs -ftest-coverage")
+SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+
 include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 add_executable(RunUnitTests

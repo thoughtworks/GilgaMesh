@@ -42,7 +42,9 @@ if [[ $platform == 'osx' ]]; then
 	# should check checksum
 	open $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V502f.pkg
 elif [[ $platform == 'linux' ]]; then	
+	echo '****************************************************************************'
 	echo 'For linux, manually install segger JLink tools version 9 from www.segger.com'
+	echo '****************************************************************************'
 fi
 
 # ********************* #
@@ -57,7 +59,7 @@ if [[ $platform == 'osx' ]]; then
 	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4/* $GCC_ARM_TOOLCHAIN
 	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4/
 elif [[ $platform == 'linux' ]]; then
-	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2
+	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2
 	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2
 	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4/* $GCC_ARM_TOOLCHAIN
 	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4/	

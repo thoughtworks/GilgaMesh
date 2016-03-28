@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.2)
+
 #set common variables
 SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_9_0)
 SET(COMPONENTS              ${SDK_BASE}/components)

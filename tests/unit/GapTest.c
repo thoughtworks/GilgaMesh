@@ -1,5 +1,7 @@
 #include "cmocka_includes.h"
 
+#include "gap.h"
+
 // This is a dummy test
 static void dummyTestOne(void **state) {
     (void) state; // unused

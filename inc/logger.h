@@ -1,8 +1,9 @@
 #pragma once
 
+#define TRACE_BUFFER_SIZE 500
+
 #if defined(TESTING) && !defined(LOGGER_TEST)
 #include "logger_mock.h"
-
 #else
 
 #include <stdint.h>
@@ -10,7 +11,6 @@
 //TODO: we need to take this out later!!!!!
 #include <stdio.h>
 
-#define TRACE_BUFFER_SIZE 500
 
 #ifdef _MSC_VER
 #include <string.h>

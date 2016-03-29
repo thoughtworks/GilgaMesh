@@ -20,6 +20,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/sr
 
 # include mocks
 include_directories(${INC_PATH})
+include_directories(${CONFIG_PATH})
 include_directories(mocks)
 include_directories(mocks/sdk)
 include_directories(mocks/sdk/s130)
@@ -59,7 +60,7 @@ include_directories(mocks/sdk/s130)
 #list(APPEND RunUnitTests_SOURCES "${COMPONENTS}/softdevice/common/softdevice_handler/softdevice_handler.c")
 
 # add system under test sources
-# list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
 
 #list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/nrf/simple_uart.c")
 #list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/connection.c")

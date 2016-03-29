@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(TESTING) && !defined(CONNECTION_TEST)
+#include "connection_mock.h"
+
+#else
 #include <stdbool.h>
 
 #include <ble_gap.h>
@@ -40,3 +44,5 @@ void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
 bool central_connection_active(void);
 bool peripheral_connections_active(void);
+
+#endif

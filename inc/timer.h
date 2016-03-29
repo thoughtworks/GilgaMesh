@@ -1,5 +1,10 @@
 #pragma once
 
+#if defined(TESTING) && !defined(TIMER_TEST)
+#include "timer_mock.h"
+
+#else
+
 #include <app_timer.h>
 #include <led.h>
 #include <error.h>
@@ -11,3 +16,5 @@
 
 void timer_initialize(void);
 void timer_tick_handler(void);
+
+#endif

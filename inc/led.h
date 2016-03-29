@@ -1,5 +1,10 @@
 #pragma once
 
+#if defined(TESTING) && !defined(LED_TEST)
+#include "led_mock.h"
+
+#else
+
 #include <stdint.h>
 #include <boards.h>
 #include "nrf.h"
@@ -18,3 +23,4 @@ void led_blue_off(void);
 void led_white_off(void);
 void led_white_off(void);
 
+#endif

@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(TESTING) && !defined(GAP_TEST)
+#include "gap_mock.h"
+
+#else
 #include <string.h>
 
 #include <nrf_soc.h>
@@ -50,3 +54,5 @@ void start_scanning(void);
 void stop_scanning(void);
 
 void handle_gap_event(ble_evt_t * bleEvent);
+
+#endif

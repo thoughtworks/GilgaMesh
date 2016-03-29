@@ -1,5 +1,10 @@
 #pragma once
 
+#if defined(TESTING) && !defined(LOGGER_TEST)
+#include "logger_mock.h"
+
+#else
+
 #include <stdint.h>
 #include <stdbool.h>
 //TODO: we need to take this out later!!!!!
@@ -49,3 +54,5 @@ const char* getPstorageStatusErrorString(uint16_t operationCode);
 
 #define trace(message, ...) log_f(false, __FILE_S__, __LINE__, message, ##__VA_ARGS__)
 #define log(message, ...) log_f(true, __FILE_S__, __LINE__, message, ##__VA_ARGS__)
+
+#endif

@@ -19,6 +19,7 @@ SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DT
 SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug")
 
 # include mocks
+include_directories(${INC_PATH})
 include_directories(mocks)
 include_directories(mocks/sdk)
 include_directories(mocks/sdk/s130)
@@ -57,17 +58,20 @@ include_directories(mocks/sdk/s130)
 #list(APPEND RunUnitTests_SOURCES "${COMPONENTS}/drivers_nrf/pstorage/pstorage.c")
 #list(APPEND RunUnitTests_SOURCES "${COMPONENTS}/softdevice/common/softdevice_handler/softdevice_handler.c")
 
+# add system under test sources
+# list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/nrf/simple_uart.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/connection.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gatt.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/led.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/logger.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/terminal.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/timer.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/error.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/dfu.c")
+
 # add testcase sources
-#list(APPEND RunUnitTests_SOURCES "nrf/simple_uart.c")
-#list(APPEND RunUnitTests_SOURCES "connection.c")
-#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
-#list(APPEND RunUnitTests_SOURCES "gatt.c")
-#list(APPEND RunUnitTests_SOURCES "led.c")
-#list(APPEND RunUnitTests_SOURCES "logger.c")
-#list(APPEND RunUnitTests_SOURCES "terminal.c")
-#list(APPEND RunUnitTests_SOURCES "timer.c")
-#list(APPEND RunUnitTests_SOURCES "error.c")
-#list(APPEND RunUnitTests_SOURCES "dfu.c")
 list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")
 list(APPEND RunUnitTests_SOURCES "unit/GattTest.c")
 list(APPEND RunUnitTests_SOURCES "unit/RunTests.c")

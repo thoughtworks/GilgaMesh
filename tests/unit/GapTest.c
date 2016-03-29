@@ -1,7 +1,5 @@
 #include "cmocka_includes.h"
 
-#include "gap.h"
-
 // This is a dummy test
 static void dummyTestOne(void **state) {
     (void) state; // unused
@@ -15,11 +13,18 @@ static void dummyTestTwo(void **state) {
     assert_false(false);
 }
 
+static void StopAdvertizingTest(void **state) {
+    (void) state; // unused
+
+    //stop_advertising();
+}
+
 int RunGapTest(void) {
     const struct CMUnitTest tests[] = {
         // list test functions here
         cmocka_unit_test(dummyTestOne),
         cmocka_unit_test(dummyTestTwo),
+        cmocka_unit_test(StopAdvertizingTest),
     };
 
     //set test suite name here

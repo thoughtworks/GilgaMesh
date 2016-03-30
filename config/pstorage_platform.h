@@ -22,9 +22,11 @@
 #include <stdint.h>
 #include "nrf.h"
 
+#include "cmocka_includes.h"
+
 static __INLINE uint16_t pstorage_flash_page_size()
 {
-  return (uint16_t)NRF_FICR->CODEPAGESIZE;
+  return mock_type(uint16_t); // mock the flash page size
 }
 
 #define PSTORAGE_FLASH_PAGE_SIZE     pstorage_flash_page_size()          /**< Size of one flash page. */
@@ -38,10 +40,7 @@ static __INLINE uint16_t pstorage_flash_page_size()
 
 static __INLINE uint32_t pstorage_flash_page_end()
 {
-   uint32_t bootloader_addr = BOOTLOADER_ADDRESS;
-
-   return ((bootloader_addr != PSTORAGE_FLASH_EMPTY_MASK) ?
-           (bootloader_addr/ PSTORAGE_FLASH_PAGE_SIZE) : NRF_FICR->CODESIZE);
+   return mock_type(uint32_t);
 }
 
 #define PSTORAGE_FLASH_PAGE_END     pstorage_flash_page_end()
@@ -70,7 +69,9 @@ typedef struct
 typedef uint16_t pstorage_size_t;      /** Size of length and offset fields. */
 
 /**@brief Handles Flash Access Result Events. To be called in the system event dispatcher of the application. */
-void pstorage_sys_event_handler (uint32_t sys_evt);
+void pstorage_sys_event_handler (uint32_t sys_evt) {
+    check_expected(sys_evt); // cmocka verify sys_evt
+}
 
 #endif // PSTORAGE_PL_H__
 

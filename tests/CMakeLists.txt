@@ -18,14 +18,18 @@ endmacro(GEN_OUTPUTS)
 SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -DSVCALL_AS_NORMAL_FUNCTION -std=c11 -g3 -flto -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
 SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug")
 
-# include mocks
+# production code headers
 include_directories(${INC_PATH})
 include_directories(${CONFIG_PATH})
+
+# include SDK mocks
 include_directories(mocks/sdk)
 include_directories(mocks/sdk/s130)
 include_directories(mocks/sdk/EHAL)
 include_directories(mocks/sdk/device)
 include_directories(mocks/sdk/toolchain)
+
+# include project mocks
 include_directories(mocks)
 
 # add system under test sources

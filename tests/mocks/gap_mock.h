@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mocking.h"
+#include <nrf_sdm.h>
 
 #include <string.h>
 

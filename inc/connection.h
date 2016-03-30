@@ -1,9 +1,4 @@
 #pragma once
-
-#if defined(TESTING) && !defined(CONNECTION_TEST)
-#include "connection_mock.h"
-
-#else
 #include <stdbool.h>
 
 #include <ble_gap.h>
@@ -19,22 +14,29 @@ typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
 typedef struct
 {
-  bool active;
-  uint16_t handle;
-  ConnectionType type;
-  ble_gap_addr_t address;
+    bool active;
+    uint16_t handle;
+    ConnectionType type;
+    ble_gap_addr_t address;
 } connection;
 
 typedef struct
 {
-  connection central;
-  connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
+    connection central;
+    connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
 
 
 uint16_t nodeId;
 uint32_t familyId;
 connections *activeConnections;
+
+// load function implementations from mock when testing
+
+#if defined(TESTING) && !defined(CONNECTION_TEST)
+#include "connection_mock.h"
+
+#else
 
 void connections_initialize(void);
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);

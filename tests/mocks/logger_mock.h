@@ -1,6 +1,16 @@
 #pragma once
 
 #include <stdarg.h>
+#include <stdio.h>
+
+#include "pstorage.h"
+
+#ifdef _MSC_VER
+#include <string.h>
+#define __FILE_S__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+#else
+#define __FILE_S__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#endif
 
 char mhTraceBuffer[TRACE_BUFFER_SIZE] = { 0 };
 
@@ -14,7 +24,7 @@ log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
     vsnprintf(mhTraceBuffer, TRACE_BUFFER_SIZE, message, aptr);
     va_end(aptr);
 
-    snprintf(mhTraceBuffer2, TRACE_BUFFER_SIZE, "[%s@%d]: %s\r\n", file, line, mhTraceBuffer);
+    snprintf(mhTraceBuffer, TRACE_BUFFER_SIZE, "[%s@%d]: %s\r\n", file, line, mhTraceBuffer);
 
 }
 

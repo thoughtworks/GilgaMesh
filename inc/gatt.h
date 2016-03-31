@@ -14,28 +14,5 @@
 #define FOO_CHARACTERISTIC_DESCRIPTION "meshData"
 
 
-typedef struct
-{
-  uint8_t length1;
-//  uint32_t newFamilyId;
-//  uint16_t length2:4;
-  uint8_t newFamilyIdParts[4];
-} familyUpdate;
-
-typedef struct
-{
-	uint16_t                     		serviceHandle;
-	ble_gatts_char_handles_t		testValCharacteristicHandle;
-	ble_gatts_char_handles_t		sendMessageCharacteristicHandle;
-	uint16_t								sendMessageCharacteristicDescriptorHandle;
-	ble_uuid_t						serviceUuid;
-	uint16_t								connectionHandle;  // Holds the current connection handle (can only be one at a time)
-	bool							isNotifying;
-} meshServiceStruct;
-
-meshServiceStruct meshService;
-
-
 void gatt_initialize(void);
-void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength);
-void update_family(void);
+void propagate_family_id(uint16_t originHandle);

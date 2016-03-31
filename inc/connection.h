@@ -28,11 +28,11 @@ typedef struct
 } connections;
 
 
-uint16_t nodeId;
 uint32_t familyId;
 connections *activeConnections;
 
 void connections_initialize(void);
+uint32_t generate_family_id(void);
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
 void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
 ConnectionType unset_connection(uint16_t connectionHandle);

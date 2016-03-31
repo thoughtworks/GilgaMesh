@@ -127,7 +127,7 @@ void stop_scanning(void)
 }
 
 
-void update_family_id(newFamilyId)
+void update_family_id(uint32_t newFamilyId)
 {
   if (!central_connection_active()) stop_advertising();
 
@@ -138,10 +138,10 @@ void update_family_id(newFamilyId)
 }
 
 
-void update_family_id_for_all_connections()
+void update_and_propagate_family_id(uint32_t newFamilyId, uint16_t originHandle)
 {
-  update_family_id(familyId + 1);
-  update_family();
+  update_family_id(newFamilyId);
+  propagate_family_id(originHandle);
 }
 
 
@@ -173,20 +173,21 @@ void handle_connection_event(ble_evt_t * bleEvent)
     start_scanning();
   }
 
-  print_all_connections();
-
   if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
-    update_family_id_for_all_connections();
+    update_and_propagate_family_id(familyId + 1, BLE_CONN_HANDLE_INVALID);
   }
+
+  print_all_connections();
 }
 
 
 void handle_disconnection_event(ble_evt_t * bleEvent)
 {
   ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
-  if (lostConnectionType == CENTRAL){
-    start_advertising();
-  }
+
+  uint32_t newFamilyId = (lostConnectionType == CENTRAL) ? generate_family_id() : (familyId + 1);
+  update_and_propagate_family_id(newFamilyId, BLE_CONN_HANDLE_INVALID);
+
   print_all_connections();
 }
 
@@ -205,18 +206,7 @@ void handle_write_event(ble_evt_t * bleEvent)
     return;
   }
 
-  update_family_id(*newFamilyId);
-
-  // now that we've received data, we propagate it through the mesh
-  uint8_t connectionCount;
-  uint16_t connectionHandles[4];
-  get_active_connection_handles(connectionHandles, &connectionCount);
-  for (int i = 0; i < connectionCount; i++){
-    if (connectionHandle != connectionHandles[i]){ //don't resend to the node who sent it
-      log("Passing on familyId %u to connection handle %u", familyId, connectionHandles[i]);
-      write_value(connectionHandles[i], &familyId, sizeof(familyId));
-    }
-  }
+  update_and_propagate_family_id(*newFamilyId, connectionHandle);
 }
 
 
@@ -233,6 +223,9 @@ void handle_gap_event(ble_evt_t * bleEvent)
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
     handle_write_event(bleEvent);
+
+  } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
+    //no need to do anything, just swallow the event
 
   } else {
     log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

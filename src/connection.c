@@ -1,12 +1,19 @@
 #include <connection.h>
 
+
 void connections_initialize()
 {
-  nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
-  familyId = nodeId << 16;
-  activeConnections = calloc(1, sizeof(connections));
+  familyId = generate_family_id();
+  log("Family Id: %u", familyId);
 
-  log("NodeId: %d, familyId: %u", nodeId, familyId);
+  activeConnections = calloc(1, sizeof(connections));
+}
+
+
+uint32_t generate_family_id()
+{
+  uint16_t nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
+  return ((uint32_t)nodeId) << 16;
 }
 
 

@@ -1,4 +1,6 @@
-#pragma once
+#include <connection.h>
+
+#include "cmocka_includes.h"
 
 void connections_initialize(void){}
 

@@ -26,17 +26,9 @@ typedef struct
     connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
 
-
 uint16_t nodeId;
 uint32_t familyId;
 connections *activeConnections;
-
-// load function implementations from mock when testing
-
-#if defined(TESTING) && !defined(CONNECTION_TEST)
-#include "connection_mock.h"
-
-#else
 
 void connections_initialize(void);
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
@@ -47,4 +39,3 @@ connection* find_active_connection_by_address(ble_gap_addr_t address);
 bool central_connection_active(void);
 bool peripheral_connections_active(void);
 
-#endif

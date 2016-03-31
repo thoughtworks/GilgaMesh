@@ -1,5 +1,5 @@
 #include "cmocka_includes.h"
-//#include "gap.h"
+#include "gap.h"
 
 // This is a dummy test
 static void dummyTestOne(void **state) {
@@ -17,7 +17,7 @@ static void dummyTestTwo(void **state) {
 static void StopAdvertizingTest(void **state) {
     (void) state; // unused
 
- //   stop_advertising();
+//    stop_advertising();
 }
 
 int RunGapTest(void) {

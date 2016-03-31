@@ -32,8 +32,12 @@ include_directories(mocks/sdk/toolchain)
 include_directories(mocks/config)
 include_directories(mocks)
 
+# add mock implementations
+list(APPEND RunUnitTests_SOURCES "mocks/connection_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
+
 # add system under test sources
-list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
 
 # add testcase sources
 list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")

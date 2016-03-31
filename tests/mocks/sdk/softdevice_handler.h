@@ -109,10 +109,7 @@ typedef void (*sys_evt_handler_t) (uint32_t evt_id);
 uint32_t softdevice_handler_init(nrf_clock_lfclksrc_t              clock_source,
                                  void *                            p_ble_evt_buffer,
                                  uint16_t                          ble_evt_buffer_size,
-                                 softdevice_evt_schedule_func_t    evt_schedule_func)
-{
-   return mock_type(uint32_t);
-}
+                                 softdevice_evt_schedule_func_t    evt_schedule_func);
 
 
 /**@brief     Function for disabling the SoftDevice.
@@ -120,9 +117,7 @@ uint32_t softdevice_handler_init(nrf_clock_lfclksrc_t              clock_source,
  * @details   This function will disable the SoftDevice. It will also update the internal state
  *            of this module.
  */
-uint32_t softdevice_handler_sd_disable(void){
-   return mock_type(uint32_t);
-}
+uint32_t softdevice_handler_sd_disable(void);
 
 
 /**@brief     Function for registering for System (SOC) events.
@@ -139,13 +134,13 @@ uint32_t softdevice_handler_sd_disable(void){
  * @retval    NRF_SUCCESS     Successful registration.
  * @retval    NRF_ERROR_NULL  Null pointer provided as input.
  */
-uint32_t softdevice_sys_evt_handler_set(sys_evt_handler_t sys_evt_handler){
-   return mock_type(uint32_t);
-}
+uint32_t softdevice_sys_evt_handler_set(sys_evt_handler_t sys_evt_handler);
+
 
 // Functions for connecting the Stack Event Handler to the scheduler:
 /**@cond NO_DOXYGEN */
-void intern_softdevice_events_execute(void){}
+void intern_softdevice_events_execute(void);
+
 
 /**@endcond */
 

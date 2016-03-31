@@ -35,13 +35,6 @@ typedef struct
 
 meshServiceStruct meshService;
 
-#if defined(TESTING) && !defined(GATT_TEST)
-#include "gatt_mock.h"
-
-#else
-
 void gatt_initialize(void);
 void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength);
 void update_family(void);
-
-#endif

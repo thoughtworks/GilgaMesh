@@ -1,4 +1,8 @@
-#pragma once
+#include <gatt.h>
+
+#include "cmocka_includes.h"
+
+#if defined(TESTING) && !defined(GATT_TEST)
 
 void gatt_initialize(void) {
 
@@ -12,3 +16,4 @@ void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength) 
 void update_family(void) {
 
 }
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#include <gap.h>
+
+#if defined(TESTING) && !defined(GAP_TEST)
 
 void ble_initialize(void) {
 
@@ -23,3 +25,5 @@ void stop_scanning(void) {
 void handle_gap_event(ble_evt_t * bleEvent) {
    check_expected_ptr(bleEvent);
 }
+
+#endif

@@ -35,6 +35,8 @@ include_directories(mocks)
 # add mock implementations
 list(APPEND RunUnitTests_SOURCES "mocks/connection_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
+#list(APPEND RunUnitTests_SOURCES "mocks/gatt_mock.c")
+#list(APPEND RunUnitTests_SOURCES "mocks/gap_mock.c")
 
 # add system under test sources
 #list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")

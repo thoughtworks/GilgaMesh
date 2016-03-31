@@ -33,7 +33,7 @@ include_directories(mocks/config)
 include_directories(mocks)
 
 # add system under test sources
-#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
 
 # add testcase sources
 list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")

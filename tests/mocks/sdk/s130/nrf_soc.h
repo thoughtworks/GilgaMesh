@@ -51,6 +51,8 @@
 #include "nrf51_bitfields.h"
 #include "nrf_error_soc.h"
 
+#include "cmocka_includes.h"
+
 /**@addtogroup NRF_SOC_DEFINES Defines
  * @{ */
 
@@ -371,7 +373,9 @@ typedef struct
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_MUTEX_NEW, uint32_t, sd_mutex_new(nrf_mutex_t * p_mutex));
+SVCALL(SD_MUTEX_NEW, uint32_t, sd_mutex_new(nrf_mutex_t * p_mutex)) {
+  return mock_type(uint32_t);
+}
 
 /**@brief Attempt to acquire a mutex.
  *
@@ -380,7 +384,9 @@ SVCALL(SD_MUTEX_NEW, uint32_t, sd_mutex_new(nrf_mutex_t * p_mutex));
  * @retval ::NRF_SUCCESS The mutex was successfully acquired.
  * @retval ::NRF_ERROR_SOC_MUTEX_ALREADY_TAKEN The mutex could not be acquired.
  */
-SVCALL(SD_MUTEX_ACQUIRE, uint32_t, sd_mutex_acquire(nrf_mutex_t * p_mutex));
+SVCALL(SD_MUTEX_ACQUIRE, uint32_t, sd_mutex_acquire(nrf_mutex_t * p_mutex)) {
+   return mock_type(uint32_t);
+}
 
 /**@brief Release a mutex.
  *
@@ -388,7 +394,10 @@ SVCALL(SD_MUTEX_ACQUIRE, uint32_t, sd_mutex_acquire(nrf_mutex_t * p_mutex));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_MUTEX_RELEASE, uint32_t, sd_mutex_release(nrf_mutex_t * p_mutex));
+SVCALL(SD_MUTEX_RELEASE, uint32_t, sd_mutex_release(nrf_mutex_t * p_mutex)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Enable External Interrupt.
  * @note Corresponds to NVIC_EnableIRQ in CMSIS.
@@ -401,7 +410,10 @@ SVCALL(SD_MUTEX_RELEASE, uint32_t, sd_mutex_release(nrf_mutex_t * p_mutex));
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE The interrupt is not available for the application.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_PRIORITY_NOT_ALLOWED The interrupt has a priority not available for the application.
  */
-SVCALL(SD_NVIC_ENABLEIRQ, uint32_t, sd_nvic_EnableIRQ(IRQn_Type IRQn));
+SVCALL(SD_NVIC_ENABLEIRQ, uint32_t, sd_nvic_EnableIRQ(IRQn_Type IRQn)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief  Disable External Interrupt.
  * @note Corresponds to NVIC_DisableIRQ in CMSIS.
@@ -413,7 +425,10 @@ SVCALL(SD_NVIC_ENABLEIRQ, uint32_t, sd_nvic_EnableIRQ(IRQn_Type IRQn));
  * @retval ::NRF_SUCCESS The interrupt was disabled.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE The interrupt is not available for the application.
  */
-SVCALL(SD_NVIC_DISABLEIRQ, uint32_t, sd_nvic_DisableIRQ(IRQn_Type IRQn));
+SVCALL(SD_NVIC_DISABLEIRQ, uint32_t, sd_nvic_DisableIRQ(IRQn_Type IRQn)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief  Get Pending Interrupt.
  * @note Corresponds to NVIC_GetPendingIRQ in CMSIS.
@@ -426,7 +441,10 @@ SVCALL(SD_NVIC_DISABLEIRQ, uint32_t, sd_nvic_DisableIRQ(IRQn_Type IRQn));
  * @retval ::NRF_SUCCESS The interrupt is available for the application.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE IRQn is not available for the application.
  */
-SVCALL(SD_NVIC_GETPENDINGIRQ, uint32_t, sd_nvic_GetPendingIRQ(IRQn_Type IRQn, uint32_t * p_pending_irq));
+SVCALL(SD_NVIC_GETPENDINGIRQ, uint32_t, sd_nvic_GetPendingIRQ(IRQn_Type IRQn, uint32_t * p_pending_irq)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief  Set Pending Interrupt.
  * @note Corresponds to NVIC_SetPendingIRQ in CMSIS.
@@ -438,7 +456,10 @@ SVCALL(SD_NVIC_GETPENDINGIRQ, uint32_t, sd_nvic_GetPendingIRQ(IRQn_Type IRQn, ui
  * @retval ::NRF_SUCCESS The interrupt is set pending.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE IRQn is not available for the application.
  */
-SVCALL(SD_NVIC_SETPENDINGIRQ, uint32_t, sd_nvic_SetPendingIRQ(IRQn_Type IRQn));
+SVCALL(SD_NVIC_SETPENDINGIRQ, uint32_t, sd_nvic_SetPendingIRQ(IRQn_Type IRQn)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief  Clear Pending Interrupt.
  * @note Corresponds to NVIC_ClearPendingIRQ in CMSIS.
@@ -450,7 +471,10 @@ SVCALL(SD_NVIC_SETPENDINGIRQ, uint32_t, sd_nvic_SetPendingIRQ(IRQn_Type IRQn));
  * @retval ::NRF_SUCCESS The interrupt pending flag is cleared.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE IRQn is not available for the application.
  */
-SVCALL(SD_NVIC_CLEARPENDINGIRQ, uint32_t, sd_nvic_ClearPendingIRQ(IRQn_Type IRQn));
+SVCALL(SD_NVIC_CLEARPENDINGIRQ, uint32_t, sd_nvic_ClearPendingIRQ(IRQn_Type IRQn)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Set Interrupt Priority.
  * @note Corresponds to NVIC_SetPriority in CMSIS.
@@ -465,7 +489,10 @@ SVCALL(SD_NVIC_CLEARPENDINGIRQ, uint32_t, sd_nvic_ClearPendingIRQ(IRQn_Type IRQn
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE IRQn is not available for the application.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_PRIORITY_NOT_ALLOWED The interrupt priority is not available for the application.
  */
-SVCALL(SD_NVIC_SETPRIORITY, uint32_t, sd_nvic_SetPriority(IRQn_Type IRQn, nrf_app_irq_priority_t priority));
+SVCALL(SD_NVIC_SETPRIORITY, uint32_t, sd_nvic_SetPriority(IRQn_Type IRQn, nrf_app_irq_priority_t priority)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get Interrupt Priority.
  * @note Corresponds to NVIC_GetPriority in CMSIS.
@@ -478,14 +505,20 @@ SVCALL(SD_NVIC_SETPRIORITY, uint32_t, sd_nvic_SetPriority(IRQn_Type IRQn, nrf_ap
  * @retval ::NRF_SUCCESS The interrupt priority is returned in p_priority.
  * @retval ::NRF_ERROR_SOC_NVIC_INTERRUPT_NOT_AVAILABLE - IRQn is not available for the application.
  */
-SVCALL(SD_NVIC_GETPRIORITY, uint32_t, sd_nvic_GetPriority(IRQn_Type IRQn, nrf_app_irq_priority_t * p_priority));
+SVCALL(SD_NVIC_GETPRIORITY, uint32_t, sd_nvic_GetPriority(IRQn_Type IRQn, nrf_app_irq_priority_t * p_priority)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief System Reset.
  * @note Corresponds to NVIC_SystemReset in CMSIS.
  *
  * @retval ::NRF_ERROR_SOC_NVIC_SHOULD_NOT_RETURN
  */
-SVCALL(SD_NVIC_SYSTEMRESET, uint32_t, sd_nvic_SystemReset(void));
+SVCALL(SD_NVIC_SYSTEMRESET, uint32_t, sd_nvic_SystemReset(void)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Enters critical region.
  *
@@ -497,7 +530,10 @@ SVCALL(SD_NVIC_SYSTEMRESET, uint32_t, sd_nvic_SystemReset(void));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_NVIC_CRITICAL_REGION_ENTER, uint32_t, sd_nvic_critical_region_enter(uint8_t * p_is_nested_critical_region));
+SVCALL(SD_NVIC_CRITICAL_REGION_ENTER, uint32_t, sd_nvic_critical_region_enter(uint8_t * p_is_nested_critical_region)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Exit critical region.
  *
@@ -508,7 +544,10 @@ SVCALL(SD_NVIC_CRITICAL_REGION_ENTER, uint32_t, sd_nvic_critical_region_enter(ui
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_NVIC_CRITICAL_REGION_EXIT, uint32_t, sd_nvic_critical_region_exit(uint8_t is_nested_critical_region));
+SVCALL(SD_NVIC_CRITICAL_REGION_EXIT, uint32_t, sd_nvic_critical_region_exit(uint8_t is_nested_critical_region)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Query the capacity of the application random pool.
  *
@@ -516,7 +555,10 @@ SVCALL(SD_NVIC_CRITICAL_REGION_EXIT, uint32_t, sd_nvic_critical_region_exit(uint
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_RAND_APPLICATION_POOL_CAPACITY, uint32_t, sd_rand_application_pool_capacity_get(uint8_t * p_pool_capacity));
+SVCALL(SD_RAND_APPLICATION_POOL_CAPACITY, uint32_t, sd_rand_application_pool_capacity_get(uint8_t * p_pool_capacity)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get number of random bytes available to the application.
  *
@@ -524,7 +566,10 @@ SVCALL(SD_RAND_APPLICATION_POOL_CAPACITY, uint32_t, sd_rand_application_pool_cap
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_RAND_APPLICATION_BYTES_AVAILABLE, uint32_t, sd_rand_application_bytes_available_get(uint8_t * p_bytes_available));
+SVCALL(SD_RAND_APPLICATION_BYTES_AVAILABLE, uint32_t, sd_rand_application_bytes_available_get(uint8_t * p_bytes_available)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get random bytes from the application pool.
  *
@@ -534,7 +579,10 @@ SVCALL(SD_RAND_APPLICATION_BYTES_AVAILABLE, uint32_t, sd_rand_application_bytes_
  * @retval ::NRF_SUCCESS The requested bytes were written to p_buff.
  * @retval ::NRF_ERROR_SOC_RAND_NOT_ENOUGH_VALUES No bytes were written to the buffer, because there were not enough bytes available.
 */
-SVCALL(SD_RAND_APPLICATION_GET_VECTOR, uint32_t, sd_rand_application_vector_get(uint8_t * p_buff, uint8_t length));
+SVCALL(SD_RAND_APPLICATION_GET_VECTOR, uint32_t, sd_rand_application_vector_get(uint8_t * p_buff, uint8_t length)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Gets the reset reason register. 
  *
@@ -542,7 +590,10 @@ SVCALL(SD_RAND_APPLICATION_GET_VECTOR, uint32_t, sd_rand_application_vector_get(
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_RESET_REASON_GET, uint32_t, sd_power_reset_reason_get(uint32_t * p_reset_reason));
+SVCALL(SD_POWER_RESET_REASON_GET, uint32_t, sd_power_reset_reason_get(uint32_t * p_reset_reason)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Clears the bits of the reset reason register. 
  *
@@ -550,7 +601,10 @@ SVCALL(SD_POWER_RESET_REASON_GET, uint32_t, sd_power_reset_reason_get(uint32_t *
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_RESET_REASON_CLR, uint32_t, sd_power_reset_reason_clr(uint32_t reset_reason_clr_msk));
+SVCALL(SD_POWER_RESET_REASON_CLR, uint32_t, sd_power_reset_reason_clr(uint32_t reset_reason_clr_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Sets the power mode when in CPU sleep.
  *
@@ -559,13 +613,19 @@ SVCALL(SD_POWER_RESET_REASON_CLR, uint32_t, sd_power_reset_reason_clr(uint32_t r
  * @retval ::NRF_SUCCESS The power mode was set.
  * @retval ::NRF_ERROR_SOC_POWER_MODE_UNKNOWN The power mode was unknown.
  */
-SVCALL(SD_POWER_MODE_SET, uint32_t, sd_power_mode_set(nrf_power_mode_t power_mode));
+SVCALL(SD_POWER_MODE_SET, uint32_t, sd_power_mode_set(nrf_power_mode_t power_mode)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Puts the chip in System OFF mode. 
  *
  * @retval ::NRF_ERROR_SOC_POWER_OFF_SHOULD_NOT_RETURN
  */
-SVCALL(SD_POWER_SYSTEM_OFF, uint32_t, sd_power_system_off(void));
+SVCALL(SD_POWER_SYSTEM_OFF, uint32_t, sd_power_system_off(void)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Enables or disables the power-fail comparator.
  *
@@ -576,7 +636,10 @@ SVCALL(SD_POWER_SYSTEM_OFF, uint32_t, sd_power_system_off(void));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_POF_ENABLE, uint32_t, sd_power_pof_enable(uint8_t pof_enable));
+SVCALL(SD_POWER_POF_ENABLE, uint32_t, sd_power_pof_enable(uint8_t pof_enable)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Sets the power-fail threshold value.
  *
@@ -585,7 +648,10 @@ SVCALL(SD_POWER_POF_ENABLE, uint32_t, sd_power_pof_enable(uint8_t pof_enable));
  * @retval ::NRF_SUCCESS The power failure threshold was set.
  * @retval ::NRF_ERROR_SOC_POWER_POF_THRESHOLD_UNKNOWN The power failure threshold is unknown.
  */
-SVCALL(SD_POWER_POF_THRESHOLD_SET, uint32_t, sd_power_pof_threshold_set(nrf_power_failure_threshold_t threshold));
+SVCALL(SD_POWER_POF_THRESHOLD_SET, uint32_t, sd_power_pof_threshold_set(nrf_power_failure_threshold_t threshold)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Sets bits in the NRF_POWER->RAMON register.
  *
@@ -593,7 +659,10 @@ SVCALL(SD_POWER_POF_THRESHOLD_SET, uint32_t, sd_power_pof_threshold_set(nrf_powe
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_RAMON_SET, uint32_t, sd_power_ramon_set(uint32_t ramon));
+SVCALL(SD_POWER_RAMON_SET, uint32_t, sd_power_ramon_set(uint32_t ramon)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Clears bits in the NRF_POWER->RAMON register.
  *
@@ -601,7 +670,10 @@ SVCALL(SD_POWER_RAMON_SET, uint32_t, sd_power_ramon_set(uint32_t ramon));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_RAMON_CLR, uint32_t, sd_power_ramon_clr(uint32_t ramon));
+SVCALL(SD_POWER_RAMON_CLR, uint32_t, sd_power_ramon_clr(uint32_t ramon)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get contents of NRF_POWER->RAMON register, indicates power status of ram blocks.
  *
@@ -609,7 +681,10 @@ SVCALL(SD_POWER_RAMON_CLR, uint32_t, sd_power_ramon_clr(uint32_t ramon));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_RAMON_GET, uint32_t, sd_power_ramon_get(uint32_t * p_ramon));
+SVCALL(SD_POWER_RAMON_GET, uint32_t, sd_power_ramon_get(uint32_t * p_ramon)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Set bits in the NRF_POWER->GPREGRET register.
  *
@@ -617,7 +692,10 @@ SVCALL(SD_POWER_RAMON_GET, uint32_t, sd_power_ramon_get(uint32_t * p_ramon));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_GPREGRET_SET, uint32_t, sd_power_gpregret_set(uint32_t gpregret_msk));
+SVCALL(SD_POWER_GPREGRET_SET, uint32_t, sd_power_gpregret_set(uint32_t gpregret_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Clear bits in the NRF_POWER->GPREGRET register.
  *
@@ -625,7 +703,10 @@ SVCALL(SD_POWER_GPREGRET_SET, uint32_t, sd_power_gpregret_set(uint32_t gpregret_
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_GPREGRET_CLR, uint32_t, sd_power_gpregret_clr(uint32_t gpregret_msk));
+SVCALL(SD_POWER_GPREGRET_CLR, uint32_t, sd_power_gpregret_clr(uint32_t gpregret_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get contents of the NRF_POWER->GPREGRET register.
  *
@@ -633,7 +714,10 @@ SVCALL(SD_POWER_GPREGRET_CLR, uint32_t, sd_power_gpregret_clr(uint32_t gpregret_
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_POWER_GPREGRET_GET, uint32_t, sd_power_gpregret_get(uint32_t *p_gpregret));
+SVCALL(SD_POWER_GPREGRET_GET, uint32_t, sd_power_gpregret_get(uint32_t *p_gpregret)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Sets the DCDC mode.
  *
@@ -644,7 +728,10 @@ SVCALL(SD_POWER_GPREGRET_GET, uint32_t, sd_power_gpregret_get(uint32_t *p_gpregr
  * @retval ::NRF_SUCCESS
  * @retval ::NRF_ERROR_INVALID_PARAM The DCDC mode is invalid.
  */
-SVCALL(SD_POWER_DCDC_MODE_SET, uint32_t, sd_power_dcdc_mode_set(nrf_power_dcdc_mode_t dcdc_mode));
+SVCALL(SD_POWER_DCDC_MODE_SET, uint32_t, sd_power_dcdc_mode_set(nrf_power_dcdc_mode_t dcdc_mode)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Request the high frequency crystal oscillator.
  *
@@ -656,7 +743,10 @@ SVCALL(SD_POWER_DCDC_MODE_SET, uint32_t, sd_power_dcdc_mode_set(nrf_power_dcdc_m
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_CLOCK_HFCLK_REQUEST, uint32_t, sd_clock_hfclk_request(void));
+SVCALL(SD_CLOCK_HFCLK_REQUEST, uint32_t, sd_clock_hfclk_request(void)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Releases the high frequency crystal oscillator.
  *
@@ -667,7 +757,10 @@ SVCALL(SD_CLOCK_HFCLK_REQUEST, uint32_t, sd_clock_hfclk_request(void));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_CLOCK_HFCLK_RELEASE, uint32_t, sd_clock_hfclk_release(void));
+SVCALL(SD_CLOCK_HFCLK_RELEASE, uint32_t, sd_clock_hfclk_release(void)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Checks if the high frequency crystal oscillator is running.
  *
@@ -678,7 +771,10 @@ SVCALL(SD_CLOCK_HFCLK_RELEASE, uint32_t, sd_clock_hfclk_release(void));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_CLOCK_HFCLK_IS_RUNNING, uint32_t, sd_clock_hfclk_is_running(uint32_t * p_is_running));
+SVCALL(SD_CLOCK_HFCLK_IS_RUNNING, uint32_t, sd_clock_hfclk_is_running(uint32_t * p_is_running)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Waits for an application event.
  * 
@@ -703,7 +799,10 @@ SVCALL(SD_CLOCK_HFCLK_IS_RUNNING, uint32_t, sd_clock_hfclk_is_running(uint32_t *
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_APP_EVT_WAIT, uint32_t, sd_app_evt_wait(void));
+SVCALL(SD_APP_EVT_WAIT, uint32_t, sd_app_evt_wait(void)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get PPI channel enable register contents.
  *
@@ -711,7 +810,10 @@ SVCALL(SD_APP_EVT_WAIT, uint32_t, sd_app_evt_wait(void));
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_CHANNEL_ENABLE_GET, uint32_t, sd_ppi_channel_enable_get(uint32_t * p_channel_enable));
+SVCALL(SD_PPI_CHANNEL_ENABLE_GET, uint32_t, sd_ppi_channel_enable_get(uint32_t * p_channel_enable)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Set PPI channel enable register.
  *
@@ -719,7 +821,10 @@ SVCALL(SD_PPI_CHANNEL_ENABLE_GET, uint32_t, sd_ppi_channel_enable_get(uint32_t *
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_CHANNEL_ENABLE_SET, uint32_t, sd_ppi_channel_enable_set(uint32_t channel_enable_set_msk));
+SVCALL(SD_PPI_CHANNEL_ENABLE_SET, uint32_t, sd_ppi_channel_enable_set(uint32_t channel_enable_set_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Clear PPI channel enable register.
  *
@@ -727,7 +832,10 @@ SVCALL(SD_PPI_CHANNEL_ENABLE_SET, uint32_t, sd_ppi_channel_enable_set(uint32_t c
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_CHANNEL_ENABLE_CLR, uint32_t, sd_ppi_channel_enable_clr(uint32_t channel_enable_clr_msk));
+SVCALL(SD_PPI_CHANNEL_ENABLE_CLR, uint32_t, sd_ppi_channel_enable_clr(uint32_t channel_enable_clr_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Assign endpoints to a PPI channel.
  *
@@ -738,7 +846,10 @@ SVCALL(SD_PPI_CHANNEL_ENABLE_CLR, uint32_t, sd_ppi_channel_enable_clr(uint32_t c
  * @retval ::NRF_ERROR_SOC_PPI_INVALID_CHANNEL The channel number is invalid.
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_CHANNEL_ASSIGN, uint32_t, sd_ppi_channel_assign(uint8_t channel_num, const volatile void * evt_endpoint, const volatile void * task_endpoint));
+SVCALL(SD_PPI_CHANNEL_ASSIGN, uint32_t, sd_ppi_channel_assign(uint8_t channel_num, const volatile void * evt_endpoint, const volatile void * task_endpoint)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Task to enable a channel group.
  *
@@ -747,7 +858,10 @@ SVCALL(SD_PPI_CHANNEL_ASSIGN, uint32_t, sd_ppi_channel_assign(uint8_t channel_nu
  * @retval ::NRF_ERROR_SOC_PPI_INVALID_GROUP The group number is invalid
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_GROUP_TASK_ENABLE, uint32_t, sd_ppi_group_task_enable(uint8_t group_num));
+SVCALL(SD_PPI_GROUP_TASK_ENABLE, uint32_t, sd_ppi_group_task_enable(uint8_t group_num)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Task to disable a channel group.
  *
@@ -756,7 +870,10 @@ SVCALL(SD_PPI_GROUP_TASK_ENABLE, uint32_t, sd_ppi_group_task_enable(uint8_t grou
  * @retval ::NRF_ERROR_SOC_PPI_INVALID_GROUP The group number is invalid.
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_GROUP_TASK_DISABLE, uint32_t, sd_ppi_group_task_disable(uint8_t group_num));
+SVCALL(SD_PPI_GROUP_TASK_DISABLE, uint32_t, sd_ppi_group_task_disable(uint8_t group_num)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Assign PPI channels to a channel group.
  *
@@ -766,7 +883,10 @@ SVCALL(SD_PPI_GROUP_TASK_DISABLE, uint32_t, sd_ppi_group_task_disable(uint8_t gr
  * @retval ::NRF_ERROR_SOC_PPI_INVALID_GROUP The group number is invalid.
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_GROUP_ASSIGN, uint32_t, sd_ppi_group_assign(uint8_t group_num, uint32_t channel_msk));
+SVCALL(SD_PPI_GROUP_ASSIGN, uint32_t, sd_ppi_group_assign(uint8_t group_num, uint32_t channel_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Gets the PPI channels of a channel group.
  *
@@ -776,7 +896,10 @@ SVCALL(SD_PPI_GROUP_ASSIGN, uint32_t, sd_ppi_group_assign(uint8_t group_num, uin
  * @retval ::NRF_ERROR_SOC_PPI_INVALID_GROUP The group number is invalid.
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_PPI_GROUP_GET, uint32_t, sd_ppi_group_get(uint8_t group_num, uint32_t * p_channel_msk));
+SVCALL(SD_PPI_GROUP_GET, uint32_t, sd_ppi_group_get(uint8_t group_num, uint32_t * p_channel_msk)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Configures the Radio Notification signal.
  *
@@ -805,7 +928,10 @@ SVCALL(SD_PPI_GROUP_GET, uint32_t, sd_ppi_group_get(uint8_t group_num, uint32_t 
  * @retval ::NRF_ERROR_INVALID_PARAM The group number is invalid.
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_RADIO_NOTIFICATION_CFG_SET, uint32_t, sd_radio_notification_cfg_set(nrf_radio_notification_type_t type, nrf_radio_notification_distance_t distance));
+SVCALL(SD_RADIO_NOTIFICATION_CFG_SET, uint32_t, sd_radio_notification_cfg_set(nrf_radio_notification_type_t type, nrf_radio_notification_distance_t distance)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Encrypts a block according to the specified parameters.
  *
@@ -816,7 +942,10 @@ SVCALL(SD_RADIO_NOTIFICATION_CFG_SET, uint32_t, sd_radio_notification_cfg_set(nr
  *
  * @retval ::NRF_SUCCESS
  */
-SVCALL(SD_ECB_BLOCK_ENCRYPT, uint32_t, sd_ecb_block_encrypt(nrf_ecb_hal_data_t * p_ecb_data));
+SVCALL(SD_ECB_BLOCK_ENCRYPT, uint32_t, sd_ecb_block_encrypt(nrf_ecb_hal_data_t * p_ecb_data)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Gets any pending events generated by the SoC API.
  *
@@ -827,7 +956,10 @@ SVCALL(SD_ECB_BLOCK_ENCRYPT, uint32_t, sd_ecb_block_encrypt(nrf_ecb_hal_data_t *
  * @retval ::NRF_SUCCESS An event was pending. The event id is written in the p_evt_id parameter.
  * @retval ::NRF_ERROR_NOT_FOUND No pending events. 
  */
-SVCALL(SD_EVT_GET, uint32_t, sd_evt_get(uint32_t * p_evt_id));
+SVCALL(SD_EVT_GET, uint32_t, sd_evt_get(uint32_t * p_evt_id)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Get the temperature measured on the chip
  * 
@@ -840,7 +972,10 @@ SVCALL(SD_EVT_GET, uint32_t, sd_evt_get(uint32_t * p_evt_id));
  *
  * @retval ::NRF_SUCCESS A temperature measurement was done, and the temperature was written to temp
  */
-SVCALL(SD_TEMP_GET, uint32_t, sd_temp_get(int32_t * p_temp));
+SVCALL(SD_TEMP_GET, uint32_t, sd_temp_get(int32_t * p_temp)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Flash Write
 *
@@ -872,7 +1007,10 @@ SVCALL(SD_TEMP_GET, uint32_t, sd_temp_get(int32_t * p_temp));
 * @retval ::NRF_ERROR_FORBIDDEN      Tried to write to or read from protected location.
 * @retval ::NRF_SUCCESS              The command was accepted.
 */
-SVCALL(SD_FLASH_WRITE, uint32_t, sd_flash_write(uint32_t * const p_dst, uint32_t const * const p_src, uint32_t size));
+SVCALL(SD_FLASH_WRITE, uint32_t, sd_flash_write(uint32_t * const p_dst, uint32_t const * const p_src, uint32_t size)) {
+   return mock_type(uint32_t);
+}
+
 
 
 /**@brief Flash Erase page
@@ -901,7 +1039,10 @@ SVCALL(SD_FLASH_WRITE, uint32_t, sd_flash_write(uint32_t * const p_dst, uint32_t
 * @retval ::NRF_ERROR_FORBIDDEN     Tried to erase a protected page.
 * @retval ::NRF_SUCCESS             The command was accepted.
 */
-SVCALL(SD_FLASH_PAGE_ERASE, uint32_t, sd_flash_page_erase(uint32_t page_number));
+SVCALL(SD_FLASH_PAGE_ERASE, uint32_t, sd_flash_page_erase(uint32_t page_number)) {
+   return mock_type(uint32_t);
+}
+
 
 
 /**@brief Flash Protection set
@@ -916,7 +1057,10 @@ SVCALL(SD_FLASH_PAGE_ERASE, uint32_t, sd_flash_page_erase(uint32_t page_number))
  * @retval ::NRF_ERROR_FORBIDDEN Tried to protect the SoftDevice.
  * @retval ::NRF_SUCCESS Values successfully written to PROTENSETx.
  */
-SVCALL(SD_FLASH_PROTECT, uint32_t, sd_flash_protect(uint32_t protenset0, uint32_t protenset1));
+SVCALL(SD_FLASH_PROTECT, uint32_t, sd_flash_protect(uint32_t protenset0, uint32_t protenset1)) {
+   return mock_type(uint32_t);
+}
+
 
 /**@brief Opens a session for radio requests.
  *
@@ -938,7 +1082,10 @@ SVCALL(SD_FLASH_PROTECT, uint32_t, sd_flash_protect(uint32_t protenset0, uint32_
  * @retval ::NRF_ERROR_INTERNAL If a new session could not be opened due to an internal error.
  * @retval ::NRF_SUCCESS Otherwise.
  */
- SVCALL(SD_RADIO_SESSION_OPEN, uint32_t, sd_radio_session_open(nrf_radio_signal_callback_t p_radio_signal_callback));
+ SVCALL(SD_RADIO_SESSION_OPEN, uint32_t, sd_radio_session_open(nrf_radio_signal_callback_t p_radio_signal_callback)) {
+    return mock_type(uint32_t);
+ }
+
 
 /**@brief Closes a session for radio requests.
  *
@@ -951,7 +1098,10 @@ SVCALL(SD_FLASH_PROTECT, uint32_t, sd_flash_protect(uint32_t protenset0, uint32_
  * @retval ::NRF_ERROR_BUSY If session is currently being closed.
  * @retval ::NRF_SUCCESS Otherwise.
  */
- SVCALL(SD_RADIO_SESSION_CLOSE, uint32_t, sd_radio_session_close(void));
+ SVCALL(SD_RADIO_SESSION_CLOSE, uint32_t, sd_radio_session_close(void)) {
+    return mock_type(uint32_t);
+ }
+
 
 /**@brief Requests a radio timeslot.
  *
@@ -984,7 +1134,10 @@ SVCALL(SD_FLASH_PROTECT, uint32_t, sd_flash_protect(uint32_t protenset0, uint32_
  * @retval ::NRF_ERROR_INVALID_PARAM If the parameters of p_request are not valid.
  * @retval ::NRF_SUCCESS Otherwise.
  */
- SVCALL(SD_RADIO_REQUEST, uint32_t, sd_radio_request(nrf_radio_request_t * p_request ));
+ SVCALL(SD_RADIO_REQUEST, uint32_t, sd_radio_request(nrf_radio_request_t * p_request )) {
+    return mock_type(uint32_t);
+ }
+
 
 /**@} */
 

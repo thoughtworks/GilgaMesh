@@ -1,9 +1,5 @@
 #pragma once
 
-#if defined(TESTING) && !defined(GAP_TEST)
-#include "gap_mock.h"
-
-#else
 #include <string.h>
 
 #include <nrf_soc.h>
@@ -40,6 +36,11 @@ typedef struct
 extern const ble_gap_conn_params_t meshConnectionParams;
 extern const ble_gap_adv_params_t meshAdvertisingParams;
 extern const ble_gap_scan_params_t meshScanningParams;
+
+#if defined(TESTING) && !defined(GAP_TEST)
+#include "gap_mock.h"
+
+#else
 
 static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
 static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;

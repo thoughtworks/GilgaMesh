@@ -15,7 +15,7 @@ macro(GEN_OUTPUTS target)
 endmacro(GEN_OUTPUTS)
 
 #set compiler and linker options
-SET(CMAKE_C_FLAGS_DEBUG "-DGAP_TEST -DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -DSVCALL_AS_NORMAL_FUNCTION -std=c11 -g3 -flto -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
+SET(CMAKE_C_FLAGS_DEBUG "-DGAP_TEST -DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -std=c11 -g3 -flto -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
 SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug")
 
 # production code headers
@@ -40,8 +40,7 @@ list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")
 list(APPEND RunUnitTests_SOURCES "unit/GattTest.c")
 list(APPEND RunUnitTests_SOURCES "unit/RunTests.c")
 
-
-add_executable(RunUnitTests ${RunUnitTests_HEADERS} ${RunUnitTests_SOURCES} )
+add_executable(RunUnitTests ${RunUnitTests_SOURCES} )
 
 target_link_libraries(RunUnitTests cmocka)
 GEN_OUTPUTS(RunUnitTests)

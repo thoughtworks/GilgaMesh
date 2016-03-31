@@ -47,8 +47,6 @@
 #include "ble_ranges.h"
 #include "nrf_svc.h"
 
-#include "cmocka_includes.h"
-
 /**@addtogroup BLE_GAP_ENUMERATIONS Enumerations
  * @{ */
 

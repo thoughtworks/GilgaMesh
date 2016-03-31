@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cmocka_includes.h"
-
 void gatt_initialize(void) {
 
 }

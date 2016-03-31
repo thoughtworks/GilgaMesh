@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) Nordic Semiconductor ASA
  * All rights reserved.
  * 
@@ -373,6 +373,7 @@ typedef struct
  *
  * @retval ::NRF_SUCCESS
  */
+
 SVCALL(SD_MUTEX_NEW, uint32_t, sd_mutex_new(nrf_mutex_t * p_mutex)) {
   return mock_type(uint32_t);
 }

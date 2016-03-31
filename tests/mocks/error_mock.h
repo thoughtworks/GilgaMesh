@@ -1,6 +1,5 @@
 #pragma once
 
-#include <nrf_soc.h>
 #include <app_error.h>
 
 #include <logger.h>

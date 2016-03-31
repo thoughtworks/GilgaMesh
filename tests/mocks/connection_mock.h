@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cmocka_includes.h"
-
 void connections_initialize(void){}
 
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress){

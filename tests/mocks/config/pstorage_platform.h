@@ -22,8 +22,6 @@
 #include <stdint.h>
 #include "nrf.h"
 
-#include "cmocka_includes.h"
-
 static __INLINE uint16_t pstorage_flash_page_size()
 {
    return mock_type(uint16_t); // mock the flash page size

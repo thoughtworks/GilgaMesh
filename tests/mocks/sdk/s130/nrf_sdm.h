@@ -47,7 +47,7 @@
 
 #include "nrf_svc.h"
 #include "nrf51.h"
-#include "nrf_soc.h"
+//#include "nrf_soc.h"
 #include "nrf_error_sdm.h"
 
 /** @addtogroup NRF_SDM_DEFINES Defines

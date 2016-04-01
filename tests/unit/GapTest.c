@@ -1,30 +1,16 @@
 #include "cmocka_includes.h"
 #include "gap.h"
 
-// This is a dummy test
-static void dummyTestOne(void **state) {
-    (void) state; // unused
-
-    assert_true(true);
-}
-
-static void dummyTestTwo(void **state) {
-    (void) state; // unused
-
-    assert_false(false);
-}
-
 static void StopAdvertizingTest(void **state) {
     (void) state; // unused
 
-//    stop_advertising();
+    will_return(sd_ble_gap_adv_stop, 0); // setup mock to return error code 0
+    stop_advertising(); // exercise the SUT
 }
 
 int RunGapTest(void) {
     const struct CMUnitTest tests[] = {
         // list test functions here
-        cmocka_unit_test(dummyTestOne),
-        cmocka_unit_test(dummyTestTwo),
         cmocka_unit_test(StopAdvertizingTest),
     };
 

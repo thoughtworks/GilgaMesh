@@ -5,6 +5,7 @@
 #include <nrf_soc.h>
 
 #include <logger.h>
+#include <led.h>
 
 #define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3

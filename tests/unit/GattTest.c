@@ -1,4 +1,5 @@
 #include "cmocka_includes.h"
+#include "gatt.h"
 
 // This is a dummy test
 static void gattTestOne(void **state) {

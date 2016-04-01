@@ -2,6 +2,8 @@
 
 #include "cmocka_includes.h"
 
+#if defined(TESTING) && !defined(CONNECTION_TEST)
+
 void connections_initialize(void){}
 
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress){
@@ -34,3 +36,5 @@ bool peripheral_connections_active(void){
 uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount) {
    return mock_type(uint16_t*);
 }
+
+#endif

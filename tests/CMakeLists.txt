@@ -55,11 +55,11 @@ add_library(GapTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/gap.c unit/GapTe
 set_target_properties(GapTests PROPERTIES COMPILE_FLAGS -DGAP_TEST)
 target_link_libraries(GapTests cmocka)
 
-add_library(GattTests STATIC ${RunUnitTests_SOURCES} unit/GattTest.c)
+add_library(GattTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/gatt.c unit/GattTest.c)
 set_target_properties(GattTests PROPERTIES COMPILE_FLAGS -DGATT_TEST)
 target_link_libraries(GattTests cmocka)
 
-add_library(ConnectionTests STATIC ${RunUnitTests_SOURCES} unit/ConnectionTest.c)
+add_library(ConnectionTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/connection.c unit/ConnectionTest.c)
 set_target_properties(ConnectionTests PROPERTIES COMPILE_FLAGS -DCONNECTION_TEST)
 target_link_libraries(ConnectionTests cmocka)
 

@@ -16,7 +16,7 @@ endmacro(GEN_OUTPUTS)
 
 #set compiler and linker options
 SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -std=c11 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
-
+SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
 
 # production code headers
 include_directories(${INC_PATH})
@@ -30,41 +30,45 @@ include_directories(mocks/sdk/EHAL)
 include_directories(mocks/sdk/device)
 include_directories(mocks/sdk/toolchain)
 
-# add sdk mock implementations
-list(APPEND RunUnitTests_SOURCES "mocks/sdk/s130/ble_gap_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/sdk/softdevice_handler_mock.c")
-
 # include project mock headers
 include_directories(mocks/config)
 include_directories(mocks)
 
-# add mock implementations
-list(APPEND RunUnitTests_SOURCES "mocks/config/pstorage_platform_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/connection_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/dfu_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/error_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/gap_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/gatt_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/led_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/terminal_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/timer_mock.c")
+# add sdk mock implementations
+list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gap_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gatts_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gattc_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk/softdevice_handler_mock.c")
 
-# add unit tests
-add_library(GapTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/gap.c unit/GapTest.c)
-set_target_properties(GapTests PROPERTIES COMPILE_FLAGS -DGAP_TEST)
-target_link_libraries(GapTests cmocka)
+###############################################################################################
+# add unit tests and mocks they need
 
-add_library(GattTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/gatt.c unit/GattTest.c)
-set_target_properties(GattTests PROPERTIES COMPILE_FLAGS -DGATT_TEST)
-target_link_libraries(GattTests cmocka)
+add_executable(GapTest ${TestFramework_SOURCES}
+    mocks/config/pstorage_platform_mock.c
+    mocks/logger_mock.c
+    mocks/error_mock.c
+    mocks/connection_mock.c
+    mocks/gatt_mock.c
+    ${SRC_PATH}/gap.c
+    unit/GapTest.c)
+target_link_libraries(GapTest cmocka)
+GEN_OUTPUTS(GapTest)
 
-add_library(ConnectionTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/connection.c unit/ConnectionTest.c)
-set_target_properties(ConnectionTests PROPERTIES COMPILE_FLAGS -DCONNECTION_TEST)
-target_link_libraries(ConnectionTests cmocka)
+add_executable(GattTest ${TestFramework_SOURCES}
+    mocks/logger_mock.c
+    mocks/error_mock.c
+    mocks/connection_mock.c
+    ${SRC_PATH}/gatt.c
+    unit/GattTest.c)
+target_link_libraries(GattTest cmocka)
+GEN_OUTPUTS(GattTest)
 
-# build the main test runner executable
-add_executable(RunUnitTests unit/RunTests.c)
-target_link_libraries(RunUnitTests GapTests GattTests ConnectionTests)
+add_executable(ConnectionTest ${TestFramework_SOURCES}
+    mocks/logger_mock.c
+    mocks/led_mock.c
+    mocks/gatt_mock.c
+    ${SRC_PATH}/connection.c
+    unit/ConnectionTest.c)
+target_link_libraries(ConnectionTest cmocka)
+GEN_OUTPUTS(ConnectionTest)
 
-GEN_OUTPUTS(RunUnitTests)

@@ -24,3 +24,7 @@ int RunGattTest(void) {
     //set test suite name here
     return cmocka_run_group_tests_name("GattTest", tests, NULL, NULL);
 }
+
+int main(int argc, char **argv) {
+    return RunGattTest();
+}

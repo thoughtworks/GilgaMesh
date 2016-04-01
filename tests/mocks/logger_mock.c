@@ -10,15 +10,6 @@ char mhTraceBuffer[TRACE_BUFFER_SIZE] = { 0 };
 
 log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
 {
-   memset(mhTraceBuffer, 0, TRACE_BUFFER_SIZE);
-
-   //Variable argument list must be passed to vnsprintf
-   va_list aptr;
-   va_start(aptr, message);
-   vsnprintf(mhTraceBuffer, TRACE_BUFFER_SIZE, message, aptr);
-   va_end(aptr);
-
-   snprintf(mhTraceBuffer, TRACE_BUFFER_SIZE, "[%s@%d]: %s\r\n", file, line, mhTraceBuffer);
 
 }
 

@@ -17,3 +17,7 @@ int RunGapTest(void) {
     //set test suite name here
     return cmocka_run_group_tests_name("GapTest", tests, NULL, NULL);
 }
+
+int main(int argc, char **argv) {
+   return RunGapTest();
+}

@@ -1,13 +1,13 @@
 #include "cmocka_includes.h"
 
 // This is a dummy test
-static void dummyTestOne(void **state) {
+static void gattTestOne(void **state) {
     (void) state; // unused
 
     assert_true(true);
 }
 
-static void dummyTestTwo(void **state) {
+static void gattTestTwo(void **state) {
     (void) state; // unused
 
     assert_false(false);
@@ -16,8 +16,8 @@ static void dummyTestTwo(void **state) {
 int RunGattTest(void) {
     const struct CMUnitTest tests[] = {
         // list test functions here
-        cmocka_unit_test(dummyTestOne),
-        cmocka_unit_test(dummyTestTwo),
+        cmocka_unit_test(gattTestOne),
+        cmocka_unit_test(gattTestTwo),
     };
 
     //set test suite name here

@@ -1,5 +1,6 @@
 #include "cmocka_includes.h"
 #include "gap.h"
+#include "led.h"
 
 static void StopAdvertizingTest(void **state) {
     (void) state; // unused

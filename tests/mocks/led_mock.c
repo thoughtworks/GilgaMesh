@@ -2,41 +2,41 @@
 
 void led_red_on(void)
 {
-   printf("RED LED: ON\n");
+   printf("-*- RED: ON\n");
 }
 
 void led_red_off(void)
 {
-   printf("RED LED: OFF\n");
+   printf("--- RED: OFF\n");
 }
 
 void led_green_on(void)
 {
-   printf("GREEN LED: ON\n");
+   printf("-*- GREEN: ON\n");
 }
 
 void led_green_off(void)
 {
-   printf("GREEN LED: OFF\n");
+   printf("--- GREEN: OFF\n");
 }
 
 void led_blue_on(void)
 {
-   printf("BLUE LED: ON\n");
+   printf("-*- BLUE: ON\n");
 }
 
 void led_blue_off(void)
 {
-   printf("BLUE LED: OFF\n");
+   printf("--- BLUE: OFF\n");
 }
 
 void led_white_on(void)
 {
-   printf("WHITE LED: ON\n");
+   printf("-*- WHITE: ON\n");
 }
 
 void led_white_off(void)
 {
-   printf("WHITE LED: OFF\n");
+   printf("--- WHITE: OFF\n");
 }
 

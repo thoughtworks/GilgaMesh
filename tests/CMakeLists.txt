@@ -15,8 +15,8 @@ macro(GEN_OUTPUTS target)
 endmacro(GEN_OUTPUTS)
 
 #set compiler and linker options
-SET(CMAKE_C_FLAGS_DEBUG "-DGAP_TEST -DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -std=c11 -g3 -flto -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
-SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/src -L${EHAL_PATH}/ARM/Nordic/nRF51/CMSIS/Debug")
+SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -std=c11 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
+
 
 # production code headers
 include_directories(${INC_PATH})
@@ -43,22 +43,28 @@ list(APPEND RunUnitTests_SOURCES "mocks/config/pstorage_platform_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/connection_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/dfu_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/error_mock.c")
-#list(APPEND RunUnitTests_SOURCES "mocks/gap_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/gap_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/gatt_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/led_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/terminal_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/timer_mock.c")
 
-# add system under test sources
-list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+# add unit tests
+add_library(GapTests STATIC ${RunUnitTests_SOURCES} ${SRC_PATH}/gap.c unit/GapTest.c)
+set_target_properties(GapTests PROPERTIES COMPILE_FLAGS -DGAP_TEST)
+target_link_libraries(GapTests cmocka)
 
-# add testcase sources
-list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")
-list(APPEND RunUnitTests_SOURCES "unit/GattTest.c")
-list(APPEND RunUnitTests_SOURCES "unit/RunTests.c")
+add_library(GattTests STATIC ${RunUnitTests_SOURCES} unit/GattTest.c)
+set_target_properties(GattTests PROPERTIES COMPILE_FLAGS -DGATT_TEST)
+target_link_libraries(GattTests cmocka)
 
-add_executable(RunUnitTests ${RunUnitTests_SOURCES} )
+add_library(ConnectionTests STATIC ${RunUnitTests_SOURCES} unit/ConnectionTest.c)
+set_target_properties(ConnectionTests PROPERTIES COMPILE_FLAGS -DCONNECTION_TEST)
+target_link_libraries(ConnectionTests cmocka)
 
-target_link_libraries(RunUnitTests cmocka)
+# build the main test runner executable
+add_executable(RunUnitTests unit/RunTests.c)
+target_link_libraries(RunUnitTests GapTests GattTests ConnectionTests)
+
 GEN_OUTPUTS(RunUnitTests)

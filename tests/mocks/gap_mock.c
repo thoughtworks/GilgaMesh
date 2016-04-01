@@ -1,5 +1,7 @@
 #include <gap.h>
 
+#include "cmocka_includes.h"
+
 #if defined(TESTING) && !defined(GAP_TEST)
 
 void ble_initialize(void) {

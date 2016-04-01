@@ -1,5 +1,6 @@
 #include "GapTest.h"
 #include "GattTest.h"
+#include "ConnectionTest.h"
 
 int main(int argc, char **argv) {
     int retVal = 0;
@@ -7,6 +8,7 @@ int main(int argc, char **argv) {
     //call all test suites here
     retVal &= RunGapTest();
     retVal &= RunGattTest();
+    retVal &= RunConnectionTest();
 
     return retVal;
 }

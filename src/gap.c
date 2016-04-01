@@ -39,8 +39,6 @@ void sys_evt_dispatch(uint32_t sys_evt)
 }
 
 void ble_initialize(void){
-  uint32_t err = 0;
-
   log("Initializing Softdevice");
 
   EC(softdevice_handler_init(NRF_CLOCK_LFCLKSRC_XTAL_20_PPM, currentEventBuffer, sizeOfEvent, 0));
@@ -71,8 +69,6 @@ void ble_initialize(void){
 
 void start_advertising(void)
 {
-  uint32_t err;
-
   advertisingData adv_data;
   adv_data.meshNameLength = MESH_NAME_SIZE;
   memcpy(adv_data.meshName, MESH_NAME, MESH_NAME_SIZE);
@@ -104,9 +100,9 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
   if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
 
   uint32_t advertiserFamilyId = (adv_data->familyIdParts[0] << 16) | adv_data->familyIdParts[1];
-  log("Received advertisement from node with familyId %u", advertiserFamilyId);
   if (advertiserFamilyId == familyId) return false;
 
+  log("Received advertisement from node with familyId %u", advertiserFamilyId);
   log("familyIds don't match, so we should connect...");
 
   return true;
@@ -170,11 +166,8 @@ void handle_connection_event(ble_evt_t * bleEvent)
   } else if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
     //we are the central, we need to add a peripheral connection
     set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
-    start_scanning();
-  }
-
-  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
     update_and_propagate_family_id(familyId + 1, BLE_CONN_HANDLE_INVALID);
+    start_scanning();
   }
 
   print_all_connections();
@@ -184,7 +177,9 @@ void handle_connection_event(ble_evt_t * bleEvent)
 void handle_disconnection_event(ble_evt_t * bleEvent)
 {
   ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
+  if (lostConnectionType == INVALID) return;
 
+  if (lostConnectionType == CENTRAL) start_advertising();
   uint32_t newFamilyId = (lostConnectionType == CENTRAL) ? generate_family_id() : (familyId + 1);
   update_and_propagate_family_id(newFamilyId, BLE_CONN_HANDLE_INVALID);
 
@@ -194,10 +189,10 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
 
 void handle_write_event(ble_evt_t * bleEvent)
 {
-  uint8_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+  uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 
   uint32_t *newFamilyId = (uint32_t *) bleEvent->evt.gatts_evt.params.write.data;
-  log("***** RECEIVED New family id: %u", *newFamilyId);
+  log("Received new family id %u from connection %u", *newFamilyId, connectionHandle);
 
   if (*newFamilyId == familyId){
     //we are already connected to this family! we should disconnect

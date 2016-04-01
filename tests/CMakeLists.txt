@@ -20,26 +20,38 @@ SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage -L${EHAL_PATH}/ARM/sr
 
 # production code headers
 include_directories(${INC_PATH})
+include_directories(${INC_PATH}/nrf)
+include_directories(${CONFIG_PATH})
 
-# include SDK mocks
+# include SDK mock headers
 include_directories(mocks/sdk)
 include_directories(mocks/sdk/s130)
 include_directories(mocks/sdk/EHAL)
 include_directories(mocks/sdk/device)
 include_directories(mocks/sdk/toolchain)
 
-# include project mocks
+# add sdk mock implementations
+list(APPEND RunUnitTests_SOURCES "mocks/sdk/s130/ble_gap_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/sdk/softdevice_handler_mock.c")
+
+# include project mock headers
 include_directories(mocks/config)
 include_directories(mocks)
 
 # add mock implementations
+list(APPEND RunUnitTests_SOURCES "mocks/config/pstorage_platform_mock.c")
 list(APPEND RunUnitTests_SOURCES "mocks/connection_mock.c")
-list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
-#list(APPEND RunUnitTests_SOURCES "mocks/gatt_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/dfu_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/error_mock.c")
 #list(APPEND RunUnitTests_SOURCES "mocks/gap_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/gatt_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/led_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/logger_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/terminal_mock.c")
+list(APPEND RunUnitTests_SOURCES "mocks/timer_mock.c")
 
 # add system under test sources
-#list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
+list(APPEND RunUnitTests_SOURCES "${SRC_PATH}/gap.c")
 
 # add testcase sources
 list(APPEND RunUnitTests_SOURCES "unit/GapTest.c")

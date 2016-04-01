@@ -12,6 +12,8 @@
 #ifndef BOARDS_H
 #define BOARDS_H
 
+#ifndef TESTING
+
 #include "nrf_gpio.h"
 
 #if defined(BOARD_NRF6310)
@@ -60,3 +62,5 @@
                                           nrf_gpio_cfg_output(pin); } while (0)
 
 #endif
+
+#endif // !TESTING

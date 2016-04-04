@@ -44,3 +44,7 @@ bool peripheral_connections_active(void){
 uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount) {
    return mock_type(uint16_t*);
 }
+
+char* get_connection_info(connection *conn, char* result) {
+   return mock_type(char*);
+}

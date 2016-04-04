@@ -14,14 +14,9 @@ SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 # set target hardware type
 SET(TARGET_BOARD       BOARD_PCA10028)
 
-#add a variable to tell Linux from OSX
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
-
 project(MeshyMesh)
 
-if(IS_TEST_BUILD AND LINUX) #build tests on linux
+if(IS_TEST_BUILD AND UNIX) #build tests on linux or osx
     add_subdirectory(tests)
 else() #build for real hardware
     add_subdirectory(src)

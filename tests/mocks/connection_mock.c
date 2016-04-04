@@ -6,6 +6,10 @@ void connections_initialize(void){
 
 }
 
+uint32_t generate_family_id() {
+   return mock_type(uint32_t);
+}
+
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress){
    check_expected(connectionHandle);
 }

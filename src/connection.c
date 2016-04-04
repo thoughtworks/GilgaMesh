@@ -1,18 +1,18 @@
 #include <connection.h>
 
-#ifdef TESTING
-  #define BLE_NODE_ID 0xdeadbeef
-#else
-  #define BLE_NODE_ID (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1
-#endif
 
 void connections_initialize()
 {
-  nodeId = BLE_NODE_ID;
   familyId = nodeId << 16;
   activeConnections = calloc(1, sizeof(connections));
 
   log("NodeId: %d, familyId: %u", nodeId, familyId);
+}
+
+uint32_t generate_family_id()
+{
+  uint16_t nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
+  return ((uint32_t)nodeId) << 16;
 }
 
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)

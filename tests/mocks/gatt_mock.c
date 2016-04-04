@@ -17,4 +17,8 @@ void update_family(void) {
 
 }
 
+void propagate_family_id(uint16_t originHandle) {
+   check_expected(originHandle);
+}
+
 #endif

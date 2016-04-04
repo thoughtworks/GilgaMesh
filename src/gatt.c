@@ -76,13 +76,15 @@ void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
 }
 
 
-void update_family()
+void propagate_family_id(uint16_t originHandle)
 {
   uint8_t connectionCount;
   uint16_t connectionHandles[4];
   get_active_connection_handles(connectionHandles, &connectionCount);
   for (int i = 0; i < connectionCount; i++){
-    log("Sending familyId %u to connection handle %u", familyId, connectionHandles[i]);
-    write_value(connectionHandles[i], &familyId, sizeof(familyId));
+    if (originHandle != connectionHandles[i]){ //don't resend to the node who sent it
+      log("Sending familyId %u to connection handle %u", familyId, connectionHandles[i]);
+      write_value(connectionHandles[i], &familyId, sizeof(familyId));
+    }
   }
 }

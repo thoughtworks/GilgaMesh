@@ -27,10 +27,10 @@
 
 typedef struct
 {
-  uint8_t meshNameLength;
-  uint8_t meshName[MESH_NAME_SIZE];
-  uint8_t familyIdLength;
-  uint16_t familyIdParts[2];
+    uint8_t length;
+    uint8_t typeDefinition;
+    uint8_t meshName[MESH_NAME_SIZE];
+    uint32_t familyId;
 } advertisingData;
 
 extern const ble_gap_conn_params_t meshConnectionParams;

@@ -3,10 +3,10 @@
 
 void connections_initialize()
 {
-  familyId = nodeId << 16;
+  familyId = generate_family_id();
   activeConnections = calloc(1, sizeof(connections));
 
-  log("NodeId: %d, familyId: %u", nodeId, familyId);
+  log("FamilyId: %u", familyId);
 }
 
 uint32_t generate_family_id()
@@ -206,6 +206,7 @@ uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCo
       (*connectionCount)++;
     }
   }
+  return handles;
 }
 
 void handle_connection_change()

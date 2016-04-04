@@ -27,7 +27,6 @@ typedef struct
     connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
 
-uint16_t nodeId;
 uint32_t familyId;
 connections *activeConnections;
 

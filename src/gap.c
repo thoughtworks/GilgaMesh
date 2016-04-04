@@ -1,4 +1,5 @@
 #include <gap.h>
+#include <ble_gap.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -59,7 +60,7 @@ void ble_initialize(void){
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, strlen(MESH_NAME)));
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, MESH_NAME_SIZE));
 
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
@@ -70,13 +71,12 @@ void ble_initialize(void){
 void start_advertising(void)
 {
   advertisingData adv_data;
-  adv_data.meshNameLength = MESH_NAME_SIZE;
+  adv_data.length = sizeof(adv_data) - 1;
+  adv_data.typeDefinition = BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA;
+  adv_data.familyId = familyId;
   memcpy(adv_data.meshName, MESH_NAME, MESH_NAME_SIZE);
-  adv_data.familyIdLength = sizeof(familyId);
-  adv_data.familyIdParts[0] = (uint16_t) (familyId >> 16);
-  adv_data.familyIdParts[1] = (uint16_t) (familyId & 0x0000FFFF);
 
-  EC(sd_ble_gap_adv_data_set(&adv_data, sizeof(adv_data), 0, 0));
+  EC(sd_ble_gap_adv_data_set((const uint8_t *)&adv_data, sizeof(adv_data), 0, 0));
 
   EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
 
@@ -91,20 +91,16 @@ void stop_advertising(void)
 }
 
 
-bool should_connect_to_advertiser(ble_gap_evt_adv_report_t adv_report)
+bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
 {
-  advertisingData* adv_data = (advertisingData *)adv_report.data;
+  advertisingData* adv_data = (advertisingData *)adv_report->data;
 
-  if (adv_report.dlen != sizeof(advertisingData))return false;
-  if (adv_data->meshNameLength != MESH_NAME_SIZE) return false;
+  if (adv_report->dlen != sizeof(advertisingData)) return false;
+  if (adv_data->typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
   if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
+  if (adv_data->familyId == familyId) return false;
 
-  uint32_t advertiserFamilyId = (adv_data->familyIdParts[0] << 16) | adv_data->familyIdParts[1];
-  if (advertiserFamilyId == familyId) return false;
-
-  log("Received advertisement from node with familyId %u", advertiserFamilyId);
-  log("familyIds don't match, so we should connect...");
-
+  log("Connecting to node with familyId %u", adv_data->familyId);
   return true;
 }
 
@@ -144,7 +140,7 @@ void update_and_propagate_family_id(uint32_t newFamilyId, uint16_t originHandle)
 void handle_advertising_report_event(ble_evt_t * bleEvent)
 {
   ble_gap_evt_adv_report_t advertisingParams = bleEvent->evt.gap_evt.params.adv_report;
-  if (should_connect_to_advertiser(advertisingParams)){
+  if (should_connect_to_advertiser(&advertisingParams)){
     EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshScanningParams, &meshConnectionParams));
   }
 }

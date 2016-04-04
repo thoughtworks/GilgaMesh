@@ -24,7 +24,7 @@
 
 static __INLINE uint16_t pstorage_flash_page_size()
 {
-  return (uint16_t)NRF_FICR->CODEPAGESIZE;
+   return (uint16_t)NRF_FICR->CODEPAGESIZE;
 }
 
 #define PSTORAGE_FLASH_PAGE_SIZE     pstorage_flash_page_size()          /**< Size of one flash page. */

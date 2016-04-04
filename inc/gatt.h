@@ -35,7 +35,6 @@ typedef struct
 
 meshServiceStruct meshService;
 
-
 void gatt_initialize(void);
 void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength);
 void update_family(void);

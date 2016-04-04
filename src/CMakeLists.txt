@@ -1,14 +1,8 @@
-#set common variables
-SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_9_0)
-SET(COMPONENTS              ${SDK_BASE}/components)
-SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
+cmake_minimum_required(VERSION 3.2)
 
 # cross compiling configuration
 SET(CMAKE_SYSTEM_NAME Generic)
 include(CMakeForceCompiler)
-
-# set target hardware type
-SET(TARGET_BOARD       BOARD_PCA10028)
 
 # set compiler and paths
 CMAKE_FORCE_C_COMPILER(${DEPLOY_PATH}/gcc-arm-none-eabi/bin/arm-none-eabi-gcc GNU)

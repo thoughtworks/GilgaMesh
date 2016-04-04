@@ -4,3 +4,4 @@
 #include <boards.h>
 
 void terminal_initialize(void);
+

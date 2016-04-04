@@ -1,5 +1,4 @@
 #pragma once
-
 #include <stdbool.h>
 
 #include <ble_gap.h>
@@ -15,18 +14,17 @@ typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
 typedef struct
 {
-  bool active;
-  uint16_t handle;
-  ConnectionType type;
-  ble_gap_addr_t address;
+    bool active;
+    uint16_t handle;
+    ConnectionType type;
+    ble_gap_addr_t address;
 } connection;
 
 typedef struct
 {
-  connection central;
-  connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
+    connection central;
+    connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
-
 
 uint16_t nodeId;
 uint32_t familyId;
@@ -40,3 +38,6 @@ void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
 bool central_connection_active(void);
 bool peripheral_connections_active(void);
+uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount);
+char* get_connection_info(connection *conn, char* result);
+

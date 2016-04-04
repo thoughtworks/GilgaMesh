@@ -1,11 +1,12 @@
 #pragma once
 
+#define TRACE_BUFFER_SIZE 500
+
 #include <stdint.h>
 #include <stdbool.h>
 //TODO: we need to take this out later!!!!!
 #include <stdio.h>
 
-#define TRACE_BUFFER_SIZE 500
 
 #ifdef _MSC_VER
 #include <string.h>

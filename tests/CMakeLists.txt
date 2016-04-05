@@ -18,6 +18,10 @@ endmacro(GEN_OUTPUTS)
 SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF51 -DDEST_BOARD_ID=0 -DTESTING -DNO_LOG_OUTPUT -std=c11 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
 SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
 
+# include cmocka test framework
+include_directories(${DEPLOY_PATH}/cmocka/include)
+link_directories(${DEPLOY_PATH}/cmocka/lib)
+
 # production code headers
 include_directories(${INC_PATH})
 include_directories(${INC_PATH}/nrf)

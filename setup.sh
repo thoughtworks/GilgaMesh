@@ -9,7 +9,7 @@ GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi
 CMOCKA=deploy/cmocka
 
 function reset-workspace {
-    rm -fr $DEPLOY_RESOURCES/jlink $SDK $DEPLOY_RESOURCES/softdevice $DEPLOY_RESOURCES/EHAL $GCC_ARM_TOOLCHAIN
+    rm -fr $DEPLOY_RESOURCES/jlink $SDK $DEPLOY_RESOURCES/softdevice $DEPLOY_RESOURCES/EHAL $GCC_ARM_TOOLCHAIN $CMOCKA
     exit
 }
 
@@ -51,8 +51,8 @@ fi
 # * GCC ARM Toolchain * #
 # ********************* #
 mkdir $GCC_ARM_TOOLCHAIN
-# should check checksum
-# should get the latest gcc-arm-none-eabi
+#should check checksum
+#should get the latest gcc-arm-none-eabi
 if [[ $platform == 'osx' ]]; then
 	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2
 	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_2-2015q4-20151219-mac.tar.bz2
@@ -94,21 +94,23 @@ cp $DEPLOY_RESOURCES/nrf_drv_config.h.fix $BAD_CONFIG_FILE
 # ************************* #
 # * cmocka test framework * #
 # ************************* #
-if [[ $platform == 'linux' ]]; then
-	mkdir $CMOCKA
-	wget -O $CMOCKA/cmocka-1.0.1.tar.xz https://cmocka.org/files/1.0/cmocka-1.0.1.tar.xz
-	tar -C $CMOCKA -xvf $CMOCKA/cmocka-1.0.1.tar.xz
-	mv $CMOCKA/cmocka-1.0.1/* $CMOCKA
-	mv $CMOCKA/cmocka-1.0.1/.[!.]* $CMOCKA
-	rmdir $CMOCKA/cmocka-1.0.1
-	rm $CMOCKA/cmocka-1.0.1.tar.xz
-	mkdir $CMOCKA/build
-	cd $CMOCKA/build
-	cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug ..
-	make
-	echo 'Installing cmocka test framework libraries under /usr/lib'
-	sudo make install
-	cd -
+mkdir $CMOCKA
+wget -O $CMOCKA/cmocka-1.0.1.tar.xz https://cmocka.org/files/1.0/cmocka-1.0.1.tar.xz
+tar -C $CMOCKA -xvf $CMOCKA/cmocka-1.0.1.tar.xz
+mv $CMOCKA/cmocka-1.0.1/* $CMOCKA
+mv $CMOCKA/cmocka-1.0.1/.[!.]* $CMOCKA
+rmdir $CMOCKA/cmocka-1.0.1
+rm $CMOCKA/cmocka-1.0.1.tar.xz
+mkdir $CMOCKA/build
+cd $CMOCKA/build
+cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
+make
+make install
+cd -
+if [[ $platform == 'osx' ]]; then
+	ln -s `pwd`/_build/tests/libcmocka.0.dylib $CMOCKA/lib/libcmocka.0.dylib
+elif [[ $platform == 'linux' ]]; then
+	ln -s `pwd`/_build/tests/libcmocka.so.0 $CMOCKA/lib/libcmocka.so.0
 fi
 
 ### BELOW DOES NOT YET WORK ###

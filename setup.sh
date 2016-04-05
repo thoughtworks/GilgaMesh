@@ -107,10 +107,11 @@ cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
 make
 make install
 cd -
+	echo 'Installing cmocka library under /usr/local/lib'
 if [[ $platform == 'osx' ]]; then
-	ln -s `pwd`/_build/tests/libcmocka.0.dylib $CMOCKA/lib/libcmocka.0.dylib
+	sudo cp `pwd`/_build/tests/libcmocka.0.dylib /usr/local/lib/libcmocka.0.dylib
 elif [[ $platform == 'linux' ]]; then
-	ln -s `pwd`/_build/tests/libcmocka.so.0 $CMOCKA/lib/libcmocka.so.0
+	sudo cp `pwd`/_build/tests/libcmocka.so.0 /usr/local/lib/libcmocka.so.0
 fi
 
 ### BELOW DOES NOT YET WORK ###

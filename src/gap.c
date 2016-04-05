@@ -60,7 +60,7 @@ void ble_initialize(void){
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, MESH_NAME_SIZE));
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, MESH_NAME_SIZE + 1));
 
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
@@ -70,16 +70,24 @@ void ble_initialize(void){
 
 void start_advertising(void)
 {
-  advertisingData adv_data;
-  adv_data.length = sizeof(adv_data) - 1;
-  adv_data.typeDefinition = BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA;
-  adv_data.familyId = familyId;
-  memcpy(adv_data.meshName, MESH_NAME, MESH_NAME_SIZE);
+  advertisingMeshData meshData;
+  meshData.length = sizeof(meshData) - 1;
+  meshData.typeDefinition = BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA;
+  meshData.familyId = familyId;
+  memcpy(meshData.meshName, MESH_NAME, MESH_NAME_SIZE + 1);
 
-  EC(sd_ble_gap_adv_data_set((const uint8_t *)&adv_data, sizeof(adv_data), 0, 0));
+  advertisingDeviceData deviceData;
+  deviceData.length = sizeof(deviceData) - 1;
+  deviceData.typeDefinition = BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME;
+  memcpy(deviceData.deviceName, nodeName, NODE_NAME_SIZE + 1);
+
+  advertisingData advData;
+  advData.meshData = meshData;
+  advData.deviceData = deviceData;
+
+  EC(sd_ble_gap_adv_data_set((const uint8_t *)&advData, sizeof(meshData) + sizeof(deviceData), 0, 0));
 
   EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
-
   log("Advertising started");
 }
 
@@ -95,12 +103,12 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
 {
   advertisingData* adv_data = (advertisingData *)adv_report->data;
 
-  if (adv_report->dlen != sizeof(advertisingData)) return false;
-  if (adv_data->typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
-  if (strncmp(adv_data->meshName, MESH_NAME, MESH_NAME_SIZE) != 0) return false;
-  if (adv_data->familyId == familyId) return false;
+  if (adv_report->dlen != (sizeof(advertisingMeshData) + sizeof(advertisingDeviceData))) return false;
+  if (adv_data->meshData.typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
+  if (strncmp(adv_data->meshData.meshName, MESH_NAME, MESH_NAME_SIZE + 1) != 0) return false;
+  if (adv_data->meshData.familyId == familyId) return false;
 
-  log("Connecting to node with familyId %u", adv_data->familyId);
+  log("Connecting to node with familyId %u, device name %s", adv_data->meshData.familyId, adv_data->deviceData.deviceName);
   return true;
 }
 

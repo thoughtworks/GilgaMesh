@@ -10,6 +10,7 @@
 #define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3
 #define ATTR_MAX_CONNECTIONS           ATTR_MAX_CENTRAL_CONNS + ATTR_MAX_PERIPHERAL_CONNS
+#define NODE_NAME_SIZE                 7
 
 typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
@@ -27,6 +28,7 @@ typedef struct
     connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
 
+uint8_t *nodeName;
 uint32_t familyId;
 connections *activeConnections;
 

@@ -4,16 +4,36 @@
 void connections_initialize()
 {
   familyId = generate_family_id();
+  set_node_name();
   activeConnections = calloc(1, sizeof(connections));
 
-  log("FamilyId: %u", familyId);
+  log("FamilyId: %u, NodeName: %s", familyId, nodeName);
 }
+
+
+void set_node_name()
+{
+  static char hex_chars[] = "0123456789ABCDEF";
+  char buf[NODE_NAME_SIZE + 1] = "VB-0000";
+
+  uint32_t device_id = NRF_FICR->DEVICEID[1];
+
+  for (uint8_t i = 1; i <= 4; i++){
+	  buf[NODE_NAME_SIZE - i] = hex_chars[device_id & 0xf];
+    device_id >>= 4;
+  }
+
+  nodeName = malloc(NODE_NAME_SIZE + 1);
+  memcpy(nodeName, buf, NODE_NAME_SIZE + 1);
+}
+
 
 uint32_t generate_family_id()
 {
   uint16_t nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
   return ((uint32_t)nodeId) << 16;
 }
+
 
 void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
 {

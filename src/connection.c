@@ -1,5 +1,13 @@
 #include <connection.h>
 
+static inline uint32_t get_device_id() {
+  // define out direct device memory access when testing
+  #ifdef TESTING
+    return 0xDEADBEEF; // arbitrary device id for tests
+  #else
+    return NRF_FICR->DEVICEID[1];
+  #endif
+}
 
 void connections_initialize()
 {
@@ -16,7 +24,7 @@ void set_node_name()
   static char hex_chars[] = "0123456789ABCDEF";
   char buf[NODE_NAME_SIZE + 1] = "VB-0000";
 
-  uint32_t device_id = NRF_FICR->DEVICEID[1];
+  uint32_t device_id = get_device_id();
 
   for (uint8_t i = 1; i <= 4; i++){
 	  buf[NODE_NAME_SIZE - i] = hex_chars[device_id & 0xf];
@@ -30,7 +38,7 @@ void set_node_name()
 
 uint32_t generate_family_id()
 {
-  uint16_t nodeId = (uint16_t) NRF_FICR->DEVICEID[1] % 15000 + 1;
+  uint16_t nodeId = (uint16_t) get_device_id() % 15000 + 1;
   return ((uint32_t)nodeId) << 16;
 }
 

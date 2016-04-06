@@ -72,6 +72,7 @@ add_executable(ConnectionTest ${TestFramework_SOURCES}
     mocks/logger_mock.c
     mocks/led_mock.c
     mocks/gatt_mock.c
+    mocks/conversion_mock.c
     ${SRC_PATH}/connection.c
     unit/ConnectionTest.c)
 target_link_libraries(ConnectionTest cmocka)

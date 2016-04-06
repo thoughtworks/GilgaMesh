@@ -1,9 +1,11 @@
 #pragma once
+
 #include <stdbool.h>
 
 #include <ble_gap.h>
 #include <nrf_soc.h>
 
+#include <conversion.h>
 #include <logger.h>
 #include <led.h>
 

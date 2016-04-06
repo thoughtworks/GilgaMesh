@@ -135,31 +135,6 @@ ConnectionType unset_connection(uint16_t connectionHandle)
 }
 
 
-#define INT_DIGITS 19/* enough for 64 bit integer */
-
-char *itoa(uint16_t i)
-{
-  /* Room for INT_DIGITS digits, - and '\0' */
-  static char buf[INT_DIGITS + 2];
-  char *p = buf + INT_DIGITS + 1;/* points to terminating '\0' */
-  if (i >= 0) {
-    do {
-      *--p = '0' + (i % 10);
-      i /= 10;
-    } while (i != 0);
-    return p;
-  }
-  else {/* i < 0 */
-    do {
-      *--p = '0' - (i % 10);
-      i /= 10;
-    } while (i != 0);
-    *--p = '-';
-  }
-  return p;
-}
-
-
 char* get_connection_type_name(connection *conn)
 {
   switch (conn->type)
@@ -181,10 +156,10 @@ char* get_connection_info(connection *conn, char* result)
     strcpy(result, "\n\r   [");
     strcat(result, get_connection_type_name(conn));
     strcat(result, "] [");
-    strcat(result, itoa(conn->handle));
+    strcat(result, int_to_string(conn->handle));
     strcat(result, "]");
     for (int i = 0; i < 6; i++){
-      strcat(strcat(result, " "), itoa((uint16_t)*addr+i));
+      strcat(strcat(result, " "), int_to_string((uint16_t)*addr+i));
     }
     strcat(result, "\0");
   } else {

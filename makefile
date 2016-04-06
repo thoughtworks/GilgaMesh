@@ -71,6 +71,7 @@ C_SOURCE_FILES += $(COMPONENTS)/drivers_nrf/pstorage/pstorage.c
 C_SOURCE_FILES += $(COMPONENTS)/softdevice/common/softdevice_handler/softdevice_handler.c
 C_SOURCE_FILES += ./src/nrf/simple_uart.c
 C_SOURCE_FILES += ./src/connection.c
+C_SOURCE_FILES += ./src/conversion.c
 C_SOURCE_FILES += ./src/gap.c
 C_SOURCE_FILES += ./src/gatt.c
 C_SOURCE_FILES += ./src/led.c

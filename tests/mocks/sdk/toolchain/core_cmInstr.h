@@ -1,3 +1,6 @@
+#include "cmocka_includes.h"
+#include "logger.h"
+
 /**************************************************************************//**
  * @file     core_cmInstr.h
  * @brief    CMSIS Cortex-M Core Instruction Access Header File
@@ -324,7 +327,7 @@ __attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int32_t __REVSH(in
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __NOP(void)
 {
-  __ASM volatile ("nop");
+//  __ASM volatile ("nop");
 }
 
 
@@ -335,7 +338,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __NOP(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __WFI(void)
 {
-  __ASM volatile ("wfi");
+//  __ASM volatile ("wfi");
+  log("ARM CALL: Wait for interrupt");
 }
 
 
@@ -346,7 +350,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __WFI(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __WFE(void)
 {
-  __ASM volatile ("wfe");
+//  __ASM volatile ("wfe");
+  log("ARM CALL: Wait for event");
 }
 
 
@@ -356,7 +361,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __WFE(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __SEV(void)
 {
-  __ASM volatile ("sev");
+//  __ASM volatile ("sev");
+  log("ARM CALL: Send event");
 }
 
 
@@ -368,7 +374,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __SEV(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __ISB(void)
 {
-  __ASM volatile ("isb");
+//  __ASM volatile ("isb");
+  log("ARM CALL: Instruction sync barrier");
 }
 
 
@@ -379,7 +386,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __ISB(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __DSB(void)
 {
-  __ASM volatile ("dsb");
+//  __ASM volatile ("dsb");
+  log("ARM CALL: Data sync barrier");
 }
 
 
@@ -390,7 +398,8 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __DSB(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __DMB(void)
 {
-  __ASM volatile ("dmb");
+//  __ASM volatile ("dmb");
+  log("ARM CALL: Data memory barrier");
 }
 
 
@@ -425,8 +434,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __REV16(uint32_t val
 {
   uint32_t result;
 
-  __ASM volatile ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
-  return(result);
+  //__ASM volatile ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+
+  return(__builtin_bswap16(value));
 }
 
 

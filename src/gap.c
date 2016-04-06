@@ -205,7 +205,7 @@ void setFamilyID(ble_evt_t * bleEvent) {
 }
 
 
-extern ble_gatts_char_handles_t characteristicHandles;
+ble_gatts_char_handles_t characteristicHandles;
 
 void handle_write_event(ble_evt_t * bleEvent)
 {

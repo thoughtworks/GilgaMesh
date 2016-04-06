@@ -117,8 +117,6 @@ uint32_t sd_ble_gap_adv_start(ble_gap_adv_params_t const * const p_adv_params)
    return mock_type(uint32_t);
 }
 
-uint32_t sd_power_dcdc_mode_set(nrf_power_dcdc_mode_t dcdc_mode) { return mock_type(uint32_t); }
-uint32_t sd_power_mode_set(nrf_power_mode_t power_mode) { return mock_type(uint32_t); }
 uint32_t sd_ble_gap_device_name_set(ble_gap_conn_sec_mode_t const *p_write_perm, uint8_t const *p_dev_name, uint16_t len ) { return mock_type(uint32_t); }
 uint32_t sd_ble_gap_appearance_set(uint16_t appearance) { return mock_type(uint32_t); }
 uint32_t sd_ble_gap_ppcp_set(ble_gap_conn_params_t const *p_conn_params) { return mock_type(uint32_t); }

@@ -42,6 +42,7 @@ include_directories(mocks)
 list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gap_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gatts_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk/s130/ble_gattc_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk/s130/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk/softdevice_handler_mock.c")
 
 ###############################################################################################

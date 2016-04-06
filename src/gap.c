@@ -216,6 +216,18 @@ void setFamilyID(ble_evt_t * bleEvent) {
 }
 
 
+void restartForDFU()
+{
+  log("StartDFU");
+  BleMessageStartDFURsp result;
+  result.result.errorCode = 0;
+  // Now the device will reboot to bootloader
+  sd_power_gpregret_clr(0xFF);
+  sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
+  NVIC_SystemReset();
+}
+
+
 ble_gatts_char_handles_t characteristicHandles;
 
 void handle_write_event(ble_evt_t * bleEvent)
@@ -250,24 +262,17 @@ void handle_write_event(ble_evt_t * bleEvent)
   	  result.versionSub = APP_VERSION_SUB;
   	  log("QueryVersion with result:%d,%d;session:%d", result.result.errorCode, result.versionMain, head->sessionID);
 
-  	  write_rsp(connectionHandle, &result, sizeof(result));
+      write_rsp(connectionHandle, (uint8_t *)&result, sizeof(result));
     }
   	  break;
-    case StartDFU: { // reboot the device into dfu mode
-  	  log("StartDFU");
-  	  BleMessageStartDFURsp result;
-  	  result.result.errorCode = 0;
-      // Now the device will reboot to bootloader
-  	  sd_power_gpregret_clr(0xFF);
-  	  sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
-  	  NVIC_SystemReset();
-    }
+    case StartDFU:  // reboot the device into dfu mode
+      restartForDFU();
   	  break;
     case SetFamilyID:
     	setFamilyID(bleEvent);
     	break;
     default:
-  	  log("unknown message type:%d", head->messageType);
+      log("unknown message type: %d", head->messageType);
   	  break;
     }
 }

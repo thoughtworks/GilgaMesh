@@ -10,6 +10,7 @@
 #include <ble.h>
 #include <ble_gap.h>
 #include <ble_hci.h>
+#include <pstorage_platform.h>
 
 #include <gatt.h>
 #include <logger.h>

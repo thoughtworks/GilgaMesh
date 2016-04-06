@@ -1,9 +1,8 @@
 #pragma once
 
 typedef enum {
-	QueryVersion = 0,
-	StartDFU = 1,
-	SetFamilyID = 2
+	SetFamilyID = 0,
+	StartDFU = 1
 } BleMessageType;
 
 // This is a message head.all request message struct must declare this head first.

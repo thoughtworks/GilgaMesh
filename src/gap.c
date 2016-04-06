@@ -239,8 +239,8 @@ void handle_write_event(ble_evt_t * bleEvent)
   char ps[7];
   memset(ps, 0, 7);
   memcpy(ps, head->password, 6);
-  log("connect handle:%d;password:%s；op:%d;charUUID:%d", connectionHandle, ps,
-		  bleEvent->evt.gatts_evt.params.write.op, characteristicHandles.value_handle);
+  log("connect handle: %d；op: %d; charUUID: %d; password: %s", connectionHandle,
+		  bleEvent->evt.gatts_evt.params.write.op, characteristicHandles.value_handle, ps);
 
   // check password
   //  if (head->password) {
@@ -252,19 +252,6 @@ void handle_write_event(ble_evt_t * bleEvent)
   //  }
 
   switch (head->messageType) {
-    case QueryVersion: { // should return the version of current application.now it is test code
-  	  static uint8_t verErrorCode = 1;
-  	  BleMessageQueryVersionRsp result;
-  	  result.result.errorCode = 0;
-  	  result.result.sessionID = head->sessionID;
-  	  verErrorCode++;
-  	  result.versionMain = APP_VERSION_MAIN;
-  	  result.versionSub = APP_VERSION_SUB;
-  	  log("QueryVersion with result:%d,%d;session:%d", result.result.errorCode, result.versionMain, head->sessionID);
-
-      write_rsp(connectionHandle, (uint8_t *)&result, sizeof(result));
-    }
-  	  break;
     case StartDFU:  // reboot the device into dfu mode
       restartForDFU();
   	  break;

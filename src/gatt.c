@@ -10,12 +10,10 @@ void gatt_initialize()
 
   ble_uuid128_t baseUUID128 = { FOO_SERVICE_UUID };
 
-  log("GATT: Adding our UUID");
   EC(sd_ble_uuid_vs_add(&baseUUID128, &serviceUUID.type));
 
   uint16_t serviceHandle = 0;
 
-  log("GATT: Adding a service");
   EC(sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &serviceUUID, &serviceHandle));
 
   ble_gatts_attr_md_t characteristicConfigurationDescriptor;
@@ -59,7 +57,6 @@ void gatt_initialize()
 
   memset(&characteristicHandles, 0, sizeof(characteristicHandles));
 
-  log("GATT: Adding a characteristic");
   EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
 }
 
@@ -75,23 +72,6 @@ void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
   writeParams.p_value = data;
 
   EC(sd_ble_gattc_write(connectionHandle, &writeParams));
-}
-
-
-void write_rsp(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
-{
-	log("GATT: sd_ble_gatts_value_set");
-	ble_gatts_value_t gatts_value;
-
-	// Initialize value struct.
-	memset(&gatts_value, 0, sizeof(gatts_value));
-
-	gatts_value.len     = dataLength;
-	gatts_value.offset  = 0;
-	gatts_value.p_value = data;
-
-	// Update database
-	EC(sd_ble_gatts_value_set(connectionHandle, characteristicHandles.value_handle, &gatts_value));
 }
 
 

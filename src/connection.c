@@ -22,17 +22,17 @@ void connections_initialize()
 void set_node_name()
 {
   static char hex_chars[] = "0123456789ABCDEF";
-  char buf[NODE_NAME_SIZE + 1] = "VB-0000";
+  char buf[NODE_NAME_SIZE] = "VB-0000";
 
   uint32_t device_id = get_device_id();
 
-  for (uint8_t i = 1; i <= 4; i++){
+  for (uint8_t i = 2; i <= 5; i++){
 	  buf[NODE_NAME_SIZE - i] = hex_chars[device_id & 0xf];
     device_id >>= 4;
   }
 
-  nodeName = malloc(NODE_NAME_SIZE + 1);
-  memcpy(nodeName, buf, NODE_NAME_SIZE + 1);
+  nodeName = malloc(NODE_NAME_SIZE);
+  memcpy(nodeName, buf, NODE_NAME_SIZE);
 }
 
 

@@ -59,7 +59,7 @@ void ble_initialize(void){
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (uint8_t*)MESH_NAME, MESH_NAME_SIZE + 1));
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, nodeName, NODE_NAME_SIZE));
 
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
@@ -78,7 +78,7 @@ void start_advertising(void)
   advertisingDeviceData deviceData;
   deviceData.length = sizeof(deviceData) - 1;
   deviceData.typeDefinition = BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME;
-  memcpy(deviceData.deviceName, nodeName, NODE_NAME_SIZE + 1);
+  memcpy(deviceData.deviceName, nodeName, NODE_NAME_SIZE);
 
   advertisingData advData;
   advData.meshData = meshData;

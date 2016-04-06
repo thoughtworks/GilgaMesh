@@ -38,7 +38,7 @@ typedef struct
 {
     uint8_t length;
     uint8_t typeDefinition;
-    uint8_t deviceName[NODE_NAME_SIZE + 1];
+    uint8_t deviceName[NODE_NAME_SIZE];
 } advertisingDeviceData;
 
 typedef struct
@@ -56,11 +56,8 @@ static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;
 static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 
 void ble_initialize(void);
-
 void start_advertising(void);
 void stop_advertising(void);
-
 void start_scanning(void);
 void stop_scanning(void);
-
 void handle_gap_event(ble_evt_t * bleEvent);

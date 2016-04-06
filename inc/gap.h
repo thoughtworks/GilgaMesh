@@ -17,8 +17,7 @@
 #include <error.h>
 #include <version.h>
 
-#define MESH_NAME                      "MeshyMesh"
-#define MESH_NAME_SIZE                 9
+#define MANUFACTURER_ID                0xC0DE
 #define ATTR_MESH_CONNECTION_INTERVAL  MSEC_TO_UNITS(100, UNIT_1_25_MS)
 #define ATTR_MESH_CONNECTION_TIMEOUT   MSEC_TO_UNITS(500, UNIT_10_MS)
 #define ATTR_MESH_SCANNING_INTERVAL    MSEC_TO_UNITS(100, UNIT_0_625_MS)
@@ -28,24 +27,39 @@
 
 typedef struct
 {
-    uint8_t length;
-    uint8_t typeDefinition;
-    uint8_t meshName[MESH_NAME_SIZE + 1];
-    uint32_t familyId;
-} advertisingMeshData;
+  uint8_t length;
+  uint8_t typeDefinition;
+  uint16_t manufacturerId;
+  uint8_t majorVersion;
+  uint8_t minorVersion;
+  uint32_t familyId;
+}__attribute__ ((packed)) advertisingManufacturerData;
 
 typedef struct
 {
-    uint8_t length;
-    uint8_t typeDefinition;
-    uint8_t deviceName[NODE_NAME_SIZE];
-} advertisingDeviceData;
+  uint8_t length;
+  uint8_t typeDefinition;
+  uint8_t deviceName[NODE_NAME_SIZE];
+}__attribute__ ((packed)) advertisingDeviceData;
 
 typedef struct
 {
-    advertisingMeshData meshData;
-    advertisingDeviceData deviceData;
-} advertisingData;
+  uint8_t length;
+  uint8_t typeDefinition;
+  uint8_t serviceUUID[16];
+}__attribute__ ((packed)) advertisingServiceData;
+
+typedef struct
+{
+  advertisingManufacturerData manufacturerData;
+  advertisingDeviceData deviceData;
+}__attribute__ ((packed)) advertisingData;
+
+typedef struct
+{
+  advertisingServiceData serviceData;
+}__attribute__ ((packed)) scanResponseData;
+
 
 extern const ble_gap_conn_params_t meshConnectionParams;
 extern const ble_gap_adv_params_t meshAdvertisingParams;

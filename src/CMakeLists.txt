@@ -115,6 +115,7 @@ list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/softdevice/common/softdevice_handle
 
 # add project sources
 list(APPEND MeshyMesh_SOURCES "nrf/simple_uart.c")
+list(APPEND MeshyMesh_SOURCES "pn532.c")
 list(APPEND MeshyMesh_SOURCES "connection.c")
 list(APPEND MeshyMesh_SOURCES "gap.c")
 list(APPEND MeshyMesh_SOURCES "gatt.c")

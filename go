@@ -41,7 +41,7 @@ function deploy-to-many {
 }
 
 function deploy-to-device-i-choose {
-    $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
+    $JLINK deploy/single-mesh-only-deploy.jlink
 }
 
 function size {

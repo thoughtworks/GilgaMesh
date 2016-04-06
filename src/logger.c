@@ -6,6 +6,7 @@
 #include <pstorage.h>
 #include <stdarg.h>
 #include <app_timer.h>
+#include <string.h>
 
 
 char mhTraceBuffer[TRACE_BUFFER_SIZE] = { 0 };

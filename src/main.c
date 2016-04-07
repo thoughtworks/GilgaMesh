@@ -25,7 +25,7 @@ int main(void)
   while (true)
   {
     uint32_t error_code = NRF_ERROR_NOT_FOUND;
-    //***** Terminal::PollUART();
+    terminal_process_input();
 
     sizeOfCurrentEvent = sizeOfEvent;
     error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);

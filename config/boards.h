@@ -12,8 +12,6 @@
 #ifndef BOARDS_H
 #define BOARDS_H
 
-#ifndef TESTING
-
 #include "nrf_gpio.h"
 
 #if defined(BOARD_NRF6310)
@@ -42,6 +40,7 @@
   #include "seeed.h"
 #else
 #error "Board is not defined"
+
 #endif
 
 #define LEDS_OFF(leds_mask) do {  NRF_GPIO->OUTSET = (leds_mask) & (LEDS_MASK & LEDS_INV_MASK); \
@@ -62,5 +61,3 @@
                                           nrf_gpio_cfg_output(pin); } while (0)
 
 #endif
-
-#endif // !TESTING

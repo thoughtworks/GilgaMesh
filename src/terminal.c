@@ -22,3 +22,8 @@ void terminal_initialize(void)
   simple_uart_putstring((const uint8_t*) dfu_device_name_with_id());
   simple_uart_putstring((const uint8_t*) "\r\n--------------------------------------------------\r\n");
 }
+
+void terminal_process_input(void)
+{
+
+}

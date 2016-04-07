@@ -78,6 +78,12 @@ add_executable(ConnectionTest ${TestFramework_SOURCES}
 target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
+add_executable(ConversionTest ${TestFramework_SOURCES}
+        ${SRC_PATH}/conversion.c
+        unit/ConversionTest.c)
+target_link_libraries(ConversionTest cmocka)
+GEN_OUTPUTS(ConversionTest)
+
 add_executable(TerminalTest ${TestFramework_SOURCES}
     mocks/dfu_mock.c
     mocks/simple_uart_mock.c

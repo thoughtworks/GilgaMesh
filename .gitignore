@@ -7,3 +7,4 @@ deploy/sdk/
 deploy/softdevice/
 deploy/EHAL/
 deploy/cmocka/
+_build/

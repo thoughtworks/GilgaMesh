@@ -18,17 +18,6 @@ typedef struct {
 	uint8_t errorCode;
 }__attribute__ ((packed))  BleMessageResult;
 
-// Query Version Message
-typedef struct {
-	BleMessageHead head;
-}__attribute__ ((packed))  BleMessageQueryVersionReq;
-
-typedef struct {
-	BleMessageResult result;
-	uint8_t versionMain;
-	uint8_t versionSub;
-}__attribute__ ((packed))  BleMessageQueryVersionRsp;
-
 // DFU Update Message
 typedef struct {
 	BleMessageHead head;

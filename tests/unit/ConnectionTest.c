@@ -2,7 +2,6 @@
 #include "cmocka_includes.h"
 #include "connection.h"
 
-// This is a dummy test
 static void CreateCentralConnection(void **state) {
    (void) state; // unused
 

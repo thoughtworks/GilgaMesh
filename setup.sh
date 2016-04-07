@@ -113,13 +113,3 @@ if [[ $platform == 'osx' ]]; then
 elif [[ $platform == 'linux' ]]; then
 	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.so.0.3.1 /usr/local/lib/libcmocka.so.0
 fi
-
-### BELOW DOES NOT YET WORK ###
-
-#? necessary?
-#cp deploy/nrf_svc.h.fix $DEPLOY_RESOURCES/sdk/nrf_sdk_9_0/components/softdevice/s130/headers/nrf_svc.h
-#wget -O sdk/nRF52_SDK_0.9.2_dbc28c9.zip https://developer.nordicsemi.com/nRF52_SDK/nRF52_SDK_v0.x.x/nRF52_SDK_0.9.2_dbc28c9.zip
-#unzip sdk/nRF52_SDK_0.9.2_dbc28c9.zip -d sdk/nrf52_sdk_0_9_1
-#ln -s ehal_2015_09_08 nrf/sdk/ehal_latest
-#ln -s ../../arm_cmsis_4_3/CMSIS nrf/sdk/ehal_latest/ARM/CMSIS
-#files/Makefile.posix nrf/sdk/nrf_sdk_9_0/components/toolchain/gcc/Makefile.posix

@@ -1,4 +1,3 @@
-#include <nrf/simple_uart.h>
 #include "pn532.h"
 
 bool first_response_received = false;

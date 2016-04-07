@@ -9,6 +9,7 @@
 #include "nrf.h"
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
+#include "simple_uart.h"
 
 #include "led.h"
 

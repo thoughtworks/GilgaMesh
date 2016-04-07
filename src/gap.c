@@ -67,8 +67,7 @@ void ble_initialize(void){
 }
 
 
-void start_advertising(void)
-{
+void set_advertising_data() {
   advertisingManufacturerData manufacturerData;
   manufacturerData.length = sizeof(manufacturerData) - 1;
   manufacturerData.typeDefinition = BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA;
@@ -96,16 +95,14 @@ void start_advertising(void)
   scanData.serviceData = serviceData;
 
   EC(sd_ble_gap_adv_data_set((const uint8_t *)&advData, sizeof(advData), (const uint8_t *)&scanData, sizeof(scanData)));
-
-  EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
-  log("Advertising started");
 }
 
 
-void stop_advertising(void)
+void start_advertising(void)
 {
-  EC(sd_ble_gap_adv_stop());
-  log("Advertising stopped");
+  set_advertising_data();
+  EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
+  log("Advertising started");
 }
 
 
@@ -130,21 +127,12 @@ void start_scanning(void)
 }
 
 
-void stop_scanning(void)
-{
-  EC(sd_ble_gap_scan_stop());
-  log("Scanning stopped");
-}
-
-
 void update_family_id(uint32_t newFamilyId)
 {
-  if (!central_connection_active()) stop_advertising();
-
   familyId = newFamilyId;
   log("Updated family id to %u", familyId);
 
-  if (!central_connection_active()) start_advertising();
+  set_advertising_data();
 }
 
 

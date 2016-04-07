@@ -12,15 +12,7 @@ void start_advertising(void) {
 
 }
 
-void stop_advertising(void) {
-
-}
-
 void start_scanning(void) {
-
-}
-
-void stop_scanning(void) {
 
 }
 

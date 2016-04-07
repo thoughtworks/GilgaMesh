@@ -111,7 +111,7 @@ cd -
 if [[ $platform == 'osx' ]]; then
 	sudo cp `pwd`/_build/tests/libcmocka.0.dylib /usr/local/lib/libcmocka.0.dylib
 elif [[ $platform == 'linux' ]]; then
-	sudo cp `pwd`/_build/tests/libcmocka.so.0 /usr/local/lib/libcmocka.so.0
+	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.so.0.3.1 /usr/local/lib/libcmocka.so.0
 fi
 
 ### BELOW DOES NOT YET WORK ###

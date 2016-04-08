@@ -12,7 +12,11 @@ SET(COMPONENTS              ${SDK_BASE}/components)
 SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 
 # set target hardware type
-SET(TARGET_BOARD       BOARD_PCA10028)
+if(IS_PROD_BOARD)
+    SET(TARGET_BOARD       BOARD_SEEED)
+else()
+    SET(TARGET_BOARD       BOARD_PCA10028)
+endif()
 
 project(MeshyMesh)
 

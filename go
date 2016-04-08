@@ -41,7 +41,7 @@ function deploy-to-many {
 }
 
 function deploy-to-device-i-choose {
-    $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
+    $JLINK deploy/single-mesh-only-deploy.jlink
 }
 
 function size {
@@ -93,6 +93,7 @@ function helptext {
     echo "Usage: BOARD=TYPE ./go <command>"
     echo ""
     echo "Available commands are:"
+    echo "    ut                Run all unit tests"
     echo "    c                 Compile current code"
     echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
     echo "    cd1               Compile and deploy current code to one device"
@@ -110,7 +111,19 @@ function helptext {
     echo "    PCA10028(default) PCA10031 PCA10036 BLE400"
 }
 
+function run-tests {
+    cd _build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=True ..
+    cd -
+    _build/tests/ConnectionTest
+    _build/tests/GapTest
+    _build/tests/GattTest
+    _build/tests/Pn532Test
+}
+
 case "$1" in
+    ut) run-tests
+    ;;
     c) compile
     ;;
     cd) compile-deploy-all

@@ -1,4 +1,5 @@
 #include <main.h>
+#include <pn532.h>
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
@@ -11,6 +12,7 @@ int main(void)
   ble_initialize();
   gatt_initialize();
   timer_initialize();
+  initialize_uart();
 
   //Turn all LEDs off
   led_white_off();

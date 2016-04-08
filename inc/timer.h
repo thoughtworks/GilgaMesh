@@ -8,8 +8,9 @@
 #include <app_timer.h>
 #include <led.h>
 #include <error.h>
+#include <logger.h>
 
-#define ATTR_TIMER_TICK_MS 200
+#define ATTR_TIMER_TICK_MS 100
 #define ATTR_TIMER_COUNT 1
 #define ATTR_TIMER_QUEUE_LENGTH 1
 #define ATTR_TIMER_PRESCALER 0

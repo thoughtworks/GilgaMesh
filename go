@@ -115,10 +115,11 @@ function run-tests {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=True ..
     cd -
-    _build/tests/ConnectionTest
-    _build/tests/GapTest
-    _build/tests/GattTest
-    _build/tests/Pn532Test
+
+    for TEST in `ls _build/tests/*Test`;
+    do
+        ./$TEST
+    done
 }
 
 case "$1" in

@@ -111,6 +111,7 @@ function helptext {
 function run-tests {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=True ..
+    make
     cd -
 
     for TEST in `ls _build/tests/*Test`;
@@ -122,6 +123,7 @@ function run-tests {
 function deploy {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False ..
+    make
     cd -
 
     $JLINK deploy/deploy-meshy-swd.jlink

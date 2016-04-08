@@ -12,7 +12,7 @@ int main(void)
   ble_initialize();
   gatt_initialize();
   timer_initialize();
-  initialize_uart();
+  //initialize_uart();
 
   //Turn all LEDs off
   led_white_off();

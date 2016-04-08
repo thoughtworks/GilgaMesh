@@ -20,8 +20,8 @@ void terminal_initialize(void)
 
   simple_uart_putstring((const uint8_t*) "------------------------------------------------------\r\n");
 
-   simple_uart_putstring((const uint8_t*) "    __  __        _        __  __        _    \r\n");
-   simple_uart_putstring((const uint8_t*) "   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_  \r\n");
+   simple_uart_putstring((const uint8_t*) "    __  __        _        __  __        _\r\n");
+   simple_uart_putstring((const uint8_t*) "   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
    simple_uart_putstring((const uint8_t*) "   | |\\/| / -_|_-< ' \\ || | |\\/| / -_|_-< ' \\ \r\n");
    simple_uart_putstring((const uint8_t*) "   |_|  |_\\___/__/_||_\\_, |_|  |_\\___/__/_||_| ");
    simple_uart_putstring((const uint8_t*) "v");
@@ -29,7 +29,7 @@ void terminal_initialize(void)
    simple_uart_putstring((const uint8_t*) ".");
    simple_uart_putstring((const uint8_t*) int_to_string(APP_VERSION_SUB));
    simple_uart_putstring((const uint8_t*) "\r\n");
-   simple_uart_putstring((const uint8_t*) "                        |__/                       \r\n");
+   simple_uart_putstring((const uint8_t*) "                        |__/\r\n");
 
 
   simple_uart_putstring((const uint8_t*) "  compile date: ");
@@ -42,6 +42,11 @@ void terminal_initialize(void)
   simple_uart_putstring((const uint8_t*) "\r\n------------------------------------------------------\r\n");
 
   is_terminal_initialized = true;
+}
+
+bool terminal_initialized()
+{
+   return is_terminal_initialized;
 }
 
 static void ReadlineUART(char* readBuffer, uint8_t readBufferLength, uint8_t offset)
@@ -96,7 +101,7 @@ void terminal_process_input(void)
 {
   char readBuffer[READ_BUFFER_SIZE] = {0};
 
-  if(!is_terminal_initialized) { return; }
+   if(!is_terminal_initialized) { return; }
 
   if(simple_uart_get_with_timeout(1, (uint8_t*) readBuffer)) {
     simple_uart_put(readBuffer[0]);

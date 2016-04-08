@@ -1,4 +1,13 @@
 #include <terminal.h>
+#include <string.h>
+
+#define READ_BUFFER_SIZE 256
+#define TERMINAL_PROMPT "\r\n#> "
+static bool is_terminal_initialized = false;
+
+static void print_prompt() {
+  simple_uart_putstring((const uint8_t*) TERMINAL_PROMPT);
+}
 
 void terminal_initialize(void)
 {
@@ -21,9 +30,73 @@ void terminal_initialize(void)
   simple_uart_putstring((const uint8_t*) ", nRF51s ");
   simple_uart_putstring((const uint8_t*) dfu_device_name_with_id());
   simple_uart_putstring((const uint8_t*) "\r\n--------------------------------------------------\r\n");
+
+  is_terminal_initialized = true;
+}
+
+static void ReadlineUART(char* readBuffer, uint8_t readBufferLength, uint8_t offset)
+{
+  if (!is_terminal_initialized) return;
+
+   uint8_t byteBuffer;
+   uint8_t counter = offset;
+
+	//Read in an infinite loop until \r is recognized
+	while (true)
+	{
+		//Read from terminal
+		byteBuffer = simple_uart_get();
+
+		//BACKSPACE
+		if (byteBuffer == 127)
+		{
+			if (counter > 0)
+			{
+				//Output Backspace
+				simple_uart_put(byteBuffer);
+
+				readBuffer[counter - 1] = 0;
+				counter--;
+			}
+			//ALL OTHER CHARACTERS
+		}
+		else
+		{
+
+			//Display entered character in terminal
+			simple_uart_put(byteBuffer);
+
+			if (byteBuffer == '\r' || counter >= readBufferLength || counter >= READ_BUFFER_SIZE)
+			{
+				readBuffer[counter] = '\0';
+				simple_uart_putstring("\r\n");
+				break;
+			}
+			else
+			{
+				memcpy(readBuffer + counter, &byteBuffer, sizeof(uint8_t));
+			}
+
+			counter++;
+		}
+	}
 }
 
 void terminal_process_input(void)
 {
+  char readBuffer[READ_BUFFER_SIZE] = {0};
 
+  if(!is_terminal_initialized) { return; }
+
+  if(simple_uart_get_with_timeout(1, (uint8_t*) readBuffer)) {
+    simple_uart_put(readBuffer[0]);
+  }
+
+  //Read line from uart if input doesn't start with enter
+  if(readBuffer[0] != '\r') {
+    //ReadlineUART(readBuffer, READ_BUFFER_SIZE, 1);
+  }
+  else {
+    print_prompt();
+  }
 }

@@ -35,7 +35,7 @@ uint8_t simple_uart_get(void)
 }
 
 
-bool simple_uart_get_with_timeout(int32_t timeout_ms, uint8_t * rx_data)
+bool simple_uart_get_with_timeout(int32_t timeout_100us, uint8_t * rx_data)
 {
 	//if(disableUART) return false;
 
@@ -43,10 +43,10 @@ bool simple_uart_get_with_timeout(int32_t timeout_ms, uint8_t * rx_data)
 
     while (NRF_UART0->EVENTS_RXDRDY != 1)
     {
-        if (timeout_ms-- >= 0)
+        if (timeout_100us-- >= 0)
         {
-            // wait in 1ms chunk before checking for status.
-            nrf_delay_us(1000);
+            // wait in 100us chunk before checking for status.
+            nrf_delay_us(100);
         }
         else
         {
@@ -55,7 +55,7 @@ bool simple_uart_get_with_timeout(int32_t timeout_ms, uint8_t * rx_data)
         }
     } // Wait for RXD data to be received.
 
-    if (timeout_ms >= 0)
+    if (timeout_100us >= 0)
     {
 	disableUART = false;
         // clear the event and set rx_data with received byte.

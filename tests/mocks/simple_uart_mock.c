@@ -6,8 +6,8 @@ uint8_t simple_uart_get(void) {
 }
 
 
-bool simple_uart_get_with_timeout(int32_t timeout_ms, uint8_t *rx_data) {
-   check_expected(timeout_ms);
+bool simple_uart_get_with_timeout(int32_t timeout_100us, uint8_t *rx_data) {
+   check_expected(timeout_100us);
    check_expected(rx_data);
 
    return mock_type(bool);

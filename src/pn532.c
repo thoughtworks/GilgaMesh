@@ -347,7 +347,10 @@ void nfcEventHandler(uint8_t rx_byte) {
         case TAG_PRESENCE_UNKNOWN:
             // Handle Ack
             if (current_ack_state != ack_processed) process_ack(rx_byte);
-            if (current_ack_state == ack_error) current_nfc_state = NEEDS_RETRY;
+            if (current_ack_state == ack_error) {
+                current_nfc_state = NEEDS_RETRY;
+                led_green_on();
+            }
             if (current_ack_state == ack_processed) current_nfc_state = IN_LIST_ACK_PROCESSING;
             break;
 
@@ -449,11 +452,9 @@ void nfcEventHandler(uint8_t rx_byte) {
             if (grab_state == end_grabbing) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
                     // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
-                    // STORAGE
 
                     // node->FlashWhiteAndBuzz(3);
-
-                    // led_white_on();
+                    led_white_on();
                     // BUZZ!
 
                     current_nfc_state = ID_TAKEN;
@@ -735,6 +736,15 @@ void uart_115200_config(uint8_t txd_pin_number,
 void initialize_uart() {
     uart_115200_config(19, 20, 6, nfcEventHandler);
 }
+
+//check error with below code to see if in error for logging here :D
+//if (get_setup_state() == SETUP_DONE) {
+//if (first_response_received)
+//    current_nfc_state = TAG_PRESENCE_UNKNOWN;
+//else {
+//    led_red_on();
+//}
+//}
 
 void manage_badge_reading() {
     if (get_setup_state() != SETUP_DONE) setup();

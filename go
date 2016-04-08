@@ -10,9 +10,6 @@ GDB_ARM_MAC=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-gdb
 NUM_CPUS=${NUM_CPUS:=1}
 BOARD=${BOARD:=PCA10028}
 
-#currently not supported until tested
-#GDB_ARM_LINUX=$HOME/nrf/sdk/gcc_arm_embedded_4_9_linux/bin/arm-none-eabi-gdb
-
 function compile {
     make clean && TARGET_BOARD=BOARD_$BOARD make -j $NUM_CPUS
 }
@@ -122,12 +119,18 @@ function run-tests {
     done
 }
 
+function deploy {
+    cd _build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False ..
+    cd -
+
+    $JLINK deploy/deploy-meshy-swd.jlink
+}
+
 case "$1" in
     ut) run-tests
     ;;
-    c) compile
-    ;;
-    cd) compile-deploy-all
+    d) deploy
     ;;
     cd1) compile-deploy-one
     ;;

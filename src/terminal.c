@@ -1,7 +1,7 @@
 #include <terminal.h>
 #include <string.h>
 
-#define READ_BUFFER_SIZE 256
+#define READ_BUFFER_SIZE 128
 #define TERMINAL_PROMPT "\r\n#> "
 static bool is_terminal_initialized = false;
 
@@ -17,8 +17,6 @@ void terminal_initialize(void)
   simple_uart_putstring((const uint8_t*) "[2J"); //Clear Screen
   simple_uart_put(27);
   simple_uart_putstring((const uint8_t*) "[H"); //Cursor to Home
-
-  simple_uart_putstring((const uint8_t*) "------------------------------------------------------\r\n");
 
    simple_uart_putstring((const uint8_t*) "    __  __        _        __  __        _\r\n");
    simple_uart_putstring((const uint8_t*) "   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
@@ -73,45 +71,54 @@ static void ReadlineUART(char* readBuffer, uint8_t readBufferLength, uint8_t off
 				readBuffer[counter - 1] = 0;
 				counter--;
 			}
-			//ALL OTHER CHARACTERS
 		}
-		else
+		else //ALL OTHER CHARACTERS
 		{
+			simple_uart_put(byteBuffer); // echo the entered character
 
-			//Display entered character in terminal
-			simple_uart_put(byteBuffer);
-
-			if (byteBuffer == '\r' || counter >= readBufferLength || counter >= READ_BUFFER_SIZE)
+			if (byteBuffer == 0xD || counter >= readBufferLength || counter >= READ_BUFFER_SIZE) // if enter or out of buffer
 			{
 				readBuffer[counter] = '\0';
-				simple_uart_putstring("\r\n");
 				break;
 			}
 			else
 			{
-				memcpy(readBuffer + counter, &byteBuffer, sizeof(uint8_t));
-			}
+            readBuffer[counter] = byteBuffer;
+         }
 
 			counter++;
 		}
 	}
 }
 
+static bool read_terminal(char* readBuffer) {
+
+   if (simple_uart_get_with_timeout(1, (uint8_t *) readBuffer)) {
+      simple_uart_put(readBuffer[0]);
+   }
+
+   //Read line from uart if input doesn't start with enter
+   if (readBuffer[0] != '\r') {
+      ReadlineUART(readBuffer, READ_BUFFER_SIZE - 1, 0);
+   }
+   else {
+      return false;
+   }
+
+   return true;
+}
+
 void terminal_process_input(void)
 {
-  char readBuffer[READ_BUFFER_SIZE] = {0};
+   if (!is_terminal_initialized) { return; }
+   print_prompt();
 
-   if(!is_terminal_initialized) { return; }
+   char readBuffer[READ_BUFFER_SIZE] = {0};
 
-  if(simple_uart_get_with_timeout(1, (uint8_t*) readBuffer)) {
-    simple_uart_put(readBuffer[0]);
-  }
+   if(!read_terminal(readBuffer)) {
+      return;
+   }
 
-  //Read line from uart if input doesn't start with enter
-  if(readBuffer[0] != '\r') {
-    //ReadlineUART(readBuffer, READ_BUFFER_SIZE, 1);
-  }
-  else {
-    print_prompt();
-  }
+   simple_uart_putstring("COMMAND: ");
+   simple_uart_putstring(readBuffer);
 }

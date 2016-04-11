@@ -37,6 +37,7 @@ int main(void)
     }
 
     else if (error_code == NRF_ERROR_NOT_FOUND) {
+      //timer_tick_handler();
       EC(sd_app_evt_wait());
       EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
 

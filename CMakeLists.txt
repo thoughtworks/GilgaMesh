@@ -12,7 +12,7 @@ SET(COMPONENTS              ${SDK_BASE}/components)
 SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 
 # set target hardware type
-if(IS_PROD_BOARD)
+if(IS_PRODUCTION_BOARD)
     SET(TARGET_BOARD       BOARD_SEEED)
 else()
     SET(TARGET_BOARD       BOARD_PCA10028)

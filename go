@@ -91,6 +91,8 @@ function helptext {
     echo ""
     echo "Available commands are:"
     echo "    ut                Run all unit tests"
+    echo "    d                 Deploy to nrf51 prototype board"
+    echo "    dp                Deploy to Seeed production board"
     echo "    c                 Compile current code"
     echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
     echo "    cd1               Compile and deploy current code to one device"
@@ -129,10 +131,25 @@ function deploy {
     $JLINK deploy/deploy-meshy-swd.jlink
 }
 
+function deploy-seeed {
+    cd _build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=True ..
+    make
+    cd -
+
+    #check if file exists first
+    #mkdir /tmp/mbed
+    #mount /dev/sdb /tmp/mbed
+    #cp deploy/softdevice/s130_nrf51_1.0.0_softdevice.hex /tmp/mbed
+    #cp _build/Debug/MeshyMesh.hex /tmp/mbed
+    #umount /dev/sdb /tmp/mbed
+}
 case "$1" in
     ut) run-tests
     ;;
     d) deploy
+    ;;
+    ds) deploy-seeed
     ;;
     cd1) compile-deploy-one
     ;;

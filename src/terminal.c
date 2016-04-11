@@ -3,6 +3,8 @@
 
 #define READ_BUFFER_SIZE 128
 #define TERMINAL_PROMPT "\r\n#> "
+#define MAX_ARGUMENTS 3
+
 static bool is_terminal_initialized = false;
 
 static void print_prompt() {
@@ -92,20 +94,38 @@ static void ReadlineUART(char* readBuffer, uint8_t readBufferLength, uint8_t off
 }
 
 static bool read_terminal(char* readBuffer) {
-
-   if (simple_uart_get_with_timeout(1, (uint8_t *) readBuffer)) {
-      simple_uart_put(readBuffer[0]);
-   }
-
-   //Read line from uart if input doesn't start with enter
-   if (readBuffer[0] != '\r') {
-      ReadlineUART(readBuffer, READ_BUFFER_SIZE - 1, 0);
-   }
-   else {
-      return false;
-   }
+   ReadlineUART(readBuffer, READ_BUFFER_SIZE - 1, 0);
+   if (readBuffer[0] == NULL) { return false; } // empty command
 
    return true;
+}
+
+static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {
+   uint8_t i = 0;
+   uint8_t argumentCount = 0;
+   char *token = strtok(readBuffer, " ");
+
+   while (token != NULL && argumentCount <= MAX_ARGUMENTS) {
+      parsedCommandArray[i++] = token;
+      token = strtok(NULL, " ");
+      argumentCount++;
+   }
+
+   return argumentCount;
+}
+
+static void print_parsed_command(char** parsedCommandArray, uint8_t numberOfArgs) {
+   simple_uart_putstring("\r\nCOMMAND: ");
+   simple_uart_putstring(parsedCommandArray[0]);
+   simple_uart_putstring("\r\n");
+
+   for (int i = 1; i < numberOfArgs; ++i) {
+      simple_uart_putstring("ARG");
+      simple_uart_putstring(int_to_string(i));
+      simple_uart_putstring(": ");
+      simple_uart_putstring(parsedCommandArray[i]);
+      simple_uart_putstring("\r\n");
+   }
 }
 
 void terminal_process_input(void)
@@ -114,11 +134,13 @@ void terminal_process_input(void)
    print_prompt();
 
    char readBuffer[READ_BUFFER_SIZE] = {0};
+   char *parsedCommand[MAX_ARGUMENTS + 1]; // first element is the command
 
    if(!read_terminal(readBuffer)) {
       return;
    }
 
-   simple_uart_putstring("COMMAND: ");
-   simple_uart_putstring(readBuffer);
+   uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
+
+   print_parsed_command(parsedCommand, numberOfArguments);
 }

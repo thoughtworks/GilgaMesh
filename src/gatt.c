@@ -1,5 +1,6 @@
 #include <gatt.h>
-
+#include <string.h>
+#include <message.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -88,7 +89,25 @@ void propagate_family_id(uint16_t originHandle)
       memset(&request, 0, sizeof(request));
       request.familyID = familyId;
       request.head.messageType = SetFamilyID;
-      write_value(connectionHandles[i], (uint8_t *)&request, sizeof(request));
+      write_value(connectionHandles[i], (uint8_t *)&request, 64);
     }
   }
+}
+
+void send_broadcast_message(uint16_t connectionHandle, char* content)
+{
+  BleMessageBroadcast message;
+  memset(&message, 0, sizeof(message));
+
+  if (strlen(content) > BROADCAST_SIZE) {
+    log("ERROR: Broadcast message longer than %u characters", BROADCAST_SIZE);
+    return;
+  }
+
+  for (int i = 0 ; i < BROADCAST_SIZE ; i++) {
+    message.message[i] = content[i];
+  }
+
+  message.head.messageType = Broadcast;
+  write_value(connectionHandle, (uint8_t *)&message, sizeof(message));
 }

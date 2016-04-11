@@ -1,4 +1,6 @@
 #include <gap.h>
+#include <ble_gatts.h>
+#include <message.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -188,6 +190,19 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
   print_all_connections();
 }
 
+void receiveBroadcastMessage(ble_evt_t * bleEvent) {
+  uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+  BleMessageBroadcast *msg = (BleMessageBroadcast *) bleEvent->evt.gatts_evt.params.write.data;
+
+  char content[BROADCAST_SIZE + 1];
+  content[BROADCAST_SIZE] = 0; // append string termination
+  for (int i = 0 ; i < BROADCAST_SIZE ; i++) {
+    content[i] = msg->message[i];
+  }
+
+  log("***** RECEIVED Broadcast message: %s", content);
+}
+
 void setFamilyID(ble_evt_t * bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
@@ -246,6 +261,9 @@ void handle_write_event(ble_evt_t * bleEvent)
     case SetFamilyID:
     	setFamilyID(bleEvent);
     	break;
+    case Broadcast:
+      receiveBroadcastMessage(bleEvent);
+      break;
     default:
       log("unknown message type: %d", head->messageType);
   	  break;

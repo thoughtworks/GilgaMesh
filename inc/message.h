@@ -1,8 +1,10 @@
 #pragma once
+#define BROADCAST_SIZE 12
 
 typedef enum {
 	SetFamilyID = 0,
-	StartDFU = 1
+	StartDFU = 1,
+	Broadcast = 2
 } BleMessageType;
 
 // This is a message head.all request message struct must declare this head first.
@@ -31,3 +33,8 @@ typedef struct {
 	BleMessageHead head;
 	uint32_t familyID;
 }__attribute__ ((packed))  BleMessageSetFamilyIDReq;
+
+typedef struct {
+	BleMessageHead head;
+	uint8_t message[BROADCAST_SIZE];
+}__attribute__ ((packed)) BleMessageBroadcast;

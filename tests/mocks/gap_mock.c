@@ -20,4 +20,8 @@ void handle_gap_event(ble_evt_t * bleEvent) {
    check_expected_ptr(bleEvent);
 }
 
+void receiveBroadcastMessage(ble_evt_t * bleEvent) {
+   check_expected_ptr(bleEvent);
+}
+
 #endif

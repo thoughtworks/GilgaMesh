@@ -139,5 +139,6 @@ void terminal_process_input(void)
       uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
 
       command_execute(parsedCommand, numberOfArguments);
+      simple_uart_putstring((const uint8_t*) "\r\n");
    }
 }

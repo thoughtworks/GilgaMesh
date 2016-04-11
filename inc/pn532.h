@@ -28,7 +28,7 @@ typedef enum {
 bool id_exists_in_response(uint8_t *response, size_t response_length);
 short get_id(uint8_t *response, size_t response_length);
 void manage_badge_reading();
-void initialize_uart();
+void initialize_uart_nfc();
 setup_state_t get_setup_state();
 void setup();
 void setup_state_machine();

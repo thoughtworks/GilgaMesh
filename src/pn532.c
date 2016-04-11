@@ -733,7 +733,7 @@ void uart_115200_config(uint8_t txd_pin_number,
     NVIC_EnableIRQ(UART0_IRQn);
 }
 
-void initialize_uart() {
+void initialize_uart_nfc() {
     uart_115200_config(19, 20, 6, nfcEventHandler);
 }
 

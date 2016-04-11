@@ -7,12 +7,15 @@ int main(void)
 {
   uint32_t error_code;
 
-  terminal_initialize();
+#ifdef TIMER_DEBUG
+  initialize_uart_nfc();
+  timer_initialize();
+#endif //TIMER_DEBUG
+
+  //terminal_initialize();
   connections_initialize();
   ble_initialize();
   gatt_initialize();
-  timer_initialize();
-  //initialize_uart();
 
   //Turn all LEDs off
   led_white_off();
@@ -27,7 +30,7 @@ int main(void)
   while (true)
   {
     uint32_t error_code = NRF_ERROR_NOT_FOUND;
-    terminal_process_input();
+    //terminal_process_input();
 
     sizeOfCurrentEvent = sizeOfEvent;
     error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
@@ -37,7 +40,6 @@ int main(void)
     }
 
     else if (error_code == NRF_ERROR_NOT_FOUND) {
-      //timer_tick_handler();
       EC(sd_app_evt_wait());
       EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
 

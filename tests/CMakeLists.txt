@@ -88,6 +88,7 @@ add_executable(TerminalTest ${TestFramework_SOURCES}
     mocks/dfu_mock.c
     mocks/simple_uart_mock.c
     mocks/conversion_mock.c
+    mocks/command_mock.c
     ${SRC_PATH}/terminal.c
     unit/TerminalTest.c)
 target_link_libraries(TerminalTest cmocka)

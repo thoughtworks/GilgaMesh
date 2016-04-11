@@ -1,5 +1,6 @@
 #include <terminal.h>
 #include <string.h>
+#include "command.h"
 
 #define READ_BUFFER_SIZE 128
 #define TERMINAL_PROMPT "\r\n#> "
@@ -95,7 +96,7 @@ static void ReadlineUART(char* readBuffer, uint8_t readBufferLength, uint8_t off
 
 static bool read_terminal(char* readBuffer) {
    ReadlineUART(readBuffer, READ_BUFFER_SIZE - 1, 0);
-   if (readBuffer[0] == NULL) { return false; } // empty command
+   if (readBuffer[0] == 0) { return false; } // empty command
 
    return true;
 }
@@ -114,20 +115,6 @@ static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {
    return argumentCount;
 }
 
-static void print_parsed_command(char** parsedCommandArray, uint8_t numberOfArgs) {
-   simple_uart_putstring("\r\nCOMMAND: ");
-   simple_uart_putstring(parsedCommandArray[0]);
-   simple_uart_putstring("\r\n");
-
-   for (int i = 1; i < numberOfArgs; ++i) {
-      simple_uart_putstring("ARG");
-      simple_uart_putstring(int_to_string(i));
-      simple_uart_putstring(": ");
-      simple_uart_putstring(parsedCommandArray[i]);
-      simple_uart_putstring("\r\n");
-   }
-}
-
 void terminal_process_input(void)
 {
    if (!is_terminal_initialized) { return; }
@@ -142,5 +129,5 @@ void terminal_process_input(void)
 
    uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
 
-   print_parsed_command(parsedCommand, numberOfArguments);
+   command_execute(parsedCommand, numberOfArguments);
 }

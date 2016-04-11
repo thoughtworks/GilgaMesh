@@ -33,12 +33,28 @@ static void TerminalInitTest(void **state) {
 static void TerminalOutputsPromptOnEnter(void **state) {
    (void) state; // unused
 
+   will_return(simple_uart_get, 0xD);
 
-   simple_uart_putstring((const uint8_t*) "TEST2\n");
+   terminal_process_input();
+}
 
-   will_return(simple_uart_get_with_timeout, "\r");
-   will_return(simple_uart_get_with_timeout, true);
-   expect_value(simple_uart_get_with_timeout, timeout_100us, 1);
+static void TerminalCallsCommandHandler(void **state) {
+   (void) state; // unused
+
+   char *expectedCommand[4] = {"a", "b", "c", "d"};
+
+   will_return(simple_uart_get, 'a');
+   will_return(simple_uart_get, ' ');
+   will_return(simple_uart_get, 'b');
+   will_return(simple_uart_get, ' ');
+   will_return(simple_uart_get, 'c');
+   will_return(simple_uart_get, ' ');
+   will_return(simple_uart_get, 'd');
+   will_return(simple_uart_get, 0xD);
+
+   will_return(command_execute, 0);
+
+   expect_value(command_execute, numberOfItems, 4);
 
    terminal_process_input();
 }
@@ -50,6 +66,7 @@ int RunTerminalTest(void) {
       // list test functions here
       cmocka_unit_test(TerminalInitTest),
       cmocka_unit_test(TerminalOutputsPromptOnEnter),
+      cmocka_unit_test(TerminalCallsCommandHandler),
    };
 
    //set test suite name here

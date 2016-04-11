@@ -50,6 +50,7 @@ list(APPEND TestFramework_SOURCES "mocks/sdk/softdevice_handler_mock.c")
 
 add_executable(GapTest ${TestFramework_SOURCES}
     mocks/config/pstorage_platform_mock.c
+    mocks/dfu_mock.c
     mocks/logger_mock.c
     mocks/error_mock.c
     mocks/connection_mock.c

@@ -12,6 +12,7 @@
 #include <ble_hci.h>
 #include <pstorage_platform.h>
 
+#include <dfu.h>
 #include <gatt.h>
 #include <logger.h>
 #include <connection.h>
@@ -23,8 +24,7 @@
 #define ATTR_MESH_CONNECTION_TIMEOUT   MSEC_TO_UNITS(500, UNIT_10_MS)
 #define ATTR_MESH_SCANNING_INTERVAL    MSEC_TO_UNITS(100, UNIT_0_625_MS)
 #define ATTR_MESH_SCANNING_WINDOW      MSEC_TO_UNITS(40, UNIT_0_625_MS)
-#define ATTR_TABLE_MAX_SIZE                 0x200
-#define IS_SRVC_CHANGED_CHARACT_PRESENT     1
+#define ATTR_TABLE_MAX_SIZE            0x200
 
 typedef struct
 {

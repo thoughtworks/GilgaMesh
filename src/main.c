@@ -24,15 +24,11 @@ uint32_t initialize() {
   start_scanning();
   start_advertising();
 
-#ifdef DFU_DEBUG
-  enter_dfu();
-#endif // DFU_DEBUG
-
   return NRF_SUCCESS;
 }
 
 uint32_t run() {
-  uint32_t error_code = NRF_ERROR_NOT_FOUND;
+  uint32_t error_code;
 
 #ifndef NO_TERMINAL
   terminal_process_input();

@@ -35,10 +35,12 @@ const ble_gap_scan_params_t meshScanningParams =
   0                                    //timeout
 };
 
+
 void sys_evt_dispatch(uint32_t sys_evt)
 {
   pstorage_sys_event_handler(sys_evt);
 }
+
 
 void ble_initialize(void){
   log("Initializing Softdevice");
@@ -183,9 +185,9 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
   ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
   if (lostConnectionType == INVALID) return;
 
-  if (lostConnectionType == CENTRAL) start_advertising();
   uint32_t newFamilyId = (lostConnectionType == CENTRAL) ? generate_family_id() : (familyId + 1);
   update_and_propagate_family_id(newFamilyId, BLE_CONN_HANDLE_INVALID);
+  if (lostConnectionType == CENTRAL) start_advertising();
 
   print_all_connections();
 }
@@ -219,18 +221,6 @@ void setFamilyID(ble_evt_t * bleEvent) {
 }
 
 
-void restartForDFU()
-{
-  log("StartDFU");
-  BleMessageStartDFURsp result;
-  result.result.errorCode = 0;
-  // Now the device will reboot to bootloader
-  sd_power_gpregret_clr(0xFF);
-  sd_power_gpregret_set(0xB1);//BOOTLOADER_DFU_START);
-  NVIC_SystemReset();
-}
-
-
 ble_gatts_char_handles_t characteristicHandles;
 
 void handle_write_event(ble_evt_t * bleEvent)
@@ -256,7 +246,7 @@ void handle_write_event(ble_evt_t * bleEvent)
 
   switch (head->messageType) {
     case StartDFU:  // reboot the device into dfu mode
-      restartForDFU();
+      restart_in_bootloader_mode();
   	  break;
     case SetFamilyID:
     	setFamilyID(bleEvent);

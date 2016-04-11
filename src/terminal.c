@@ -12,14 +12,18 @@ static void print_prompt() {
   simple_uart_putstring((const uint8_t*) TERMINAL_PROMPT);
 }
 
+static void terminal_clear() {
+   simple_uart_put(27);
+   simple_uart_putstring((const uint8_t*) "[2J"); //Clear Screen
+   simple_uart_put(27);
+   simple_uart_putstring((const uint8_t*) "[H"); //Cursor to Home
+}
+
 void terminal_initialize(void)
 {
   simple_uart_config(RTS_PIN_NUMBER, TX_PIN_NUMBER, CTS_PIN_NUMBER, RX_PIN_NUMBER, HWFC);
 
-  simple_uart_put(27);
-  simple_uart_putstring((const uint8_t*) "[2J"); //Clear Screen
-  simple_uart_put(27);
-  simple_uart_putstring((const uint8_t*) "[H"); //Cursor to Home
+   terminal_clear();
 
    simple_uart_putstring((const uint8_t*) "    __  __        _        __  __        _\r\n");
    simple_uart_putstring((const uint8_t*) "   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
@@ -40,7 +44,7 @@ void terminal_initialize(void)
 
   simple_uart_putstring((const uint8_t*) ", nRF51s ");
   simple_uart_putstring((const uint8_t*) dfu_device_name_with_id());
-  simple_uart_putstring((const uint8_t*) "\r\n------------------------------------------------------\r\n");
+  simple_uart_putstring((const uint8_t*) "\r\n-----------| ESC to pause into command mode |-----------\r\n");
 
   is_terminal_initialized = true;
 }
@@ -118,16 +122,22 @@ static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {
 void terminal_process_input(void)
 {
    if (!is_terminal_initialized) { return; }
-   print_prompt();
 
-   char readBuffer[READ_BUFFER_SIZE] = {0};
-   char *parsedCommand[MAX_ARGUMENTS + 1]; // first element is the command
+   uint8_t leadingCharacter = 0;
+   simple_uart_get_with_timeout(1, &leadingCharacter);
+   if(leadingCharacter == 0x1b) { // ESC pressed
+      print_prompt();
 
-   if(!read_terminal(readBuffer)) {
-      return;
+      char readBuffer[READ_BUFFER_SIZE] = {0};
+      char *parsedCommand[MAX_ARGUMENTS + 1]; // first element is the command
+
+      if(!read_terminal(readBuffer)) { // empty command -> clear screen
+         terminal_clear();
+         return;
+      }
+
+      uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
+
+      command_execute(parsedCommand, numberOfArguments);
    }
-
-   uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
-
-   command_execute(parsedCommand, numberOfArguments);
 }

@@ -30,10 +30,14 @@ static void TerminalInitTest(void **state) {
    assert_true(terminal_initialized());
 }
 
-static void TerminalOutputsPromptOnEnter(void **state) {
+static void TerminalOutputsPromptOnESC(void **state) {
    (void) state; // unused
 
-   will_return(simple_uart_get, 0xD);
+   will_return(simple_uart_get_with_timeout, "\x1b"); // ESC to enter command mode
+   will_return(simple_uart_get_with_timeout, true);
+   expect_value(simple_uart_get_with_timeout, timeout_100us, 1);
+
+   will_return(simple_uart_get, 0xd); // ENTER
 
    terminal_process_input();
 }
@@ -41,7 +45,9 @@ static void TerminalOutputsPromptOnEnter(void **state) {
 static void TerminalCallsCommandHandler(void **state) {
    (void) state; // unused
 
-   char *expectedCommand[4] = {"a", "b", "c", "d"};
+   will_return(simple_uart_get_with_timeout, "\x1b"); // ESC to enter command mode
+   will_return(simple_uart_get_with_timeout, true);
+   expect_value(simple_uart_get_with_timeout, timeout_100us, 1);
 
    will_return(simple_uart_get, 'a');
    will_return(simple_uart_get, ' ');
@@ -65,7 +71,7 @@ int RunTerminalTest(void) {
    const struct CMUnitTest tests[] = {
       // list test functions here
       cmocka_unit_test(TerminalInitTest),
-      cmocka_unit_test(TerminalOutputsPromptOnEnter),
+      cmocka_unit_test(TerminalOutputsPromptOnESC),
       cmocka_unit_test(TerminalCallsCommandHandler),
    };
 

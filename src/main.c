@@ -51,15 +51,26 @@ uint32_t run() {
   return NRF_SUCCESS;
 }
 
+static void blink_red_blue_forever() {
+  led_white_off();
+  led_red_on();
+  while(true) {
+    led_blue_off();
+    nrf_delay_ms(100);
+    led_blue_on();
+    nrf_delay_ms(100);
+  }
+}
+
 int main(void)
 {
   uint32_t error_code = initialize();
 
   if(error_code) {
-     // TODO: Init failed, blink red led or something
+     blink_red_blue_forever(); // Init failed
   }
   else {
     while (!run()) { }
-    // TODO: Run failed
+    blink_red_blue_forever(); // Run failed
   }
 }

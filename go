@@ -29,7 +29,6 @@ function compile-deploy-one-swd {
     echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy-swd.jlink
 }
 
-
 function deploy-to-many {
     NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l) - 1`
     for i in $(seq 0 $NUMBER_OF_DEVICES); do
@@ -55,6 +54,13 @@ function reset-and-deploy-bootloader {
     reset-device
     compile-bootloader
     echo 0 | $JLINK deploy/single-softdevice-bootloader-deploy.jlink
+}
+
+function archive {
+    MAJOR_VERSION=`sed -n 's/#define APP_VERSION_MAIN //p' config/version.h`
+    MINOR_VERSION=`sed -n 's/#define APP_VERSION_SUB //p' config/version.h`
+    compile
+    nrfutil dfu genpkg meshyMesh_v$MAJOR_VERSION.$MINOR_VERSION.zip --application _build/MeshyMesh.hex
 }
 
 function size {
@@ -115,6 +121,7 @@ function helptext {
     echo "    cds               Compile and deploy current code to one device via swd"
     echo "    r                 Resets one device to factory settings"
     echo "    b                 Resets one device and installs the softdevice and bootloader"
+    echo "    a                 Compile and archive the current code"
     echo "    s <device file>      Open screen terminal to specified device at baudrate 38400 (Requires screen to be installed)"
     echo "    m <device file>      Open minicom terminal to specified device at baudrate 38400 (Requires minicom to be installed)"
     echo ""
@@ -183,6 +190,8 @@ case "$1" in
     r) reset-device
     ;;
     b) reset-and-deploy-bootloader
+    ;;
+    a) archive
     ;;
     s) sterm "$2"
     ;;

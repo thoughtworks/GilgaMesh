@@ -733,8 +733,18 @@ void uart_115200_config(uint8_t txd_pin_number,
     NVIC_EnableIRQ(UART0_IRQn);
 }
 
+#ifdef BOARD_SEED
+int NFC_UART_TX = 10;
+int NFC_UART_RX = 11;
+int BUZZER_PIN = 6;
+#else
+int NFC_UART_TX = 19;
+int NFC_UART_RX = 20;
+int BUZZER_PIN = 15;
+#endif
+
 void initialize_uart_nfc() {
-    uart_115200_config(19, 20, 6, nfcEventHandler);
+    uart_115200_config(NFC_UART_TX, NFC_UART_RX, BUZZER_PIN, nfcEventHandler);
 }
 
 //check error with below code to see if in error for logging here :D

@@ -124,7 +124,7 @@ function run-tests {
 
 function deploy {
     cd _build
-    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False ..
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False ..
     make
     cd -
 
@@ -136,6 +136,11 @@ function deploy-seeed {
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=True ..
     make
     cd -
+
+    if [[ `uname` == 'Darwin' ]]; then
+        cp deploy/softdevice/s130_nrf51_1.0.0_softdevice.hex _build/Debug/
+        open _build/Debug/
+    fi
 
     #check if file exists first
     #mkdir /tmp/mbed

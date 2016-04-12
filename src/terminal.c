@@ -2,10 +2,6 @@
 #include <string.h>
 #include "command.h"
 
-#define READ_BUFFER_SIZE 128
-#define TERMINAL_PROMPT "\r\n#> "
-#define MAX_ARGUMENTS 3
-
 static bool is_terminal_initialized = false;
 
 static void print_prompt() {
@@ -124,7 +120,7 @@ void terminal_process_input(void)
    if (!is_terminal_initialized) { return; }
 
    uint8_t leadingCharacter = 0;
-   simple_uart_get_with_timeout(1, &leadingCharacter);
+   simple_uart_get_with_timeout(TERMINAL_READ_TIMEOUT_US, &leadingCharacter);
    if(leadingCharacter == 0x1b) { // ESC pressed
       print_prompt();
 

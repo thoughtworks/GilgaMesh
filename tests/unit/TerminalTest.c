@@ -35,7 +35,7 @@ static void TerminalOutputsPromptOnESC(void **state) {
 
    will_return(simple_uart_get_with_timeout, "\x1b"); // ESC to enter command mode
    will_return(simple_uart_get_with_timeout, true);
-   expect_value(simple_uart_get_with_timeout, timeout_100us, 1);
+   expect_value(simple_uart_get_with_timeout, timeout_us, 10);
 
    will_return(simple_uart_get, 0xd); // ENTER
 
@@ -47,7 +47,7 @@ static void TerminalCallsCommandHandler(void **state) {
 
    will_return(simple_uart_get_with_timeout, "\x1b"); // ESC to enter command mode
    will_return(simple_uart_get_with_timeout, true);
-   expect_value(simple_uart_get_with_timeout, timeout_100us, 1);
+   expect_value(simple_uart_get_with_timeout, timeout_us, 10);
 
    will_return(simple_uart_get, 'a');
    will_return(simple_uart_get, ' ');

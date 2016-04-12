@@ -11,8 +11,8 @@ uint8_t simple_uart_get(void) {
    return mock_type(uint8_t);
 }
 
-bool simple_uart_get_with_timeout(int32_t timeout_100us, uint8_t *rx_data) {
-   check_expected(timeout_100us);
+bool simple_uart_get_with_timeout(int32_t timeout_us, uint8_t *rx_data) {
+   check_expected(timeout_us);
    strcpy(rx_data, mock_type(uint8_t *));
 
    return mock_type(bool);

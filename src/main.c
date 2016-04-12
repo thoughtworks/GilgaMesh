@@ -3,16 +3,17 @@
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
-int main(void)
-{
-  uint32_t error_code;
+uint32_t initialize() {
 
 #ifdef TIMER_DEBUG
   initialize_uart_nfc();
   timer_initialize();
 #endif //TIMER_DEBUG
 
-  //terminal_initialize();
+#ifndef NO_TERMINAL
+  terminal_initialize();
+#endif
+
   connections_initialize();
   ble_initialize();
   gatt_initialize();
@@ -27,24 +28,42 @@ int main(void)
   enter_dfu();
 #endif // DFU_DEBUG
 
-  while (true)
-  {
-    uint32_t error_code = NRF_ERROR_NOT_FOUND;
-    //terminal_process_input();
+  return NRF_SUCCESS;
+}
 
-    sizeOfCurrentEvent = sizeOfEvent;
-    error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
+uint32_t run() {
+  uint32_t error_code = NRF_ERROR_NOT_FOUND;
 
-    if (error_code== NRF_SUCCESS) {
-      handle_gap_event(currentEvent);
-    }
+#ifndef NO_TERMINAL
+  terminal_process_input();
+#endif
 
-    else if (error_code == NRF_ERROR_NOT_FOUND) {
-      EC(sd_app_evt_wait());
-      EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
+  sizeOfCurrentEvent = sizeOfEvent;
+  error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
 
-    } else {
-      EC(error_code);
-    }
+  if (error_code== NRF_SUCCESS) {
+    handle_gap_event(currentEvent);
+  }
+
+  else if (error_code == NRF_ERROR_NOT_FOUND) {
+    EC(sd_app_evt_wait());
+    EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
+
+  } else {
+    EC(error_code);
+  }
+  return NRF_SUCCESS;
+}
+
+int main(void)
+{
+  uint32_t error_code = initialize();
+
+  if(error_code) {
+     // TODO: Init failed, blink red led or something
+  }
+  else {
+    while (!run()) { }
+    // TODO: Run failed
   }
 }

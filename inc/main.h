@@ -14,3 +14,7 @@
 #include <timer.h>
 #include <error.h>
 #include <dfu.h>
+
+uint32_t initialize();
+uint32_t run();
+int main(void);

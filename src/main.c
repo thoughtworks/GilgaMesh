@@ -1,5 +1,4 @@
 #include <main.h>
-#include <pn532.h>
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
@@ -8,6 +7,7 @@ uint32_t initialize() {
 #ifdef TIMER_DEBUG
   initialize_uart_nfc();
   timer_initialize();
+  buzzer_initialize();
 #endif //TIMER_DEBUG
 
 #ifndef NO_TERMINAL

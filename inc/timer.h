@@ -5,9 +5,10 @@
 #else
 
 #include <app_timer.h>
-#include <led.h>
 #include <error.h>
 #include <logger.h>
+
+#include <led.h>
 
 
 void timer_initialize(void);

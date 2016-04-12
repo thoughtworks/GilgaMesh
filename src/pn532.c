@@ -1,3 +1,4 @@
+#include "buzzer.h"
 #include "pn532.h"
 
 bool first_response_received = false;
@@ -279,9 +280,8 @@ bool id_exists_in_response(uint8_t *response, size_t response_length) {
     if (!first_occurrence_of_equals) return false;
 
     int expected_digits_in_id = 4;
-    for (int i = 1; i <= expected_digits_in_id; i++) {
+    for (int i = 1; i <= expected_digits_in_id; i++)
         if (!isdigit(first_occurrence_of_equals[i])) return false;
-    }
 
     return true;
 }
@@ -451,6 +451,7 @@ void nfcEventHandler(uint8_t rx_byte) {
             if (grab_state == end_grabbing) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
                     led_white_on();
+                    buzzer_on();
 
                     // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
                     // node->FlashWhiteAndBuzz(3);

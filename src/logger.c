@@ -22,6 +22,7 @@ log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
   vsnprintf(mhTraceBuffer, TRACE_BUFFER_SIZE, message, aptr);
   va_end(aptr);
 
+#ifndef NO_TERMINAL
   if (printLine)
   {
     snprintf(mhTraceBuffer2, TRACE_BUFFER_SIZE, "[%s@%d]: %s\r\n", file, line, mhTraceBuffer);
@@ -31,6 +32,7 @@ log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
   {
     simple_uart_putstring((const uint8_t *) mhTraceBuffer);
   }
+#endif
 }
 
 

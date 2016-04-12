@@ -1,6 +1,4 @@
 #include <terminal.h>
-#include <string.h>
-#include "command.h"
 
 static bool is_terminal_initialized = false;
 

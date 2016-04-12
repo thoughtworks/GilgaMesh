@@ -77,6 +77,7 @@ C_SOURCE_FILES += ./src/gatt.c
 C_SOURCE_FILES += ./src/led.c
 C_SOURCE_FILES += ./src/logger.c
 C_SOURCE_FILES += ./src/terminal.c
+C_SOURCE_FILES += ./src/command.c
 C_SOURCE_FILES += ./src/timer.c
 C_SOURCE_FILES += ./src/error.c
 C_SOURCE_FILES += ./src/dfu.c

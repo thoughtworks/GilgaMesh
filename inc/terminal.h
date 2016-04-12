@@ -2,6 +2,7 @@
 
 #include <simple_uart.h>
 #include <boards.h>
+#include <command.h>
 #include <dfu.h>
 #include <conversion.h>
 #include <version.h>

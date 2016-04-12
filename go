@@ -41,6 +41,22 @@ function deploy-to-device-i-choose {
     $JLINK deploy/single-mesh-only-deploy.jlink
 }
 
+function reset-device {
+    $JLINK deploy/reset-to-factory.jlink
+}
+
+function compile-bootloader {
+    cd bootloader
+    make
+    cd -
+}
+
+function reset-and-deploy-bootloader {
+    reset-device
+    compile-bootloader
+    echo 0 | $JLINK deploy/single-softdevice-bootloader-deploy.jlink
+}
+
 function size {
     $GCC_ARM_SIZE _build/MeshyMesh.elf
 }
@@ -97,6 +113,8 @@ function helptext {
     echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
     echo "    cd1               Compile and deploy current code to one device"
     echo "    cds               Compile and deploy current code to one device via swd"
+    echo "    r                 Resets one device to factory settings"
+    echo "    b                 Resets one device and installs the softdevice and bootloader"
     echo "    s <device file>      Open screen terminal to specified device at baudrate 38400 (Requires screen to be installed)"
     echo "    m <device file>      Open minicom terminal to specified device at baudrate 38400 (Requires minicom to be installed)"
     echo ""
@@ -161,6 +179,10 @@ case "$1" in
     cds) compile-deploy-one-swd
     ;;
     d1) deploy-to-device-i-choose
+    ;;
+    r) reset-device
+    ;;
+    b) reset-and-deploy-bootloader
     ;;
     s) sterm "$2"
     ;;

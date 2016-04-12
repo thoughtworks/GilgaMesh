@@ -5,9 +5,10 @@ export OUTPUT_FILENAME
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) ) 
 
-SDK_BASE      := ../deploy/sdk/nrf_sdk_9_0
-COMPONENTS    := $(SDK_BASE)/components
-TEMPLATE_PATH := $(COMPONENTS)/toolchain/gcc
+SDK_BASE            := ../deploy/sdk/nrf_sdk_9_0
+COMPONENTS          := $(SDK_BASE)/components
+TEMPLATE_PATH       := $(COMPONENTS)/toolchain/gcc
+BOARD               := PCA10028
 
 ifeq ($(OS),Windows_NT)
 include $(TEMPLATE_PATH)/Makefile.windows
@@ -101,7 +102,7 @@ BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LIS
 
 #flags common to all targets
 CFLAGS  = -DSWI_DISABLE0
-CFLAGS += -DBOARD_BLE400
+CFLAGS += -DBOARD_$(BOARD)
 CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DNRF51
 CFLAGS += -D__HEAP_SIZE=0
@@ -129,7 +130,7 @@ LDFLAGS += --specs=nano.specs -lc -lnosys
 # Assembler flags
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -DSWI_DISABLE0
-ASMFLAGS += -DBOARD_BLE400
+ASMFLAGS += -DBOARD_$(BOARD)
 ASMFLAGS += -DSOFTDEVICE_PRESENT
 ASMFLAGS += -DNRF51
 ASMFLAGS += -D__HEAP_SIZE=0

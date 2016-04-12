@@ -437,8 +437,7 @@ void nfcEventHandler(uint8_t rx_byte) {
 
         case FIFTH_READ_ACK:
             // \x41
-            if (rx_byte == 65)
-                current_nfc_state = GET_PAID_4;
+            if (rx_byte == 65) current_nfc_state = EAT_FOURTH_DATA_COMMAND;
             break;
 
         case EAT_FOURTH_DATA_COMMAND:
@@ -451,10 +450,10 @@ void nfcEventHandler(uint8_t rx_byte) {
 
             if (grab_state == end_grabbing) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
-                    // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
-
-                    // node->FlashWhiteAndBuzz(3);
                     led_white_on();
+
+                    // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
+                    // node->FlashWhiteAndBuzz(3);
                     // BUZZ!
 
                     current_nfc_state = ID_TAKEN;

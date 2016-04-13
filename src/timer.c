@@ -7,7 +7,7 @@
 #define ATTR_TIMER_PRESCALER 0
 
 #define MS_RATE_TO_MANAGE_NFC 100
-#define MS_RATE_TO_TURN_OFF_ALL_LEDS 100
+#define MS_RATE_TO_TURN_OFF_ALL_USER_FEEDBACK 100
 
 static app_timer_id_t feedbackOffTimerId;
 static app_timer_id_t nfcTimerId;
@@ -28,5 +28,5 @@ void timer_initialize(void) {
     EC(app_timer_start(nfcTimerId, APP_TIMER_TICKS(MS_RATE_TO_MANAGE_NFC, ATTR_TIMER_PRESCALER), NULL));
 
     EC(app_timer_create(&feedbackOffTimerId, APP_TIMER_MODE_REPEATED, turn_off_user_feedback));
-    EC(app_timer_start(feedbackOffTimerId, APP_TIMER_TICKS(MS_RATE_TO_TURN_OFF_ALL_LEDS, ATTR_TIMER_PRESCALER), NULL));
+    EC(app_timer_start(feedbackOffTimerId, APP_TIMER_TICKS(MS_RATE_TO_TURN_OFF_ALL_USER_FEEDBACK, ATTR_TIMER_PRESCALER), NULL));
 }

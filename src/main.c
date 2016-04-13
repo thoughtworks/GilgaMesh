@@ -4,11 +4,11 @@ static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
 uint32_t initialize() {
 
-#ifdef TIMER_DEBUG
+#ifdef VOTING_TIMERS
   initialize_uart_nfc();
   timer_initialize();
   buzzer_initialize();
-#endif //TIMER_DEBUG
+#endif
 
 #ifndef NO_TERMINAL
   terminal_initialize();

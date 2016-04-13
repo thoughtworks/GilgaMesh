@@ -156,7 +156,7 @@ function deploy {
     $JLINK deploy/deploy-meshy-swd.jlink
 }
 
-function deploy-seeed {
+function compile-seeed {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=True ..
     make
@@ -166,20 +166,14 @@ function deploy-seeed {
         cp deploy/softdevice/s130_nrf51_1.0.0_softdevice.hex _build/Debug/
         open _build/Debug/
     fi
-
-    #check if file exists first
-    #mkdir /tmp/mbed
-    #mount /dev/sdb /tmp/mbed
-    #cp deploy/softdevice/s130_nrf51_1.0.0_softdevice.hex /tmp/mbed
-    #cp _build/Debug/MeshyMesh.hex /tmp/mbed
-    #umount /dev/sdb /tmp/mbed
 }
+
 case "$1" in
     ut) run-tests
     ;;
     d) deploy
     ;;
-    ds) deploy-seeed
+    cs) compile-seeed
     ;;
     cd1) compile-deploy-one
     ;;

@@ -454,8 +454,6 @@ void nfcEventHandler(uint8_t rx_byte) {
                     buzzer_on();
 
                     // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
-                    // node->FlashWhiteAndBuzz(3);
-                    // BUZZ!
 
                     current_nfc_state = ID_TAKEN;
                 } else {
@@ -733,7 +731,7 @@ void uart_115200_config(uint8_t txd_pin_number,
     NVIC_EnableIRQ(UART0_IRQn);
 }
 
-#ifdef BOARD_SEED
+#ifdef BOARD_SEEED
 int NFC_UART_TX = 10;
 int NFC_UART_RX = 11;
 int BUZZER_PIN = 6;

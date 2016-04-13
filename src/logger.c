@@ -8,7 +8,6 @@
 #include <app_timer.h>
 #include <string.h>
 
-
 char mhTraceBuffer[TRACE_BUFFER_SIZE] = { 0 };
 char mhTraceBuffer2[TRACE_BUFFER_SIZE] = { 0 };
 

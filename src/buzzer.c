@@ -1,7 +1,6 @@
 #include <nrf.h>
 #include <nrf_gpio.h>
 #include <nrf_drv_config.h>
-#include <nrf_delay.h>
 #include <app_pwm.h>
 #include <app_error.h>
 

@@ -95,11 +95,12 @@ add_executable(TerminalTest ${TestFramework_SOURCES}
 target_link_libraries(TerminalTest cmocka)
 GEN_OUTPUTS(TerminalTest)
 
-#add_executable(Pn532Test ${TestFramework_SOURCES}
-#    mocks/logger_mock.c
-#    mocks/led_mock.c
-#    ${SRC_PATH}/nrf/simple_uart.c
-#    ${SRC_PATH}/pn532.c
-#    unit/Pn532Test.c)
-#target_link_libraries(Pn532Test cmocka)
-#GEN_OUTPUTS(Pn532Test)
+add_executable(Pn532Test ${TestFramework_SOURCES}
+    mocks/logger_mock.c
+    mocks/led_mock.c
+    mocks/buzzer_mock.c
+    ${SRC_PATH}/nrf/simple_uart.c
+    ${SRC_PATH}/pn532.c
+    unit/Pn532Test.c)
+target_link_libraries(Pn532Test cmocka)
+GEN_OUTPUTS(Pn532Test)

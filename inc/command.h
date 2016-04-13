@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 void print_help();
 uint32_t broadcast_message(char* message);
 

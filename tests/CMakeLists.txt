@@ -99,6 +99,8 @@ add_executable(Pn532Test ${TestFramework_SOURCES}
     mocks/logger_mock.c
     mocks/led_mock.c
     mocks/buzzer_mock.c
+    mocks/command_mock.c
+    mocks/conversion_mock.c
     ${SRC_PATH}/nrf/simple_uart.c
     ${SRC_PATH}/pn532.c
     unit/Pn532Test.c)

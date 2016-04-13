@@ -6,8 +6,8 @@ uint32_t initialize() {
 
 #ifdef VOTING_TIMERS
   initialize_uart_nfc();
-  timer_initialize();
   buzzer_initialize();
+  timer_initialize();
 #endif
 
 #ifndef NO_TERMINAL

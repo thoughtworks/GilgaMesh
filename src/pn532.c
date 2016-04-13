@@ -1,3 +1,5 @@
+#include "conversion.h"
+#include "command.h"
 #include "buzzer.h"
 #include "pn532.h"
 
@@ -286,7 +288,7 @@ bool id_exists_in_response(uint8_t *response, size_t response_length) {
     return true;
 }
 
-short get_id(uint8_t *response, size_t response_length) {
+unsigned short get_id(uint8_t *response, size_t response_length) {
     char *first_occurrence_of_equals = memchr(response, '=', response_length);
 
     int first_digit = first_occurrence_of_equals[1] - '0';
@@ -294,7 +296,7 @@ short get_id(uint8_t *response, size_t response_length) {
     int third_digit = first_occurrence_of_equals[3] - '0';
     int fourth_digit = first_occurrence_of_equals[4] - '0';
 
-    short full_id = (short) (first_digit * 1000 + second_digit * 100 + third_digit * 10 + fourth_digit);
+    unsigned short full_id = (unsigned short) (first_digit * 1000 + second_digit * 100 + third_digit * 10 + fourth_digit);
 
     return full_id;
 }
@@ -452,6 +454,7 @@ void nfcEventHandler(uint8_t rx_byte) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
                     led_white_on();
                     buzzer_on();
+                    broadcast_message(int_to_string(get_id(data_dump1, four_frame_data_dump_size)));
 
                     // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
 

@@ -149,7 +149,16 @@ function run-tests {
 
 function deploy {
     cd _build
-    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False ..
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False -DNFC_DEBUG=False ..
+    make
+    cd -
+
+    $JLINK deploy/deploy-meshy-swd.jlink
+}
+
+function deploy-nfc {
+    cd _build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False -DNFC_DEBUG=True ..
     make
     cd -
 
@@ -172,6 +181,8 @@ case "$1" in
     ut) run-tests
     ;;
     d) deploy
+    ;;
+    dn) deploy-nfc
     ;;
     cs) compile-seeed
     ;;

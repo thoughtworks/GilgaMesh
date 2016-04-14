@@ -9,7 +9,7 @@
 char mhTraceBuffer[TRACE_BUFFER_SIZE] = { 0 };
 char mhTraceBuffer2[TRACE_BUFFER_SIZE] = { 0 };
 
-log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
+void log_f(bool printLine, const char* file, int32_t line, const char* message, ...)
 {
 #ifndef NO_LOG_OUTPUT
    memset(mhTraceBuffer, 0, TRACE_BUFFER_SIZE);

@@ -1,9 +1,13 @@
 #pragma once
 
 #include <stdint.h>
+#include <string.h>
 
-void print_help();
-uint32_t broadcast_message(char* message);
+#include <simple_uart.h>
+#include <gatt.h>
+
+
+#define COMMAND_SUCCESS 0
+
 
 uint32_t command_execute(char** parsedCommandArray, uint8_t numberOfItems);
-void command_print(char** parsedCommandArray, uint8_t numberOfItems);

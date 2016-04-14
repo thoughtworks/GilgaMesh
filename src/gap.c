@@ -194,7 +194,7 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
 
 void receiveBroadcastMessage(ble_evt_t * bleEvent) {
   uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
-  BleMessageBroadcast *msg = (BleMessageBroadcast *) bleEvent->evt.gatts_evt.params.write.data;
+  BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) bleEvent->evt.gatts_evt.params.write.data;
 
   char content[BROADCAST_SIZE + 1];
   content[BROADCAST_SIZE] = 0; // append string termination
@@ -221,28 +221,9 @@ void setFamilyID(ble_evt_t * bleEvent) {
 }
 
 
-ble_gatts_char_handles_t characteristicHandles;
-
 void handle_write_event(ble_evt_t * bleEvent)
 {
-  uint16_t connectionHandle = bleEvent->evt.gatts_evt.conn_handle;
-
   BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
-
-  char ps[7];
-  memset(ps, 0, 7);
-  memcpy(ps, head->password, 6);
-  log("connect handle: %d；op: %d; charUUID: %d; password: %s", connectionHandle,
-		  bleEvent->evt.gatts_evt.params.write.op, characteristicHandles.value_handle, ps);
-
-  // check password
-  //  if (head->password) {
-  //  	  BleMessageResult result;
-  //  	  result.errorCode = AN ERROR;
-  //  	  result.sessionID = head->sessionID;
-  //  	  write_rsp(connectionHandle, &result, sizeof(result));
-  //  	  return;
-  //  }
 
   switch (head->messageType) {
     case StartDFU:  // reboot the device into dfu mode

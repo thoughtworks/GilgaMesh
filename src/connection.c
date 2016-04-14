@@ -1,4 +1,6 @@
 #include <connection.h>
+#include <string.h>
+#include <stdlib.h>
 
 static inline uint32_t get_device_id() {
   // define out direct device memory access when testing
@@ -8,16 +10,6 @@ static inline uint32_t get_device_id() {
     return NRF_FICR->DEVICEID[1];
   #endif
 }
-
-void connections_initialize()
-{
-  familyId = generate_family_id();
-  set_node_name();
-  activeConnections = calloc(1, sizeof(connections));
-
-  log("FamilyId: %u, NodeName: %s", familyId, nodeName);
-}
-
 
 void set_node_name()
 {
@@ -36,10 +28,47 @@ void set_node_name()
 }
 
 
+void connections_initialize()
+{
+  familyId = generate_family_id();
+  set_node_name();
+  activeConnections = calloc(1, sizeof(connections));
+
+  log("FamilyId: %u, NodeName: %s", familyId, nodeName);
+}
+
+
 uint32_t generate_family_id()
 {
-  uint16_t nodeId = (uint16_t) get_device_id() % 15000 + 1;
-  return ((uint32_t)nodeId) << 16;
+  uint32_t nodeId = get_device_id() % 15000 + 1;
+  return nodeId << 16;
+}
+
+
+void handle_connection_change()
+{
+  if (central_connection_active()){
+    led_green_on();
+  } else {
+    led_green_off();
+  }
+
+  if (peripheral_connections_active()){
+    led_red_on();
+  } else {
+    led_red_off();
+  }
+}
+
+
+void set_connection(connection *localConnection, uint16_t connectionHandle, ble_gap_addr_t deviceAddress, ConnectionType type)
+{
+  memcpy(&localConnection->address, &deviceAddress, sizeof(deviceAddress));
+  memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
+  localConnection->type = type;
+  localConnection->active = true;
+
+  handle_connection_change();
 }
 
 
@@ -66,17 +95,6 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 
   // Need better error handling for this...
   log("CONNECTION: Attempt to add peripheral connection, but no slots are free!");
-}
-
-
-void set_connection(connection *localConnection, uint16_t connectionHandle, ble_gap_addr_t deviceAddress, ConnectionType type)
-{
-  memcpy(&localConnection->address, &deviceAddress, sizeof(deviceAddress));
-  memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
-  localConnection->type = type;
-  localConnection->active = true;
-
-  handle_connection_change();
 }
 
 
@@ -152,14 +170,14 @@ char* get_connection_type_name(connection *conn)
 char* get_connection_info(connection *conn, char* result)
 {
   if (conn->active){
-    uint8_t *addr = &conn->address.addr;
+    uint8_t *addr = conn->address.addr;
     strcpy(result, "\n\r   [");
     strcat(result, get_connection_type_name(conn));
     strcat(result, "] [");
     strcat(result, int_to_string(conn->handle));
     strcat(result, "]");
     for (int i = 0; i < 6; i++){
-      strcat(strcat(result, " "), int_to_string((uint16_t)*addr+i));
+      strcat(strcat(result, " "), int_to_string((uint16_t)(*addr+i)));
     }
     strcat(result, "\0");
   } else {
@@ -210,19 +228,4 @@ uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCo
     }
   }
   return handles;
-}
-
-void handle_connection_change()
-{
-  if (central_connection_active()){
-    led_green_on();
-  } else {
-    led_green_off();
-  }
-
-  if (peripheral_connections_active()){
-    led_red_on();
-  } else {
-    led_red_off();
-  }
 }

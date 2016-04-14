@@ -62,6 +62,45 @@ void gatt_initialize()
 }
 
 
+void propagate_family_id(uint16_t originHandle)
+{
+  BleMessageSetFamilyIDReq request;
+  memset(&request, 0, sizeof(request));
+  request.familyID = familyId;
+  request.head.messageType = SetFamilyID;
+  uint8_t *data = (uint8_t *) &request;
+  propagate_data(originHandle, data, sizeof(request));
+}
+
+
+void broadcast_message(char* message)
+{
+  if (strlen(message) > BROADCAST_SIZE) {
+    log("ERROR: Broadcast message longer than %u characters", BROADCAST_SIZE);
+    return;
+  }
+
+  BleMessageBroadcastReq request;
+  memset(&request, 0, sizeof(request));
+  request.head.messageType = Broadcast;
+  memcpy(request.message, message, BROADCAST_SIZE);
+  propagate_data(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+}
+
+
+void propagate_data(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
+{
+  uint8_t connectionCount;
+  uint16_t connectionHandles[ATTR_MAX_CONNECTIONS];
+  get_active_connection_handles(connectionHandles, &connectionCount);
+  for (int i = 0; i < connectionCount; i++){
+    if (originHandle != connectionHandles[i]){ //don't resend to the connection who sent it
+      write_value(connectionHandles[i], data, dataLength);
+    }
+  }
+}
+
+
 void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
 {
   ble_gattc_write_params_t writeParams;
@@ -73,41 +112,4 @@ void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
   writeParams.p_value = data;
 
   EC(sd_ble_gattc_write(connectionHandle, &writeParams));
-}
-
-
-void propagate_family_id(uint16_t originHandle)
-{
-  uint8_t connectionCount;
-  uint16_t connectionHandles[4];
-  get_active_connection_handles(connectionHandles, &connectionCount);
-  for (int i = 0; i < connectionCount; i++){
-    if (originHandle != connectionHandles[i]){ //don't resend to the node who sent it
-      log("Sending familyId %u to connection handle %u", familyId, connectionHandles[i]);
-
-      BleMessageSetFamilyIDReq request;
-      memset(&request, 0, sizeof(request));
-      request.familyID = familyId;
-      request.head.messageType = SetFamilyID;
-      write_value(connectionHandles[i], (uint8_t *)&request, 64);
-    }
-  }
-}
-
-void send_broadcast_message(uint16_t connectionHandle, char* content)
-{
-  BleMessageBroadcast message;
-  memset(&message, 0, sizeof(message));
-
-  if (strlen(content) > BROADCAST_SIZE) {
-    log("ERROR: Broadcast message longer than %u characters", BROADCAST_SIZE);
-    return;
-  }
-
-  for (int i = 0 ; i < BROADCAST_SIZE ; i++) {
-    message.message[i] = content[i];
-  }
-
-  message.head.messageType = Broadcast;
-  write_value(connectionHandle, (uint8_t *)&message, sizeof(message));
 }

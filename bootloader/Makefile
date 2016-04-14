@@ -5,10 +5,11 @@ export OUTPUT_FILENAME
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) ) 
 
+TARGET_BOARD        ?= BOARD_PCA10028
+
 SDK_BASE            := ../deploy/sdk/nrf_sdk_9_0
 COMPONENTS          := $(SDK_BASE)/components
 TEMPLATE_PATH       := $(COMPONENTS)/toolchain/gcc
-BOARD               := PCA10028
 
 ifeq ($(OS),Windows_NT)
 include $(TEMPLATE_PATH)/Makefile.windows
@@ -102,7 +103,7 @@ BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LIS
 
 #flags common to all targets
 CFLAGS  = -DSWI_DISABLE0
-CFLAGS += -DBOARD_$(BOARD)
+CFLAGS += -D$(TARGET_BOARD)
 CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DNRF51
 CFLAGS += -D__HEAP_SIZE=0
@@ -130,7 +131,7 @@ LDFLAGS += --specs=nano.specs -lc -lnosys
 # Assembler flags
 ASMFLAGS += -x assembler-with-cpp
 ASMFLAGS += -DSWI_DISABLE0
-ASMFLAGS += -DBOARD_$(BOARD)
+ASMFLAGS += -D$(TARGET_BOARD)
 ASMFLAGS += -DSOFTDEVICE_PRESENT
 ASMFLAGS += -DNRF51
 ASMFLAGS += -D__HEAP_SIZE=0
@@ -170,6 +171,12 @@ nrf51422_xxac: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(MAKE) -f $(MAKEFILE_NAME) -C $(MAKEFILE_DIR) -e finalize
+	@echo "*****************************************************"
+	@echo "build project: $(PROJECT_NAME)"
+	@echo "build target:  $(TARGET_BOARD)"
+	@echo "build products --"
+	@echo "               $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).hex"
+	@echo "*****************************************************"
 
 ## Create build directories
 $(BUILD_DIRECTORIES):

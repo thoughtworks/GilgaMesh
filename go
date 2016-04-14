@@ -11,7 +11,10 @@ NUM_CPUS=${NUM_CPUS:=1}
 BOARD=${BOARD:=PCA10028}
 
 function compile {
-    make clean && TARGET_BOARD=BOARD_$BOARD make -j $NUM_CPUS
+    cd _build
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False ..
+    make
+    cd -
 }
 
 function compile-deploy-all {
@@ -50,6 +53,18 @@ function compile-bootloader {
     cd -
 }
 
+function compile-bootloader-seeed {
+    cd bootloader
+    TARGET_BOARD=BOARD_VOTING_BOX make
+    cd -
+
+    if [[ `uname` == 'Darwin' ]]; then
+        cp deploy/softdevice/s130_nrf51_1.0.0_softdevice.hex _build/Debug/
+        cp bootloader/_build/nrf51422_xxac.hex _build/Debug/
+        open _build/Debug/
+    fi
+}
+
 function reset-and-deploy-bootloader {
     reset-device
     compile-bootloader
@@ -60,7 +75,14 @@ function archive {
     MAJOR_VERSION=`sed -n 's/#define APP_VERSION_MAIN //p' config/version.h`
     MINOR_VERSION=`sed -n 's/#define APP_VERSION_SUB //p' config/version.h`
     compile
-    nrfutil dfu genpkg meshyMesh_v$MAJOR_VERSION.$MINOR_VERSION.zip --application _build/MeshyMesh.hex
+    nrfutil dfu genpkg meshyMesh_dev_v$MAJOR_VERSION.$MINOR_VERSION.zip --application _build/Debug/MeshyMesh.hex
+}
+
+function archive-seeed {
+    MAJOR_VERSION=`sed -n 's/#define APP_VERSION_MAIN //p' config/version.h`
+    MINOR_VERSION=`sed -n 's/#define APP_VERSION_SUB //p' config/version.h`
+    compile-seeed
+    nrfutil dfu genpkg meshyMesh_prod_v$MAJOR_VERSION.$MINOR_VERSION.zip --application _build/Debug/MeshyMesh.hex
 }
 
 function size {
@@ -115,13 +137,14 @@ function helptext {
     echo "    ut                Run all unit tests"
     echo "    d                 Deploy to nrf51 prototype board"
     echo "    dp                Deploy to Seeed production board"
-    echo "    c                 Compile current code"
     echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
     echo "    cd1               Compile and deploy current code to one device"
     echo "    cds               Compile and deploy current code to one device via swd"
     echo "    r                 Resets one device to factory settings"
     echo "    b                 Resets one device and installs the softdevice and bootloader"
+    echo "    bs                Compiles the bootloader for Seeed production board"
     echo "    a                 Compile and archive the current code"
+    echo "    as                Compile and archive the current code for Seeed production board"
     echo "    s <device file>      Open screen terminal to specified device at baudrate 38400 (Requires screen to be installed)"
     echo "    m <device file>      Open minicom terminal to specified device at baudrate 38400 (Requires minicom to be installed)"
     echo ""
@@ -196,7 +219,11 @@ case "$1" in
     ;;
     b) reset-and-deploy-bootloader
     ;;
+    bs) compile-bootloader-seeed
+    ;;
     a) archive
+    ;;
+    as) archive-seeed
     ;;
     s) sterm "$2"
     ;;

@@ -32,4 +32,4 @@ void initialize_uart_nfc();
 setup_state_t get_setup_state();
 void setup();
 void setup_state_machine();
-unsigned short in_list_passive_target();
+void in_list_passive_target();

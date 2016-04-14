@@ -8,11 +8,11 @@
 #include <conversion.h>
 #include <logger.h>
 #include <led.h>
+#include <message.h>
 
 #define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3
 #define ATTR_MAX_CONNECTIONS           ATTR_MAX_CENTRAL_CONNS + ATTR_MAX_PERIPHERAL_CONNS
-#define NODE_NAME_SIZE                 8
 
 typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
@@ -22,6 +22,9 @@ typedef struct
     uint16_t handle;
     ConnectionType type;
     ble_gap_addr_t address;
+    char *deviceName;
+    uint8_t majorVersion;
+    uint8_t minorVersion;
 } connection;
 
 typedef struct
@@ -44,4 +47,5 @@ bool central_connection_active(void);
 bool peripheral_connections_active(void);
 uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount);
 char* get_connection_info(connection *conn, char* result);
+void update_connection_info(uint16_t connectionHandle, BleMessageConnectionInfoReq *msg);
 uint32_t generate_family_id();

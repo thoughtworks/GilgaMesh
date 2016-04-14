@@ -1,5 +1,7 @@
 #pragma once
-#define BROADCAST_SIZE 12
+
+#define NODE_NAME_SIZE                 8
+#define BROADCAST_SIZE                 12
 
 typedef enum {
 	SetFamilyID = 0,

@@ -327,6 +327,40 @@ typedef enum {
 
 nfc_state_t current_nfc_state = SETUP;
 
+void send_preamble_and_start() {
+    simple_uart_put('\x00');
+    simple_uart_put('\x00');
+    simple_uart_put('\xFF');
+}
+
+void send_direction() {
+    simple_uart_put('\xD4');
+}
+
+void send_postamble() {
+    simple_uart_put('\x00');
+}
+
+const uint8_t LENGTH = '\x05';
+const uint8_t LENGTH_CHECK_SUM = '\xFB';
+const uint8_t COMMAND = '\x40';
+const uint8_t LOGICAL_NUMBER = '\x01';
+const uint8_t MIFARE_COMMAND = '\x30';
+
+void in_data_exchange(uint8_t start_address, uint8_t dcs) {
+    send_preamble_and_start();
+    simple_uart_put(LENGTH);
+    simple_uart_put(LENGTH_CHECK_SUM);
+    send_direction();
+    simple_uart_put(COMMAND);
+    simple_uart_put(LOGICAL_NUMBER);
+    simple_uart_put(MIFARE_COMMAND);
+    simple_uart_put(start_address);
+    simple_uart_put(dcs);
+    send_postamble();
+}
+
+
 void nfcEventHandler(uint8_t rx_byte) {
     switch (current_nfc_state) {
         case ID_TAKEN:
@@ -483,45 +517,6 @@ static uart_event_handler m_event_handler;
 
 setup_state_t current_setup_state = DOWN;
 
-void setup() {
-    switch (current_setup_state) {
-        case DOWN:
-            wakeup();
-            current_setup_state = NO_PARAM;
-            break;
-
-        case NO_PARAM:
-            set_parameter();
-            current_setup_state = NOT_WRITTEN_80;
-            break;
-
-        case NOT_WRITTEN_80:
-            write_80();
-            current_setup_state = RF_NOT_CONFIG;
-            break;
-
-        case RF_NOT_CONFIG:
-            config_rf();
-            current_setup_state = NOT_WRITTEN_40_10;
-            break;
-
-        case NOT_WRITTEN_40_10:
-            write_40_10();
-            current_setup_state = RF_MAX_NOT_CONFIG;
-            break;
-
-        case RF_MAX_NOT_CONFIG:
-            config_rf_max();
-            nrf_delay_us(1000);
-            current_setup_state = SETUP_DONE;
-            break;
-    }
-}
-
-setup_state_t get_setup_state() {
-    return current_setup_state;
-}
-
 void wakeup() {
     simple_uart_put('\x55');
     simple_uart_put('\x55');
@@ -620,40 +615,46 @@ void config_rf_max() {
     send_postamble();
 }
 
-void send_preamble_and_start() {
-    simple_uart_put('\x00');
-    simple_uart_put('\x00');
-    simple_uart_put('\xFF');
+void setup() {
+    switch (current_setup_state) {
+        case DOWN:
+            wakeup();
+            current_setup_state = NO_PARAM;
+            break;
+
+        case NO_PARAM:
+            set_parameter();
+            current_setup_state = NOT_WRITTEN_80;
+            break;
+
+        case NOT_WRITTEN_80:
+            write_80();
+            current_setup_state = RF_NOT_CONFIG;
+            break;
+
+        case RF_NOT_CONFIG:
+            config_rf();
+            current_setup_state = NOT_WRITTEN_40_10;
+            break;
+
+        case NOT_WRITTEN_40_10:
+            write_40_10();
+            current_setup_state = RF_MAX_NOT_CONFIG;
+            break;
+
+        case RF_MAX_NOT_CONFIG:
+            config_rf_max();
+            nrf_delay_us(1000);
+            current_setup_state = SETUP_DONE;
+            break;
+    }
 }
 
-void send_direction() {
-    simple_uart_put('\xD4');
+setup_state_t get_setup_state() {
+    return current_setup_state;
 }
 
-void send_postamble() {
-    simple_uart_put('\x00');
-}
-
-const uint8_t LENGTH = '\x05';
-const uint8_t LENGTH_CHECK_SUM = '\xFB';
-const uint8_t COMMAND = '\x40';
-const uint8_t LOGICAL_NUMBER = '\x01';
-const uint8_t MIFARE_COMMAND = '\x30';
-
-void in_data_exchange(uint8_t start_address, uint8_t dcs) {
-    send_preamble_and_start();
-    simple_uart_put(LENGTH);
-    simple_uart_put(LENGTH_CHECK_SUM);
-    send_direction();
-    simple_uart_put(COMMAND);
-    simple_uart_put(LOGICAL_NUMBER);
-    simple_uart_put(MIFARE_COMMAND);
-    simple_uart_put(start_address);
-    simple_uart_put(dcs);
-    send_postamble();
-}
-
-unsigned short in_list_passive_target() {
+void in_list_passive_target() {
     send_preamble_and_start();
     simple_uart_put('\x04');
     simple_uart_put('\xFC');
@@ -662,17 +663,6 @@ unsigned short in_list_passive_target() {
     simple_uart_put('\x01');
     simple_uart_put('\x00');
     simple_uart_put('\xE1');
-    send_postamble();
-}
-
-void powerdown() {
-    send_preamble_and_start();
-    simple_uart_put('\x03');
-    simple_uart_put('\xFD');
-    simple_uart_put('\xD4');
-    simple_uart_put('\x16');
-    simple_uart_put('\xF0');
-    simple_uart_put('\x26');
     send_postamble();
 }
 

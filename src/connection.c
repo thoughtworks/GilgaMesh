@@ -98,7 +98,7 @@ void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceA
 }
 
 
-connection* find_active_connection(uint16_t connectionHandle)
+connection* find_active_connection_by_handle(uint16_t connectionHandle)
 {
   connection *central = &activeConnections->central;
   if (central->active && central->handle == connectionHandle){
@@ -140,7 +140,7 @@ connection* find_active_connection_by_address(ble_gap_addr_t address)
 
 ConnectionType unset_connection(uint16_t connectionHandle)
 {
-  connection *lostConnection = find_active_connection(connectionHandle);
+  connection *lostConnection = find_active_connection_by_handle(connectionHandle);
   if (lostConnection != 0){
     ConnectionType lostConnectionType = lostConnection->type;
     memset(lostConnection, 0, sizeof(connection));
@@ -149,6 +149,17 @@ ConnectionType unset_connection(uint16_t connectionHandle)
     return lostConnectionType;
   } else {
     return INVALID;
+  }
+}
+
+
+void update_connection_info(uint16_t connectionHandle, BleMessageConnectionInfoReq *msg) {
+  connection *conn = find_active_connection_by_handle(connectionHandle);
+  if (conn != 0) {
+    conn->majorVersion = msg->majorVersion;
+    conn->minorVersion = msg->minorVersion;
+    conn->deviceName = malloc(NODE_NAME_SIZE);
+    memcpy(conn->deviceName, msg->deviceName, NODE_NAME_SIZE);
   }
 }
 
@@ -175,9 +186,18 @@ char* get_connection_info(connection *conn, char* result)
     strcat(result, get_connection_type_name(conn));
     strcat(result, "] [");
     strcat(result, int_to_string(conn->handle));
-    strcat(result, "]");
-    for (int i = 0; i < 6; i++){
-      strcat(strcat(result, " "), int_to_string((uint16_t)(*addr+i)));
+    strcat(result, "] ");
+    if (conn->deviceName != 0) {
+      strcat(result, conn->deviceName);
+      strcat(result, ", v");
+      strcat(result, int_to_string(conn->majorVersion));
+      strcat(result, ".");
+      strcat(result, int_to_string(conn->minorVersion));
+    } else {
+      for (int i = 0; i < 6; i++){
+        strcat(result, int_to_string((uint16_t)(*addr+i)));
+        strcat(result, " ");
+      }
     }
     strcat(result, "\0");
   } else {

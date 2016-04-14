@@ -1,7 +1,4 @@
 #include <gap.h>
-#include <ble_gatts.h>
-#include <message.h>
-#include <ble.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -209,7 +206,6 @@ void receive_broadcast_message(ble_evt_t *bleEvent) {
 void set_family_id(ble_evt_t *bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
-	log("***** RECEIVED New family id: %u", req->familyID);
 
 	if (req->familyID == familyId){
 	  //we are already connected to this family! we should disconnect
@@ -224,8 +220,8 @@ void set_family_id(ble_evt_t *bleEvent) {
 
 void update_connection_with_info(ble_evt_t *bleEvent) {
   BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *) bleEvent->evt.gatts_evt.params.write.data;
-
-  log("CONN INFO [%u]: %s, v%u.%u", bleEvent->evt.gatts_evt.conn_handle, msg->deviceName, msg->majorVersion, msg->minorVersion);
+  update_connection_info(bleEvent->evt.gatts_evt.conn_handle, msg);
+  print_all_connections();
 }
 
 

@@ -1,6 +1,6 @@
 #include <gatt.h>
 #include <string.h>
-#include <message.h>
+#include <version.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -62,6 +62,33 @@ void gatt_initialize()
 }
 
 
+void send_to_single_connection(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
+{
+  ble_gattc_write_params_t writeParams;
+  memset(&writeParams, 0, sizeof(writeParams));
+  writeParams.write_op = BLE_GATT_OP_WRITE_CMD;
+  writeParams.handle = characteristicHandles.value_handle;
+  writeParams.offset = 0;
+  writeParams.len = dataLength;
+  writeParams.p_value = data;
+
+  EC(sd_ble_gattc_write(connectionHandle, &writeParams));
+}
+
+
+void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
+{
+  uint8_t connectionCount;
+  uint16_t connectionHandles[ATTR_MAX_CONNECTIONS];
+  get_active_connection_handles(connectionHandles, &connectionCount);
+  for (int i = 0; i < connectionCount; i++){
+    if (originHandle != connectionHandles[i]){ //don't resend to the connection who sent it
+      send_to_single_connection(connectionHandles[i], data, dataLength);
+    }
+  }
+}
+
+
 void propagate_family_id(uint16_t originHandle)
 {
   BleMessageSetFamilyIDReq request;
@@ -69,7 +96,8 @@ void propagate_family_id(uint16_t originHandle)
   request.familyID = familyId;
   request.head.messageType = SetFamilyID;
   uint8_t *data = (uint8_t *) &request;
-  propagate_data(originHandle, data, sizeof(request));
+
+  send_to_all_connections(originHandle, data, sizeof(request));
 }
 
 
@@ -84,32 +112,19 @@ void broadcast_message(char* message)
   memset(&request, 0, sizeof(request));
   request.head.messageType = Broadcast;
   memcpy(request.message, message, BROADCAST_SIZE);
-  propagate_data(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
 }
 
 
-void propagate_data(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
+void share_connection_info(uint16_t targetHandle)
 {
-  uint8_t connectionCount;
-  uint16_t connectionHandles[ATTR_MAX_CONNECTIONS];
-  get_active_connection_handles(connectionHandles, &connectionCount);
-  for (int i = 0; i < connectionCount; i++){
-    if (originHandle != connectionHandles[i]){ //don't resend to the connection who sent it
-      write_value(connectionHandles[i], data, dataLength);
-    }
-  }
-}
+  BleMessageConnectionInfoReq request;
+  memset(&request, 0, sizeof(request));
+  request.head.messageType = ConnectionInfo;
+  request.majorVersion = APP_VERSION_MAIN;
+  request.minorVersion = APP_VERSION_SUB;
+  memcpy(request.deviceName, nodeName, NODE_NAME_SIZE);
 
-
-void write_value(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
-{
-  ble_gattc_write_params_t writeParams;
-  memset(&writeParams, 0, sizeof(writeParams));
-  writeParams.write_op = BLE_GATT_OP_WRITE_CMD;
-  writeParams.handle = characteristicHandles.value_handle;
-  writeParams.offset = 0;
-  writeParams.len = dataLength;
-  writeParams.p_value = data;
-
-  EC(sd_ble_gattc_write(connectionHandle, &writeParams));
+  send_to_single_connection(targetHandle, (uint8_t *)&request, sizeof(request));
 }

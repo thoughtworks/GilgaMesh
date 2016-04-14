@@ -74,4 +74,4 @@ void ble_initialize(void);
 void start_advertising(void);
 void start_scanning(void);
 void handle_gap_event(ble_evt_t * bleEvent);
-void receiveBroadcastMessage(ble_evt_t * bleEvent);
+void receive_broadcast_message(ble_evt_t *bleEvent);

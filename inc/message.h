@@ -4,7 +4,8 @@
 typedef enum {
 	SetFamilyID = 0,
 	StartDFU = 1,
-	Broadcast = 2
+	Broadcast = 2,
+  ConnectionInfo = 3
 } BleMessageType;
 
 // This is a message head.all request message struct must declare this head first.
@@ -27,3 +28,10 @@ typedef struct {
 	BleMessageHead head;
 	uint8_t message[BROADCAST_SIZE];
 }__attribute__ ((packed)) BleMessageBroadcastReq;
+
+typedef struct {
+	BleMessageHead head;
+  char deviceName[NODE_NAME_SIZE];
+	uint8_t majorVersion;
+  uint8_t minorVersion;
+}__attribute__ ((packed)) BleMessageConnectionInfoReq;

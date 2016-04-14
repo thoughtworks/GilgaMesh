@@ -209,6 +209,8 @@ case "$1" in
     ;;
     cs) compile-seeed
     ;;
+    cd) compile-deploy-all
+    ;;
     cd1) compile-deploy-one
     ;;
     cds) compile-deploy-one-swd

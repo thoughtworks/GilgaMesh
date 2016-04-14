@@ -1,6 +1,7 @@
 #include <gap.h>
 #include <ble_gatts.h>
 #include <message.h>
+#include <ble.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -176,6 +177,7 @@ void handle_connection_event(ble_evt_t * bleEvent)
     start_scanning();
   }
 
+  share_connection_info(bleEvent->evt.gap_evt.conn_handle);
   print_all_connections();
 }
 
@@ -192,8 +194,7 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
   print_all_connections();
 }
 
-void receiveBroadcastMessage(ble_evt_t * bleEvent) {
-  uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
+void receive_broadcast_message(ble_evt_t *bleEvent) {
   BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) bleEvent->evt.gatts_evt.params.write.data;
 
   char content[BROADCAST_SIZE + 1];
@@ -205,7 +206,7 @@ void receiveBroadcastMessage(ble_evt_t * bleEvent) {
   log("***** RECEIVED Broadcast message: %s", content);
 }
 
-void setFamilyID(ble_evt_t * bleEvent) {
+void set_family_id(ble_evt_t *bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
 	log("***** RECEIVED New family id: %u", req->familyID);
@@ -221,6 +222,13 @@ void setFamilyID(ble_evt_t * bleEvent) {
 }
 
 
+void update_connection_with_info(ble_evt_t *bleEvent) {
+  BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *) bleEvent->evt.gatts_evt.params.write.data;
+
+  log("CONN INFO [%u]: %s, v%u.%u", bleEvent->evt.gatts_evt.conn_handle, msg->deviceName, msg->majorVersion, msg->minorVersion);
+}
+
+
 void handle_write_event(ble_evt_t * bleEvent)
 {
   BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
@@ -230,10 +238,13 @@ void handle_write_event(ble_evt_t * bleEvent)
       restart_in_bootloader_mode();
   	  break;
     case SetFamilyID:
-    	setFamilyID(bleEvent);
+      set_family_id(bleEvent);
     	break;
     case Broadcast:
-      receiveBroadcastMessage(bleEvent);
+      receive_broadcast_message(bleEvent);
+      break;
+    case ConnectionInfo:
+      update_connection_with_info(bleEvent);
       break;
     default:
       log("unknown message type: %d", head->messageType);

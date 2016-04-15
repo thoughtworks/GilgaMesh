@@ -117,7 +117,6 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
   if (adv_data->manufacturerData.manufacturerId != MANUFACTURER_ID) return false;
   if (adv_data->manufacturerData.familyId == familyId) return false;
 
-  log("Connecting to node with familyId %u, device name %s", adv_data->manufacturerData.familyId, adv_data->deviceData.deviceName);
   return true;
 }
 

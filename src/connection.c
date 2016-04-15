@@ -209,9 +209,13 @@ char* get_connection_info(connection *conn, char* result)
 
 void print_all_connections()
 {
+  if (!central_connection_active() && !peripheral_connections_active()) {
+    log("Connection details: DISCONNECTED");
+    return;
+  }
+
   char centralInfo[50], peripheral1Info[50], peripheral2Info[50], peripheral3Info[50];
-  log("Connection details have changed:\n\r   Family ID: %u %s%s%s%s",
-      familyId,
+  log("Connection details: %s%s%s%s",
       get_connection_info(&activeConnections->central, centralInfo),
       get_connection_info(&activeConnections->peripheral[0], peripheral1Info),
       get_connection_info(&activeConnections->peripheral[1], peripheral2Info),

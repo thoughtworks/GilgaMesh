@@ -12,8 +12,8 @@ BOARD=${BOARD:=PCA10028}
 
 function compile {
     cd _build
-    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False ..
-    make
+    cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False -DNFC_DEBUG=False ..
+    make clean && make
     cd -
 }
 
@@ -22,20 +22,15 @@ function compile-deploy-all {
     deploy-to-many
 }
 
-function compile-deploy-one {
-    compile
-    echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
-}
-
 function compile-deploy-one-swd {
     compile
     echo 0 | $JLINK deploy/single-softdevice-meshymesh-deploy-swd.jlink
 }
 
 function deploy-to-many {
-    NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l) - 1`
-    for i in $(seq 0 $NUMBER_OF_DEVICES); do
-        echo $i | $JLINK deploy/single-softdevice-meshymesh-deploy.jlink
+    NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l)`
+    for i in $(seq 0 $(($NUMBER_OF_DEVICES-1))); do
+        echo $i | $JLINK deploy/deploy-meshy-swd.jlink
     done
 }
 
@@ -135,10 +130,9 @@ function helptext {
     echo ""
     echo "Available commands are:"
     echo "    ut                Run all unit tests"
-    echo "    d                 Deploy to nrf51 prototype board"
-    echo "    dp                Deploy to Seeed production board"
-    echo "    cd                Compile and deploy current code to many connected devices (Expects more than one)"
-    echo "    cd1               Compile and deploy current code to one device"
+    echo "    d                 Deploy to all connected nrf51 prototype boards"
+    echo "    cs                Compile for Seeed production board"
+    echo "    cd                Compile and deploy current code to all connected devices"
     echo "    cds               Compile and deploy current code to one device via swd"
     echo "    r                 Resets one device to factory settings"
     echo "    b                 Resets one device and installs the softdevice and bootloader"
@@ -176,7 +170,7 @@ function deploy {
     make
     cd -
 
-    $JLINK deploy/deploy-meshy-swd.jlink
+    deploy-to-many
 }
 
 function deploy-nfc {
@@ -185,7 +179,7 @@ function deploy-nfc {
     make
     cd -
 
-    $JLINK deploy/deploy-meshy-swd.jlink
+    deploy-to-many
 }
 
 function compile-seeed {
@@ -210,8 +204,6 @@ case "$1" in
     cs) compile-seeed
     ;;
     cd) compile-deploy-all
-    ;;
-    cd1) compile-deploy-one
     ;;
     cds) compile-deploy-one-swd
     ;;

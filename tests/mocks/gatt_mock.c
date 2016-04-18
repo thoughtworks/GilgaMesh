@@ -16,6 +16,10 @@ void broadcast_message(char* message) {
   check_expected_ptr(message);
 }
 
+void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
+  check_expected(originHandle);
+}
+
 void share_connection_info(uint16_t targetHandle) {
   check_expected(targetHandle);
 }

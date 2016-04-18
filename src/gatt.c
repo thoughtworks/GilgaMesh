@@ -1,8 +1,14 @@
 #include <gatt.h>
 #include <string.h>
 #include <version.h>
+#include <ble_gatts.h>
+#include <stdlib.h>
+#include <message.h>
+#include <connection.h>
 
 ble_gatts_char_handles_t characteristicHandles;
+
+void log_heartbeat_info(BleMessageHeartbeatReq *request);
 
 void gatt_initialize()
 {
@@ -114,6 +120,36 @@ void broadcast_message(char* message)
   memcpy(request.message, message, BROADCAST_SIZE);
 
   send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+}
+
+
+void log_heartbeat_info(BleMessageHeartbeatReq *request)
+{
+  log("HEARTBEAT: Node %s, parent %s, version %u.%u", request->deviceName, request->centralConnectionDeviceName, request->majorVersion, request->minorVersion);
+}
+
+
+void broadcast_heartbeat()
+{
+  BleMessageHeartbeatReq request;
+  memset(&request, 0, sizeof(request));
+  request.head.messageType = Heartbeat;
+  request.majorVersion = APP_VERSION_MAIN;
+  request.minorVersion = APP_VERSION_SUB;
+  memcpy(request.deviceName, nodeName, NODE_NAME_SIZE);
+  if (central_connection_active() && (activeConnections->central.deviceName != 0)) {
+    memcpy(request.centralConnectionDeviceName, activeConnections->central.deviceName, NODE_NAME_SIZE);
+  } else {
+    memcpy(request.centralConnectionDeviceName, "ROOT", 5);
+  }
+
+  log_and_propagate_heartbeat(BLE_CONN_HANDLE_INVALID, &request);
+}
+
+
+void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
+  log_heartbeat_info(heartbeat);
+  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(BleMessageHeartbeatReq));
 }
 
 

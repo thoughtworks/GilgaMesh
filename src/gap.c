@@ -202,6 +202,13 @@ void receive_broadcast_message(ble_evt_t *bleEvent) {
   log("***** RECEIVED Broadcast message: %s", content);
 }
 
+
+void receive_heartbeat(ble_evt_t *bleEvent) {
+  BleMessageHeartbeatReq *heartbeat = (BleMessageHeartbeatReq *) bleEvent->evt.gatts_evt.params.write.data;
+  log_and_propagate_heartbeat(bleEvent->evt.gatts_evt.conn_handle, heartbeat);
+}
+
+
 void set_family_id(ble_evt_t *bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
@@ -240,6 +247,9 @@ void handle_write_event(ble_evt_t * bleEvent)
       break;
     case ConnectionInfo:
       update_connection_with_info(bleEvent);
+      break;
+    case Heartbeat:
+      receive_heartbeat(bleEvent);
       break;
     default:
       log("unknown message type: %d", head->messageType);

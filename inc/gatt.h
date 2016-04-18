@@ -18,4 +18,6 @@
 void gatt_initialize(void);
 void propagate_family_id(uint16_t originHandle);
 void broadcast_message(char* message);
+void broadcast_heartbeat(void);
+void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat);
 void share_connection_info(uint16_t targetHandle);

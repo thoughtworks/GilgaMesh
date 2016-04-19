@@ -125,7 +125,8 @@ void broadcast_message(char* message)
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request)
 {
-  log("HEARTBEAT: Node %s, parent %s, version %u.%u", request->deviceName, request->centralConnectionDeviceName, request->majorVersion, request->minorVersion);
+  log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u}",
+      request->deviceName, request->centralConnectionDeviceName, familyId, request->majorVersion, request->minorVersion);
 }
 
 

@@ -34,15 +34,15 @@ typedef struct {
 
 typedef struct {
 	BleMessageHead head;
-  char deviceName[NODE_NAME_SIZE];
+  uint32_t deviceId;
 	uint8_t majorVersion;
   uint8_t minorVersion;
 }__attribute__ ((packed)) BleMessageConnectionInfoReq;
 
 typedef struct {
   BleMessageHead head;
-  char deviceName[NODE_NAME_SIZE];
-  char centralConnectionDeviceName[NODE_NAME_SIZE];
+  uint32_t deviceId;
+  uint32_t centralConnectionDeviceId;
   uint8_t majorVersion;
   uint8_t minorVersion;
 }__attribute__ ((packed)) BleMessageHeartbeatReq;

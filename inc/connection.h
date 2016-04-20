@@ -22,7 +22,7 @@ typedef struct
     uint16_t handle;
     ConnectionType type;
     ble_gap_addr_t address;
-    char *deviceName;
+    uint32_t deviceId;
     uint8_t majorVersion;
     uint8_t minorVersion;
 } connection;
@@ -33,7 +33,8 @@ typedef struct
     connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
 } connections;
 
-uint8_t *nodeName;
+uint32_t deviceId;
+char *nodeName;
 uint32_t familyId;
 connections *activeConnections;
 

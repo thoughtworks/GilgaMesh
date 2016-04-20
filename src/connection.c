@@ -11,27 +11,12 @@ static inline uint32_t get_device_id() {
   #endif
 }
 
-void set_node_name()
-{
-  static char hex_chars[] = "0123456789ABCDEF";
-  char buf[NODE_NAME_SIZE] = "VB-0000";
-
-  uint32_t device_id = get_device_id();
-
-  for (uint8_t i = 2; i <= 5; i++){
-	  buf[NODE_NAME_SIZE - i] = hex_chars[device_id & 0xf];
-    device_id >>= 4;
-  }
-
-  nodeName = malloc(NODE_NAME_SIZE);
-  memcpy(nodeName, buf, NODE_NAME_SIZE);
-}
-
-
 void connections_initialize()
 {
   familyId = generate_family_id();
-  set_node_name();
+  deviceId = get_device_id();
+  nodeName = malloc(NODE_NAME_SIZE);
+  set_node_name_from_device_id(deviceId, nodeName);
   activeConnections = calloc(1, sizeof(connections));
 
   log("FamilyId: %u, NodeName: %s", familyId, nodeName);
@@ -158,8 +143,7 @@ void update_connection_info(uint16_t connectionHandle, BleMessageConnectionInfoR
   if (conn != 0) {
     conn->majorVersion = msg->majorVersion;
     conn->minorVersion = msg->minorVersion;
-    conn->deviceName = malloc(NODE_NAME_SIZE);
-    memcpy(conn->deviceName, msg->deviceName, NODE_NAME_SIZE);
+    conn->deviceId = msg->deviceId;
   }
 }
 
@@ -187,8 +171,10 @@ char* get_connection_info(connection *conn, char* result)
     strcat(result, "] [");
     strcat(result, int_to_string(conn->handle));
     strcat(result, "] ");
-    if (conn->deviceName != 0) {
-      strcat(result, conn->deviceName);
+    if (conn->deviceId != 0) {
+      char *nodeName = malloc(NODE_NAME_SIZE);
+      set_node_name_from_device_id(conn->deviceId, nodeName);
+      strcat(result, nodeName);
       strcat(result, ", v");
       strcat(result, int_to_string(conn->majorVersion));
       strcat(result, ".");

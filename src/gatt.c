@@ -125,8 +125,19 @@ void broadcast_message(char* message)
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request)
 {
+  char *nodeName = malloc(NODE_NAME_SIZE);
+  char* parentNodeName = malloc(NODE_NAME_SIZE);
+
+  set_node_name_from_device_id(request->deviceId, nodeName);
+  if (request->centralConnectionDeviceId == 0) {
+    parentNodeName = "ROOT";
+  } else {
+    set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
+  }
+
   log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u}",
-      request->deviceName, request->centralConnectionDeviceName, familyId, request->majorVersion, request->minorVersion);
+      nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion);
+
 }
 
 
@@ -137,11 +148,9 @@ void broadcast_heartbeat()
   request.head.messageType = Heartbeat;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
-  memcpy(request.deviceName, nodeName, NODE_NAME_SIZE);
-  if (central_connection_active() && (activeConnections->central.deviceName != 0)) {
-    memcpy(request.centralConnectionDeviceName, activeConnections->central.deviceName, NODE_NAME_SIZE);
-  } else {
-    memcpy(request.centralConnectionDeviceName, "ROOT", 5);
+  request.deviceId = deviceId;
+  if (central_connection_active() && (activeConnections->central.deviceId != 0)) {
+    request.centralConnectionDeviceId = activeConnections->central.deviceId;
   }
 
   log_and_propagate_heartbeat(BLE_CONN_HANDLE_INVALID, &request);
@@ -161,7 +170,7 @@ void share_connection_info(uint16_t targetHandle)
   request.head.messageType = ConnectionInfo;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
-  memcpy(request.deviceName, nodeName, NODE_NAME_SIZE);
+  request.deviceId = deviceId;
 
   send_to_single_connection(targetHandle, (uint8_t *)&request, sizeof(request));
 }

@@ -30,7 +30,7 @@ function compile-deploy-one-swd {
 function deploy-to-many {
     NUMBER_OF_DEVICES=`expr $(echo -e "ShowEmuList\nexit\n" | $JLINK | grep 'J-Link\[' | wc -l)`
     for i in $(seq 0 $(($NUMBER_OF_DEVICES-1))); do
-        echo $i | $JLINK deploy/deploy-meshy-swd.jlink
+        echo $i | $JLINK deploy/single-mesh-only-deploy.jlink
     done
 }
 

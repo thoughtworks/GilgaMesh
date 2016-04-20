@@ -37,7 +37,6 @@
 #elif defined(BOARD_BLE400)
   #include "ble400.h"
 #elif defined(BOARD_SEEED)
-  #define BOARD_SEEED
   #include "seeed.h"
 #else
 #error "Board is not defined"

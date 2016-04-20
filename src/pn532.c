@@ -488,7 +488,7 @@ void nfcEventHandler(uint8_t rx_byte) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
                     led_white_on();
                     buzzer_on();
-                    broadcast_message(int_to_string(get_id(data_dump1, four_frame_data_dump_size)));
+                    broadcast_vote(get_id(data_dump1, four_frame_data_dump_size));
 
                     // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
 

@@ -16,7 +16,15 @@ void broadcast_message(char* message) {
   check_expected_ptr(message);
 }
 
+void broadcast_vote(unsigned short voterId) {
+  check_expected(voterId);
+}
+
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
+  check_expected(originHandle);
+}
+
+void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
   check_expected(originHandle);
 }
 

@@ -126,12 +126,13 @@ void broadcast_message(char* message)
 void log_heartbeat_info(BleMessageHeartbeatReq *request)
 {
   char *nodeName = malloc(NODE_NAME_SIZE);
-  char* parentNodeName = malloc(NODE_NAME_SIZE);
+  char* parentNodeName;
 
   set_node_name_from_device_id(request->deviceId, nodeName);
   if (request->centralConnectionDeviceId == 0) {
     parentNodeName = "ROOT";
   } else {
+    parentNodeName = malloc(NODE_NAME_SIZE);
     set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
   }
 
@@ -159,7 +160,28 @@ void broadcast_heartbeat()
 
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
   log_heartbeat_info(heartbeat);
-  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(BleMessageHeartbeatReq));
+  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(heartbeat));
+}
+
+
+void broadcast_vote(unsigned short voterId)
+{
+  BleMessageVoteReq request;
+  memset(&request, 0, sizeof(request));
+  request.head.messageType = Vote;
+  request.deviceId = deviceId;
+  request.voterId = voterId;
+
+  send_to_single_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+}
+
+
+void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
+  char *nodeName = malloc(NODE_NAME_SIZE);
+  set_node_name_from_device_id(request->deviceId, nodeName);
+
+  log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", nodeName, request->voterId);
+  send_to_all_connections(originHandle, (uint8_t *)request, sizeof(request));
 }
 
 

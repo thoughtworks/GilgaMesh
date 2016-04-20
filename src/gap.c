@@ -209,6 +209,12 @@ void receive_heartbeat(ble_evt_t *bleEvent) {
 }
 
 
+void receive_vote(ble_evt_t *bleEvent) {
+  BleMessageVoteReq *request = (BleMessageVoteReq *) bleEvent->evt.gatts_evt.params.write.data;
+  log_and_propagate_vote(bleEvent->evt.gatts_evt.conn_handle, request);
+}
+
+
 void set_family_id(ble_evt_t *bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
@@ -227,7 +233,6 @@ void set_family_id(ble_evt_t *bleEvent) {
 void update_connection_with_info(ble_evt_t *bleEvent) {
   BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *) bleEvent->evt.gatts_evt.params.write.data;
   update_connection_info(bleEvent->evt.gatts_evt.conn_handle, msg);
-  print_all_connections();
 }
 
 
@@ -250,6 +255,9 @@ void handle_write_event(ble_evt_t * bleEvent)
       break;
     case Heartbeat:
       receive_heartbeat(bleEvent);
+      break;
+    case Vote:
+      receive_vote(bleEvent);
       break;
     default:
       log("unknown message type: %d", head->messageType);

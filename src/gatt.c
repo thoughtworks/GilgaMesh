@@ -172,7 +172,7 @@ void broadcast_vote(unsigned short voterId)
   request.deviceId = deviceId;
   request.voterId = voterId;
 
-  send_to_single_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(BleMessageVoteReq));
 }
 
 

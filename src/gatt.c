@@ -160,7 +160,7 @@ void broadcast_heartbeat()
 
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
   log_heartbeat_info(heartbeat);
-  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(heartbeat));
+  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(BleMessageHeartbeatReq));
 }
 
 
@@ -181,7 +181,7 @@ void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
   set_node_name_from_device_id(request->deviceId, nodeName);
 
   log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", nodeName, request->voterId);
-  send_to_all_connections(originHandle, (uint8_t *)request, sizeof(request));
+  send_to_all_connections(originHandle, (uint8_t *)request, sizeof(BleMessageVoteReq));
 }
 
 

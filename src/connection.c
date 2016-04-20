@@ -19,7 +19,7 @@ void connections_initialize()
   set_node_name_from_device_id(deviceId, nodeName);
   activeConnections = calloc(1, sizeof(connections));
 
-  log("FamilyId: %u, NodeName: %s", familyId, nodeName);
+  log("FamilyId: %u, NodeName: %s, DeviceId: %u", familyId, nodeName, deviceId);
 }
 
 

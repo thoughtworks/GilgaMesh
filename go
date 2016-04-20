@@ -81,7 +81,7 @@ function archive-seeed {
 }
 
 function size {
-    $GCC_ARM_SIZE _build/MeshyMesh.elf
+    $GCC_ARM_SIZE _build/Debug/MeshyMesh.elf
 }
 
 function debug {

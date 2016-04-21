@@ -65,6 +65,7 @@ add_executable(GattTest ${TestFramework_SOURCES}
     mocks/error_mock.c
     mocks/connection_mock.c
     mocks/conversion_mock.c
+    mocks/votes_mock.c
     ${SRC_PATH}/gatt.c
     unit/GattTest.c)
 target_link_libraries(GattTest cmocka)
@@ -103,6 +104,7 @@ add_executable(Pn532Test ${TestFramework_SOURCES}
     mocks/command_mock.c
     mocks/conversion_mock.c
     mocks/gatt_mock.c
+    mocks/votes_mock.c
     ${SRC_PATH}/nrf/simple_uart.c
     ${SRC_PATH}/pn532.c
     unit/Pn532Test.c)

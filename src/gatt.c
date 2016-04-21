@@ -2,6 +2,7 @@
 #include <version.h>
 #include <stdlib.h>
 #include <pn532.h>
+#include <votes.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -150,7 +151,7 @@ void broadcast_heartbeat()
   if (central_connection_active() && (activeConnections->central.deviceId != 0)) {
     request.centralConnectionDeviceId = activeConnections->central.deviceId;
   }
-  request.voteCount = voteCount;
+  request.voteCount = get_vote_count();
 
   log_and_propagate_heartbeat(BLE_CONN_HANDLE_INVALID, &request);
 }

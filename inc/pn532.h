@@ -25,6 +25,8 @@ typedef enum {
     SETUP_DONE
 } setup_state_t;
 
+uint16_t voteCount;
+
 bool id_exists_in_response(uint8_t *response, size_t response_length);
 unsigned short get_id(uint8_t *response, size_t response_length);
 void manage_badge_reading();

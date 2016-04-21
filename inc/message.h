@@ -46,12 +46,13 @@ typedef struct {
   uint32_t centralConnectionDeviceId;
   uint8_t majorVersion;
   uint8_t minorVersion;
+  uint16_t voteCount;
 }__attribute__ ((packed)) BleMessageHeartbeatReq;
 
 typedef struct {
   BleMessageHead head;
   uint32_t deviceId;
-  unsigned short voterId;
+  uint16_t voterId;
 }__attribute__ ((packed)) BleMessageVoteReq;
 
 

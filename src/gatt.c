@@ -1,10 +1,7 @@
 #include <gatt.h>
-#include <string.h>
 #include <version.h>
-#include <ble_gatts.h>
 #include <stdlib.h>
-#include <message.h>
-#include <connection.h>
+#include <pn532.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -136,8 +133,8 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
     set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
   }
 
-  log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u}",
-      nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion);
+  log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u, \"votes\": %u}",
+      nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion, request->voteCount);
 
 }
 
@@ -153,6 +150,7 @@ void broadcast_heartbeat()
   if (central_connection_active() && (activeConnections->central.deviceId != 0)) {
     request.centralConnectionDeviceId = activeConnections->central.deviceId;
   }
+  request.voteCount = voteCount;
 
   log_and_propagate_heartbeat(BLE_CONN_HANDLE_INVALID, &request);
 }

@@ -486,6 +486,7 @@ void nfcEventHandler(uint8_t rx_byte) {
 
             if (grab_state == end_grabbing) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
+                    voteCount += 1;
                     led_white_on();
                     buzzer_on();
                     broadcast_vote(get_id(data_dump1, four_frame_data_dump_size));

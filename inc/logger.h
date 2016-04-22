@@ -2,6 +2,7 @@
 
 #define TRACE_BUFFER_SIZE 500
 
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 //TODO: we need to take this out later!!!!!

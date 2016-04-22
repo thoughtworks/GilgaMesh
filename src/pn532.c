@@ -671,6 +671,17 @@ void in_list_passive_target() {
     send_postamble();
 }
 
+void power_down() {
+    send_preamble_and_start();
+    simple_uart_put('\x03');
+    simple_uart_put('\xFD');
+    simple_uart_put('\xD4');
+    simple_uart_put('\x16');
+    simple_uart_put('\xF0');
+    simple_uart_put('\x26');
+    send_postamble();
+}
+
 void UART0_IRQHandler(void) {
     // Handle reception
     if ((NRF_UART0->EVENTS_RXDRDY != 0) && (NRF_UART0->INTENSET & UART_INTENSET_RXDRDY_Msk)) {

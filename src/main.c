@@ -6,6 +6,7 @@ uint32_t initialize() {
 
 #ifdef NFC_DEBUG
   initialize_uart_nfc();
+  power_down();
   buzzer_initialize();
 #endif
 

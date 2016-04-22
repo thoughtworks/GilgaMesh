@@ -33,3 +33,4 @@ setup_state_t get_setup_state();
 void setup();
 void setup_state_machine();
 void in_list_passive_target();
+void power_down(void);

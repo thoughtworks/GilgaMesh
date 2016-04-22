@@ -12,6 +12,7 @@
 
 
 void timer_initialize(void);
-void timer_tick_handler(void);
+void turn_off_voting_notification(void);
+
 
 #endif

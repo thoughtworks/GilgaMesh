@@ -1,4 +1,5 @@
 #include <votes.h>
+#include <timer.h>
 #include "conversion.h"
 #include "command.h"
 #include "buzzer.h"
@@ -362,6 +363,14 @@ void in_data_exchange(uint8_t start_address, uint8_t dcs) {
 }
 
 
+void show_vote_feedback()
+{
+    led_white_on();
+    buzzer_on();
+    turn_off_voting_notification();
+}
+
+
 void nfcEventHandler(uint8_t rx_byte) {
     switch (current_nfc_state) {
         case ID_TAKEN:
@@ -488,16 +497,13 @@ void nfcEventHandler(uint8_t rx_byte) {
 
             if (grab_state == end_grabbing) {
                 if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
-                    if (save_vote(get_id(data_dump1, four_frame_data_dump_size))) {
-                        led_white_on();
-                        buzzer_on();
+                    uint16_t voterId = get_id(data_dump1, four_frame_data_dump_size);
+//                    broadcast_vote(voterId);
+                    if (save_vote(voterId)) {
+                        show_vote_feedback();
                     } else {
                         led_red_on();
                     }
-//                    broadcast_vote(get_id(data_dump1, four_frame_data_dump_size));
-
-                    // node->PutInRetryStorage(get_id(data_dump1, four_frame_data_dump_size));
-
                     current_nfc_state = ID_TAKEN;
                 } else {
                     current_nfc_state = NEEDS_RETRY;

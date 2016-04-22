@@ -104,6 +104,7 @@ add_executable(Pn532Test ${TestFramework_SOURCES}
     mocks/command_mock.c
     mocks/conversion_mock.c
     mocks/gatt_mock.c
+    mocks/timer_mock.c
     mocks/votes_mock.c
     ${SRC_PATH}/nrf/simple_uart.c
     ${SRC_PATH}/pn532.c

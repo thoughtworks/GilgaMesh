@@ -22,6 +22,7 @@ uint32_t initialize() {
 
   //Turn all LEDs off
   led_white_off();
+  display_connection_status();
 
   start_scanning();
   start_advertising();

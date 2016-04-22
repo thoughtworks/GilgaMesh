@@ -386,7 +386,8 @@ void nfcEventHandler(uint8_t rx_byte) {
             if (current_ack_state != ack_processed) process_ack(rx_byte);
             if (current_ack_state == ack_error) {
                 current_nfc_state = NEEDS_RETRY;
-                led_green_on();
+                led_white_off();
+                led_red_on();
             }
             if (current_ack_state == ack_processed) current_nfc_state = IN_LIST_ACK_PROCESSING;
             break;

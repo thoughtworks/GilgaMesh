@@ -46,6 +46,7 @@ void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
 bool central_connection_active(void);
 bool peripheral_connections_active(void);
+void display_connection_status(void);
 uint16_t* get_active_connection_handles(uint16_t *handles, uint8_t *connectionCount);
 char* get_connection_info(connection *conn, char* result);
 void update_connection_info(uint16_t connectionHandle, BleMessageConnectionInfoReq *msg);

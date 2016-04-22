@@ -30,30 +30,13 @@ uint32_t generate_family_id()
 }
 
 
-void handle_connection_change()
-{
-  if (central_connection_active()){
-    led_green_on();
-  } else {
-    led_green_off();
-  }
-
-  if (peripheral_connections_active()){
-    led_red_on();
-  } else {
-    led_red_off();
-  }
-}
-
-
 void set_connection(connection *localConnection, uint16_t connectionHandle, ble_gap_addr_t deviceAddress, ConnectionType type)
 {
   memcpy(&localConnection->address, &deviceAddress, sizeof(deviceAddress));
   memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
   localConnection->type = type;
   localConnection->active = true;
-
-  handle_connection_change();
+  display_connection_status();
 }
 
 
@@ -129,7 +112,7 @@ ConnectionType unset_connection(uint16_t connectionHandle)
   if (lostConnection != 0){
     ConnectionType lostConnectionType = lostConnection->type;
     memset(lostConnection, 0, sizeof(connection));
-    handle_connection_change();
+    display_connection_status();
 
     return lostConnectionType;
   } else {
@@ -221,6 +204,24 @@ bool peripheral_connections_active()
     if (activeConnections->peripheral[i].active) return true;
   }
   return false;
+}
+
+
+bool connected_to_mesh()
+{
+  return central_connection_active() || peripheral_connections_active();
+}
+
+
+void display_connection_status()
+{
+  if (connected_to_mesh()){
+    led_blue_on();
+    led_green_off();
+  } else {
+    led_green_on();
+    led_blue_off();
+  }
 }
 
 

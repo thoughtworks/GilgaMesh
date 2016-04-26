@@ -158,6 +158,8 @@ void handle_advertising_report_event(ble_evt_t * bleEvent)
 void handle_connection_event(ble_evt_t * bleEvent)
 {
   ble_gap_evt_connected_t connectionParams = bleEvent->evt.gap_evt.params.connected;
+//  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL) start_scanning();
+
   if (find_active_connection_by_address(connectionParams.peer_addr) != 0){
     // we are already connected to this node, so "undo" this connection event
     EC(sd_ble_gap_disconnect(bleEvent->evt.gap_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));

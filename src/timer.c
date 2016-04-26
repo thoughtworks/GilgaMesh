@@ -13,7 +13,7 @@
 #define SCHED_QUEUE_SIZE 10
 
 #define MS_RATE_TO_MANAGE_NFC 100
-#define MS_RATE_TO_TURN_OFF_ALL_USER_FEEDBACK 100
+#define MS_RATE_TO_TURN_OFF_ALL_USER_FEEDBACK 50
 #define MS_RATE_TO_BROADCAST_HEARTBEAT 3000
 
 static app_timer_id_t feedbackOffTimerId;
@@ -31,7 +31,7 @@ void nfc_event_handler(void *context) {
 }
 
 void heartbeat_timer_handler(void *context) {
-  broadcast_heartbeat();
+  app_sched_event_put(NULL, 0, broadcast_heartbeat);
 }
 
 void turn_off_voting_notification() {
@@ -40,7 +40,7 @@ void turn_off_voting_notification() {
 
 void timer_initialize(void) {
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-  APP_TIMER_APPSH_INIT(ATTR_TIMER_PRESCALER, MAX_TIMERS, QUEUE_SIZE, true);
+  APP_TIMER_APPSH_INIT(ATTR_TIMER_PRESCALER, MAX_TIMERS, QUEUE_SIZE, false);
 
 #ifdef NFC_DEBUG
   EC(app_timer_create(&nfcTimerId, APP_TIMER_MODE_REPEATED, nfc_event_handler));

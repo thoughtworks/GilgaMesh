@@ -2,6 +2,7 @@
 #include <version.h>
 #include <stdlib.h>
 #include <votes.h>
+#include <sdk_common.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -143,8 +144,11 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
 }
 
 
-void broadcast_heartbeat()
+void broadcast_heartbeat(void *data, uint16_t dataLength)
 {
+  UNUSED_PARAMETER(data);
+  UNUSED_PARAMETER(dataLength);
+
   BleMessageHeartbeatReq request;
   memset(&request, 0, sizeof(request));
   request.head.messageType = Heartbeat;

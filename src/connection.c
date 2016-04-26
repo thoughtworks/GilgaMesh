@@ -208,6 +208,15 @@ bool peripheral_connections_active()
 }
 
 
+bool all_peripheral_connections_active()
+{
+  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+    if (!(activeConnections->peripheral[i].active)) return false;
+  }
+  return true;
+}
+
+
 bool connected_to_mesh()
 {
   return central_connection_active() || peripheral_connections_active();

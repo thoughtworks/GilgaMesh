@@ -76,7 +76,12 @@ void send_to_single_connection(uint16_t connectionHandle, uint8_t *data, uint16_
   writeParams.len = dataLength;
   writeParams.p_value = data;
 
-  EC(sd_ble_gattc_write(connectionHandle, &writeParams));
+  uint32_t errorCode;
+  do {
+    errorCode = sd_ble_gattc_write(connectionHandle, &writeParams);
+  } while (errorCode == BLE_ERROR_NO_TX_BUFFERS);
+
+  EC(errorCode);
 }
 
 

@@ -1,6 +1,5 @@
 #include <votes.h>
 #include <timer.h>
-#include "conversion.h"
 #include "command.h"
 #include "buzzer.h"
 #include "pn532.h"
@@ -506,6 +505,8 @@ void nfcEventHandler(uint8_t rx_byte) {
                     }
                     current_nfc_state = ID_TAKEN;
                 } else {
+                    led_white_off();
+                    led_red_on();
                     current_nfc_state = NEEDS_RETRY;
                 }
             }

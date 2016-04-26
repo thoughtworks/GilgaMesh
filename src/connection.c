@@ -162,6 +162,7 @@ char* get_connection_info(connection *conn, char* result)
       strcat(result, int_to_string(conn->majorVersion));
       strcat(result, ".");
       strcat(result, int_to_string(conn->minorVersion));
+      free(nodeName);
     } else {
       for (int i = 0; i < 6; i++){
         strcat(result, int_to_string((uint16_t)(*addr+i)));

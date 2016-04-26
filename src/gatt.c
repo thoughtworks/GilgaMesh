@@ -1,7 +1,6 @@
 #include <gatt.h>
 #include <version.h>
 #include <stdlib.h>
-#include <pn532.h>
 #include <votes.h>
 
 ble_gatts_char_handles_t characteristicHandles;
@@ -129,19 +128,20 @@ void broadcast_message(char* message)
 void log_heartbeat_info(BleMessageHeartbeatReq *request)
 {
   char *nodeName = malloc(NODE_NAME_SIZE);
-  char* parentNodeName;
+  char* parentNodeName = malloc(NODE_NAME_SIZE);
 
   set_node_name_from_device_id(request->deviceId, nodeName);
   if (request->centralConnectionDeviceId == 0) {
-    parentNodeName = "ROOT";
+    strncpy(parentNodeName, "ROOT", 5);
   } else {
-    parentNodeName = malloc(NODE_NAME_SIZE);
     set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
   }
 
   log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u, \"votes\": %u}",
       nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion, request->voteCount);
 
+  free(nodeName);
+  free(parentNodeName);
 }
 
 
@@ -181,10 +181,11 @@ void broadcast_vote(unsigned short voterId)
 
 
 void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
-  char *nodeName = malloc(NODE_NAME_SIZE);
-  set_node_name_from_device_id(request->deviceId, nodeName);
+  char *votingNodeName = malloc(NODE_NAME_SIZE);
+  set_node_name_from_device_id(request->deviceId, votingNodeName);
 
-  log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", nodeName, request->voterId);
+  log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", votingNodeName, request->voterId);
+  free(votingNodeName);
   send_to_all_connections(originHandle, (uint8_t *)request, sizeof(BleMessageVoteReq));
 }
 

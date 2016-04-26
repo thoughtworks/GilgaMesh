@@ -110,6 +110,8 @@ void start_advertising(void)
 
 bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
 {
+  if (all_peripheral_connections_active()) return false;
+
   advertisingData* adv_data = (advertisingData *)adv_report->data;
 
   if (adv_report->dlen != sizeof(advertisingData)) return false;

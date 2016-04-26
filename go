@@ -176,7 +176,7 @@ function deploy {
 function deploy-nfc {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=False -DNFC_DEBUG=True ..
-    make
+    make clean && make
     cd -
 
     deploy-to-many
@@ -185,7 +185,7 @@ function deploy-nfc {
 function compile-seeed {
     cd _build
     cmake -DCMAKE_BUILD_TYPE=Debug -DIS_TEST_BUILD=False -DIS_PRODUCTION_BOARD=True ..
-    make
+    make clean && make
     cd -
 
     if [[ `uname` == 'Darwin' ]]; then

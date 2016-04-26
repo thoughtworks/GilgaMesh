@@ -1,4 +1,5 @@
 #include <main.h>
+#include <app_scheduler.h>
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
@@ -36,6 +37,8 @@ uint32_t run() {
 #ifndef NO_TERMINAL
   terminal_process_input();
 #endif
+
+  app_sched_execute();
 
   sizeOfCurrentEvent = sizeOfEvent;
   error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);

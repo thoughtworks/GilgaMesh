@@ -1,4 +1,5 @@
 #include <gap.h>
+#include <app_scheduler.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -146,17 +147,21 @@ void update_and_propagate_family_id(uint32_t newFamilyId, uint16_t originHandle)
 }
 
 
-void handle_advertising_report_event(ble_evt_t * bleEvent)
+void handle_advertising_report_event(void * bleEvent, uint16_t dataLength)
 {
-  ble_gap_evt_adv_report_t advertisingParams = bleEvent->evt.gap_evt.params.adv_report;
+  UNUSED_PARAMETER(dataLength);
+  ble_gap_evt_adv_report_t advertisingParams = ((ble_evt_t *)bleEvent)->evt.gap_evt.params.adv_report;
   if (should_connect_to_advertiser(&advertisingParams)){
     EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshScanningParams, &meshConnectionParams));
   }
 }
 
 
-void handle_connection_event(ble_evt_t * bleEvent)
+void handle_connection_event(void * data, uint16_t dataLength)
 {
+  UNUSED_PARAMETER(dataLength);
+  ble_evt_t *bleEvent = (ble_evt_t *)data;
+
   ble_gap_evt_connected_t connectionParams = bleEvent->evt.gap_evt.params.connected;
 //  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL) start_scanning();
 
@@ -182,9 +187,10 @@ void handle_connection_event(ble_evt_t * bleEvent)
 }
 
 
-void handle_disconnection_event(ble_evt_t * bleEvent)
+void handle_disconnection_event(void * bleEvent, uint16_t dataLength)
 {
-  ConnectionType lostConnectionType = unset_connection(bleEvent->evt.gap_evt.conn_handle);
+  UNUSED_PARAMETER(dataLength);
+  ConnectionType lostConnectionType = unset_connection(((ble_evt_t *)bleEvent)->evt.gap_evt.conn_handle);
   if (lostConnectionType == INVALID) return;
 
   uint32_t newFamilyId = (lostConnectionType == CENTRAL) ? generate_family_id() : (familyId + 1);
@@ -193,6 +199,7 @@ void handle_disconnection_event(ble_evt_t * bleEvent)
 
   print_all_connections();
 }
+
 
 void receive_broadcast_message(ble_evt_t *bleEvent) {
   BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) bleEvent->evt.gatts_evt.params.write.data;
@@ -240,8 +247,11 @@ void update_connection_with_info(ble_evt_t *bleEvent) {
 }
 
 
-void handle_write_event(ble_evt_t * bleEvent)
+void handle_write_event(void * data, uint16_t dataLength)
 {
+  UNUSED_PARAMETER(dataLength);
+  ble_evt_t *bleEvent = (ble_evt_t *)data;
+
   BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
 
   switch (head->messageType) {
@@ -273,16 +283,16 @@ void handle_write_event(ble_evt_t * bleEvent)
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
-    handle_advertising_report_event(bleEvent);
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_advertising_report_event);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
-    handle_connection_event(bleEvent);
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_connection_event);
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
-    handle_disconnection_event(bleEvent);
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_disconnection_event);
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
-    handle_write_event(bleEvent);
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_write_event);
 
   } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
     //no need to do anything, just swallow the event

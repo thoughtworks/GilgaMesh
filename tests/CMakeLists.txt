@@ -111,3 +111,9 @@ add_executable(Pn532Test ${TestFramework_SOURCES}
     unit/Pn532Test.c)
 target_link_libraries(Pn532Test cmocka)
 GEN_OUTPUTS(Pn532Test)
+
+add_executable(QueueTest ${TestFramework_SOURCES}
+    ${SRC_PATH}/queue.c
+    unit/QueueTest.c)
+target_link_libraries(QueueTest cmocka)
+GEN_OUTPUTS(QueueTest)

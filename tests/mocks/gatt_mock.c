@@ -32,5 +32,8 @@ void share_connection_info(connection *targetConnection) {
   check_expected_ptr(targetConnection);
 }
 
+void retry_send_to_single_connection(connection *targetConnection, uint8_t messageCount) {
+  check_expected_ptr(targetConnection);
+}
 
 #endif

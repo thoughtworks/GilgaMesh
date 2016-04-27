@@ -9,6 +9,7 @@
 #include <logger.h>
 #include <led.h>
 #include <message.h>
+#include <queue.h>
 
 #define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3
@@ -25,6 +26,7 @@ typedef struct
     uint32_t deviceId;
     uint8_t majorVersion;
     uint8_t minorVersion;
+    transmissionPacketQueue unsentMessages;
 } connection;
 
 typedef struct

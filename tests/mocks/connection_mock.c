@@ -39,6 +39,10 @@ connection *find_active_connection_by_address(ble_gap_addr_t address) {
   return mock_ptr_type(connection *);
 }
 
+connection* find_active_connection_by_handle(uint16_t connectionHandle) {
+  return mock_ptr_type(connection *);
+}
+
 bool central_connection_active(void) {
   return mock_type(bool);
 }

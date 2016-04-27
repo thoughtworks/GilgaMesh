@@ -291,12 +291,22 @@ void handle_write_event(void * data, uint16_t dataLength)
 }
 
 
-void handle_connection_timeout_event(void * data, uint16_t dataLength)
-{
+void handle_connection_timeout_event(void * data, uint16_t dataLength) {
   UNUSED_PARAMETER(data);
   UNUSED_PARAMETER(dataLength);
 
   start_scanning();
+}
+
+
+void handle_buffers_freed_event(void * data, uint16_t dataLength)
+{
+  UNUSED_PARAMETER(dataLength);
+  ble_evt_t *bleEvent = (ble_evt_t *)data;
+
+  uint8_t freeBuffers = bleEvent->evt.common_evt.params.tx_complete.count;
+  connection *targetConnection = find_active_connection_by_handle(bleEvent->evt.common_evt.conn_handle);
+  retry_send_to_single_connection(targetConnection, freeBuffers);
 }
 
 
@@ -318,7 +328,7 @@ void handle_gap_event(ble_evt_t * bleEvent)
     app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_connection_timeout_event);
 
   } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
-    //no need to do anything, just swallow the event
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_buffers_freed_event);
 
   } else {
     log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));

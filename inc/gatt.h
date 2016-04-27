@@ -23,3 +23,4 @@ void broadcast_vote(unsigned short voterId);
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat);
 void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request);
 void share_connection_info(connection *targetConnection);
+void retry_send_to_single_connection(connection *targetConnection, uint8_t messageCount);

@@ -65,6 +65,7 @@ add_executable(GattTest ${TestFramework_SOURCES}
     mocks/error_mock.c
     mocks/connection_mock.c
     mocks/conversion_mock.c
+    mocks/queue_mock.c
     mocks/votes_mock.c
     ${SRC_PATH}/gatt.c
     unit/GattTest.c)

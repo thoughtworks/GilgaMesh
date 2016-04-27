@@ -40,29 +40,32 @@ void set_connection(connection *localConnection, uint16_t connectionHandle, ble_
 }
 
 
-void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
+connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
 {
   if (activeConnections->central.active){
     // Need better error handling for this...
     log("CONNECTION: Attempt to add central connection, but no slots are free!");
+    return NULL;
 
   } else {
     set_connection(&activeConnections->central, connectionHandle, deviceAddress, CENTRAL);
+    return &activeConnections->central;
   }
 }
 
 
-void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
+connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress)
 {
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     if (!activeConnections->peripheral[i].active){
       set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
-      return;
+      return &activeConnections->peripheral[i];
     }
   }
 
   // Need better error handling for this...
   log("CONNECTION: Attempt to add peripheral connection, but no slots are free!");
+  return NULL;
 }
 
 

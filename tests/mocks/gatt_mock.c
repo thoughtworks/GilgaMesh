@@ -28,8 +28,8 @@ void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
   check_expected(originHandle);
 }
 
-void share_connection_info(uint16_t targetHandle) {
-  check_expected(targetHandle);
+void share_connection_info(connection *targetConnection) {
+  check_expected_ptr(targetConnection);
 }
 
 

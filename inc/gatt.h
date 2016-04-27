@@ -22,4 +22,4 @@ void broadcast_heartbeat(void *data, uint16_t dataLength);
 void broadcast_vote(unsigned short voterId);
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat);
 void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request);
-void share_connection_info(uint16_t targetHandle);
+void share_connection_info(connection *targetConnection);

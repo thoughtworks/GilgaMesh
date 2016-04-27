@@ -1,5 +1,7 @@
 #include <gap.h>
 #include <app_scheduler.h>
+#include <ble.h>
+#include <connection.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -171,18 +173,19 @@ void handle_connection_event(void * data, uint16_t dataLength)
     return;
   }
 
+  connection *newConnection;
   if (connectionParams.role == BLE_GAP_ROLE_PERIPH){
     //we are the peripheral, we need to add a central connection
-    set_central_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
+    newConnection = set_central_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
 
-  } else if (connectionParams.role == BLE_GAP_ROLE_CENTRAL){
+  } else {
     //we are the central, we need to add a peripheral connection
-    set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
+    newConnection = set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
     update_and_propagate_family_id(familyId + 1, BLE_CONN_HANDLE_INVALID);
     start_scanning();
   }
 
-  share_connection_info(bleEvent->evt.gap_evt.conn_handle);
+  share_connection_info(newConnection);
   print_all_connections();
 }
 

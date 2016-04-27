@@ -66,7 +66,7 @@ void gatt_initialize()
 }
 
 
-void send_to_single_connection(uint16_t connectionHandle, uint8_t *data, uint16_t dataLength)
+void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength)
 {
   ble_gattc_write_params_t writeParams;
   memset(&writeParams, 0, sizeof(writeParams));
@@ -77,7 +77,7 @@ void send_to_single_connection(uint16_t connectionHandle, uint8_t *data, uint16_
   writeParams.p_value = data;
 
   uint32_t errorCode;
-  errorCode = sd_ble_gattc_write(connectionHandle, &writeParams);
+  errorCode = sd_ble_gattc_write(targetConnection->handle, &writeParams);
 
   EC(errorCode);
 }
@@ -85,12 +85,15 @@ void send_to_single_connection(uint16_t connectionHandle, uint8_t *data, uint16_
 
 void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
 {
-  uint8_t connectionCount;
-  uint16_t connectionHandles[ATTR_MAX_CONNECTIONS];
-  get_active_connection_handles(connectionHandles, &connectionCount);
-  for (int i = 0; i < connectionCount; i++){
-    if (originHandle != connectionHandles[i]){ //don't resend to the connection who sent it
-      send_to_single_connection(connectionHandles[i], data, dataLength);
+  connection *targetConnection = &activeConnections->central;
+  if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
+    send_to_single_connection(targetConnection, data, dataLength);
+  }
+
+  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+    targetConnection = &activeConnections->peripheral[i];
+    if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
+      send_to_single_connection(targetConnection, data, dataLength);
     }
   }
 }
@@ -192,7 +195,7 @@ void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
 }
 
 
-void share_connection_info(uint16_t targetHandle)
+void share_connection_info(connection *targetConnection)
 {
   BleMessageConnectionInfoReq request;
   memset(&request, 0, sizeof(request));
@@ -201,5 +204,5 @@ void share_connection_info(uint16_t targetHandle)
   request.minorVersion = APP_VERSION_SUB;
   request.deviceId = deviceId;
 
-  send_to_single_connection(targetHandle, (uint8_t *)&request, sizeof(request));
+  send_to_single_connection(targetConnection, (uint8_t *)&request, sizeof(request));
 }

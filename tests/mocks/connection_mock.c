@@ -10,12 +10,14 @@ uint32_t generate_family_id() {
   return mock_type(uint32_t);
 }
 
-void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
+connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
   check_expected(connectionHandle);
+  return mock_ptr_type(connection *);
 }
 
-void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
+connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
   check_expected(connectionHandle);
+  return mock_ptr_type(connection *);
 }
 
 ConnectionType unset_connection(uint16_t connectionHandle) {

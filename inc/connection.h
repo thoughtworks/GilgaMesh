@@ -39,11 +39,12 @@ uint32_t familyId;
 connections *activeConnections;
 
 void connections_initialize(void);
-void set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
-void set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
+connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
+connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(void);
 connection* find_active_connection_by_address(ble_gap_addr_t address);
+connection* find_active_connection_by_handle(uint16_t connectionHandle);
 bool central_connection_active(void);
 bool peripheral_connections_active(void);
 bool all_peripheral_connections_active(void);

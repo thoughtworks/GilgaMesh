@@ -1,7 +1,5 @@
 #include <gap.h>
 #include <app_scheduler.h>
-#include <ble.h>
-#include <connection.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -37,6 +35,17 @@ const ble_gap_scan_params_t meshScanningParams =
 };
 
 
+const ble_gap_scan_params_t meshConnectionScanningParams =
+{
+  0,                                   //active
+  0,                                   //selective
+  0,                                   //p_whitelist
+  ATTR_MESH_SCANNING_INTERVAL,         //interval
+  ATTR_MESH_SCANNING_WINDOW,           //window
+  ATTR_MESH_CONNECTION_SCAN_TIMEOUT    //timeout
+};
+
+
 void sys_evt_dispatch(uint32_t sys_evt)
 {
   pstorage_sys_event_handler(sys_evt);
@@ -64,7 +73,7 @@ void ble_initialize(void){
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, nodeName, NODE_NAME_SIZE));
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (const uint8_t *)nodeName, NODE_NAME_SIZE));
 
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
@@ -154,7 +163,7 @@ void handle_advertising_report_event(void * bleEvent, uint16_t dataLength)
   UNUSED_PARAMETER(dataLength);
   ble_gap_evt_adv_report_t advertisingParams = ((ble_evt_t *)bleEvent)->evt.gap_evt.params.adv_report;
   if (should_connect_to_advertiser(&advertisingParams)){
-    EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshScanningParams, &meshConnectionParams));
+    EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshConnectionScanningParams, &meshConnectionParams));
   }
 }
 
@@ -282,6 +291,15 @@ void handle_write_event(void * data, uint16_t dataLength)
 }
 
 
+void handle_connection_timeout_event(void * data, uint16_t dataLength)
+{
+  UNUSED_PARAMETER(data);
+  UNUSED_PARAMETER(dataLength);
+
+  start_scanning();
+}
+
+
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
@@ -295,6 +313,9 @@ void handle_gap_event(ble_evt_t * bleEvent)
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
     app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_write_event);
+
+  } else if (bleEvent->header.evt_id == BLE_GAP_EVT_TIMEOUT){
+    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_connection_timeout_event);
 
   } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
     //no need to do anything, just swallow the event

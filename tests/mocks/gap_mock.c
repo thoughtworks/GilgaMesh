@@ -24,4 +24,8 @@ void receiveBroadcastMessage(ble_evt_t * bleEvent) {
    check_expected_ptr(bleEvent);
 }
 
+void disconnect_from_peer(uint16_t connectionHandle) {
+  check_expected(connectionHandle);
+}
+
 #endif

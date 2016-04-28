@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <votes.h>
 #include <sdk_common.h>
+#include <gap.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -80,8 +81,8 @@ void send_to_single_connection(connection *targetConnection, uint8_t *data, uint
   errorCode = sd_ble_gattc_write(targetConnection->handle, &writeParams);
   if (errorCode == BLE_ERROR_NO_TX_BUFFERS) {
     if (!push_onto_queue(&targetConnection->unsentMessages, data, dataLength)) {
-//      disconnect_from_peer(targetConnection->handle);
-      log("*********** We can't push onto the queue! Oh noes!");
+      disconnect_from_peer(targetConnection->handle);
+      log("*********** DISCONNECTING due to full message queue");
     } else {
       char *nodeName = malloc(NODE_NAME_SIZE);
       set_node_name_from_device_id(targetConnection->deviceId, nodeName);

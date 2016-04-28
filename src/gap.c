@@ -142,6 +142,13 @@ void start_scanning(void)
 }
 
 
+void stop_scanning(void)
+{
+  EC(sd_ble_gap_scan_stop());
+  log("Scanning stopped");
+}
+
+
 void update_family_id(uint32_t newFamilyId)
 {
   familyId = newFamilyId;
@@ -158,13 +165,30 @@ void update_and_propagate_family_id(uint32_t newFamilyId, uint16_t originHandle)
 }
 
 
+void connect_to_peer(ble_gap_addr_t *peerAddress)
+{
+//  stop_scanning();
+  uint32_t errorCode = sd_ble_gap_connect(peerAddress, &meshConnectionScanningParams, &meshConnectionParams);
+//  if (errorCode != NRF_SUCCESS) {
+//    start_scanning();
+//  }
+  EC(errorCode);
+}
+
+
 void handle_advertising_report_event(void * bleEvent, uint16_t dataLength)
 {
   UNUSED_PARAMETER(dataLength);
   ble_gap_evt_adv_report_t advertisingParams = ((ble_evt_t *)bleEvent)->evt.gap_evt.params.adv_report;
   if (should_connect_to_advertiser(&advertisingParams)){
-    EC(sd_ble_gap_connect(&advertisingParams.peer_addr, &meshConnectionScanningParams, &meshConnectionParams));
+    connect_to_peer(&advertisingParams.peer_addr);
   }
+}
+
+
+void disconnect_from_peer(uint16_t connectionHandle)
+{
+  EC(sd_ble_gap_disconnect(connectionHandle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
 }
 
 
@@ -178,7 +202,7 @@ void handle_connection_event(void * data, uint16_t dataLength)
 
   if (find_active_connection_by_address(connectionParams.peer_addr) != 0){
     // we are already connected to this node, so "undo" this connection event
-    EC(sd_ble_gap_disconnect(bleEvent->evt.gap_evt.conn_handle, BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION));
+    disconnect_from_peer(bleEvent->evt.gap_evt.conn_handle);
     return;
   }
 

@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <votes.h>
 #include <sdk_common.h>
-#include <connection.h>
-#include <queue.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -82,14 +80,14 @@ void send_to_single_connection(connection *targetConnection, uint8_t *data, uint
   errorCode = sd_ble_gattc_write(targetConnection->handle, &writeParams);
   if (errorCode == BLE_ERROR_NO_TX_BUFFERS) {
     if (!push_onto_queue(&targetConnection->unsentMessages, data, dataLength)) {
-      log ("********** Queue is full! We can't send messages anymore!");
+//      disconnect_from_peer(targetConnection->handle);
+      log("*********** We can't push onto the queue! Oh noes!");
     } else {
-      log ("********** Message added to queue successfully");
+      char *nodeName = malloc(NODE_NAME_SIZE);
+      set_node_name_from_device_id(targetConnection->deviceId, nodeName);
+      log ("********** DEVICE %s, SIZE OF QUEUE: %u", nodeName, targetConnection->unsentMessages.count);
+      free(nodeName);
     }
-    char *nodeName = malloc(NODE_NAME_SIZE);
-    set_node_name_from_device_id(targetConnection->deviceId, nodeName);
-    log ("********** DEVICE %s, SIZE OF QUEUE: %u", nodeName, targetConnection->unsentMessages.count);
-    free(nodeName);
   } else {
     EC(errorCode);
   }
@@ -118,11 +116,12 @@ void retry_send_to_single_connection(connection *targetConnection, uint8_t messa
     if (queue_is_empty(&targetConnection->unsentMessages)) return;
 
     for (int i = 0; i < messageCount; i++) {
-      uint8_t retryData[MAX_QUEUE_DATA_LENGTH];
-      uint16_t retryDataLength;
+      uint8_t *retryData = malloc(MAX_QUEUE_DATA_LENGTH);
+      uint16_t retryDataLength = 0;
       if (pop_from_queue(&targetConnection->unsentMessages, retryData, &retryDataLength)) {
         send_to_single_connection(targetConnection, retryData, retryDataLength);
       }
+      free(retryData);
     }
   }
 }

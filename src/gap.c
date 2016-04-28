@@ -167,11 +167,11 @@ void update_and_propagate_family_id(uint32_t newFamilyId, uint16_t originHandle)
 
 void connect_to_peer(ble_gap_addr_t *peerAddress)
 {
-//  stop_scanning();
+  stop_scanning();
   uint32_t errorCode = sd_ble_gap_connect(peerAddress, &meshConnectionScanningParams, &meshConnectionParams);
-//  if (errorCode != NRF_SUCCESS) {
-//    start_scanning();
-//  }
+  if (errorCode != NRF_SUCCESS) {
+    start_scanning();
+  }
   EC(errorCode);
 }
 

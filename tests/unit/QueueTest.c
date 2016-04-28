@@ -108,6 +108,27 @@ static void test_queue_pop_returns_true_when_queue_has_elements() {
   assert_true(pop_from_queue(&queue, data, &dataLength));
 }
 
+static void test_queue_wraps_around_when_adding_elements() {
+  transmissionPacketQueue queue = { 0 };
+  queue.front = MAX_QUEUE_SIZE - 1;
+
+  push_onto_queue(&queue, testData, sizeof(testData));
+  assert_int_equal(1, queue.count);
+  assert_int_equal(MAX_QUEUE_SIZE - 1, queue.front);
+
+  push_onto_queue(&queue, testData, sizeof(testData));
+  assert_int_equal(2, queue.count);
+  assert_int_equal(MAX_QUEUE_SIZE - 1, queue.front);
+
+  pop_from_queue(&queue, data, &dataLength);
+  assert_int_equal(1, queue.count);
+  assert_int_equal(0, queue.front);
+
+  pop_from_queue(&queue, data, &dataLength);
+  assert_int_equal(0, queue.count);
+  assert_int_equal(1, queue.front);
+}
+
 int RunQueueTest(void) {
   const struct CMUnitTest tests[] = {
           cmocka_unit_test(test_queue_is_empty_with_no_elements),
@@ -120,7 +141,8 @@ int RunQueueTest(void) {
           cmocka_unit_test(test_queue_continues_to_store_elements_when_space_is_freed),
           cmocka_unit_test(test_queue_pop_returns_elements_in_fifo_order),
           cmocka_unit_test(test_queue_pop_returns_false_when_queue_is_empty),
-          cmocka_unit_test(test_queue_pop_returns_true_when_queue_has_elements)
+          cmocka_unit_test(test_queue_pop_returns_true_when_queue_has_elements),
+          cmocka_unit_test(test_queue_wraps_around_when_adding_elements)
   };
 
   return cmocka_run_group_tests_name("QueueTest", tests, NULL, NULL);

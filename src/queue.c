@@ -13,7 +13,8 @@ bool queue_is_full(transmissionPacketQueue *queue)
 
 transmissionPacket create_packet(uint8_t *data, uint16_t dataLength)
 {
-  transmissionPacket packet = { dataLength, { 0 }};
+  transmissionPacket packet;
+  packet.dataLength = dataLength;
   memcpy(packet.data, data, dataLength);
   return packet;
 }
@@ -36,7 +37,7 @@ bool pop_from_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t *dat
   memcpy(data, frontPacket.data, frontPacket.dataLength);
   memcpy(dataLength, &frontPacket.dataLength, sizeof(uint16_t));
 
-  queue->front += 1;
+  queue->front = (uint8_t) ((queue->front + 1) % MAX_QUEUE_SIZE);
   queue->count -= 1;
   return true;
 }

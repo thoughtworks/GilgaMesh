@@ -1,5 +1,6 @@
 #include <gap.h>
 #include <app_scheduler.h>
+#include <connection.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -120,10 +121,38 @@ void start_advertising(void)
 }
 
 
+void check_advertising_status(void)
+{
+ if (activeConnections->central.active) {
+   log("Advertising status: NOT APPLICABLE - central connection slot filled");
+ } else {
+   uint32_t errorCode = sd_ble_gap_adv_start(&meshAdvertisingParams);
+   if (errorCode == NRF_SUCCESS) {
+     log("Advertising status: RESTARTED");
+   } else {
+     log("Advertising status: RUNNING OR UNABLE TO START");
+   }
+ }
+}
+
+
+void check_scanning_status(void)
+{
+  if (all_peripheral_connections_active()) {
+    log("Scanning status NOT APPLICABLE: peripheral connection slots filled");
+  } else {
+    uint32_t errorCode = sd_ble_gap_scan_start(&meshScanningParams);
+    if (errorCode == NRF_SUCCESS) {
+      log("Scanning status: RESTARTED");
+    } else {
+      log("Scanning status: RUNNING OR UNABLE TO START");
+    }
+  }
+}
+
+
 bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
 {
-  if (all_peripheral_connections_active()) return false;
-
   advertisingData* adv_data = (advertisingData *)adv_report->data;
 
   if (adv_report->dlen != sizeof(advertisingData)) return false;
@@ -180,7 +209,7 @@ void handle_advertising_report_event(void * bleEvent, uint16_t dataLength)
 {
   UNUSED_PARAMETER(dataLength);
   ble_gap_evt_adv_report_t advertisingParams = ((ble_evt_t *)bleEvent)->evt.gap_evt.params.adv_report;
-  if (should_connect_to_advertiser(&advertisingParams)){
+  if (should_connect_to_advertiser(&advertisingParams) && !all_peripheral_connections_active()) {
     connect_to_peer(&advertisingParams.peer_addr);
   }
 }

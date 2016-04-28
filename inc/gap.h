@@ -75,6 +75,8 @@ static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 void ble_initialize(void);
 void start_advertising(void);
 void start_scanning(void);
+void check_advertising_status(void);
+void check_scanning_status(void);
 void disconnect_from_peer(uint16_t connectionHandle);
 void handle_gap_event(ble_evt_t * bleEvent);
 void receive_broadcast_message(ble_evt_t *bleEvent);

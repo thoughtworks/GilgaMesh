@@ -1,5 +1,4 @@
 #include <connection.h>
-#include <string.h>
 #include <stdlib.h>
 
 static inline uint32_t get_device_id() {

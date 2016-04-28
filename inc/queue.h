@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define MAX_QUEUE_DATA_LENGTH          23
-#define MAX_QUEUE_SIZE                 10
+#define MAX_QUEUE_SIZE                 20
 
 
 typedef struct

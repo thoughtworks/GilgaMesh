@@ -1,6 +1,5 @@
 #include <gap.h>
 #include <app_scheduler.h>
-#include <connection.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -159,6 +158,10 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report)
   if (adv_data->manufacturerData.typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
   if (adv_data->manufacturerData.manufacturerId != MANUFACTURER_ID) return false;
   if (adv_data->manufacturerData.familyId == familyId) return false;
+
+  log("UNCONNECTED NODE: {\"id\": \"%s\", \"family\": %u, \"version\": %u.%u}",
+      adv_data->deviceData.deviceName, adv_data->manufacturerData.familyId, adv_data->manufacturerData.majorVersion,
+      adv_data->manufacturerData.minorVersion);
 
   return true;
 }

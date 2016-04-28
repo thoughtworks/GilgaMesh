@@ -165,7 +165,7 @@ void handle_connection_event(void * data, uint16_t dataLength)
   ble_evt_t *bleEvent = (ble_evt_t *)data;
 
   ble_gap_evt_connected_t connectionParams = bleEvent->evt.gap_evt.params.connected;
-//  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL) start_scanning();
+  if (connectionParams.role == BLE_GAP_ROLE_CENTRAL) start_scanning();
 
   if (find_active_connection_by_address(connectionParams.peer_addr) != 0){
     // we are already connected to this node, so "undo" this connection event
@@ -182,7 +182,6 @@ void handle_connection_event(void * data, uint16_t dataLength)
     //we are the central, we need to add a peripheral connection
     newConnection = set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle, connectionParams.peer_addr);
     update_and_propagate_family_id(familyId + 1, BLE_CONN_HANDLE_INVALID);
-    start_scanning();
   }
 
   share_connection_info(newConnection);

@@ -3,12 +3,17 @@
 #include "cmocka_includes.h"
 
 
-bool push_onto_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t dataLength) {
+bool push_onto_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t dataLength, messagePriority priority) {
   check_expected_ptr(queue);
   return mock_type(bool);
 }
 
-bool pop_from_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t *dataLength) {
+bool peek_from_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t *dataLength) {
+  check_expected_ptr(queue);
+  return mock_type(bool);
+}
+
+bool pop_from_queue(transmissionPacketQueue *queue) {
   check_expected_ptr(queue);
   return mock_type(bool);
 }

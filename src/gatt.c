@@ -4,6 +4,7 @@
 #include <votes.h>
 #include <sdk_common.h>
 #include <gap.h>
+#include <connection.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -67,75 +68,67 @@ void gatt_initialize()
 }
 
 
-void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength)
+void send_message_from_connection_queue(connection *targetConnection)
 {
-  ble_gattc_write_params_t writeParams;
-  memset(&writeParams, 0, sizeof(writeParams));
-  writeParams.write_op = BLE_GATT_OP_WRITE_CMD;
-  writeParams.handle = characteristicHandles.value_handle;
-  writeParams.offset = 0;
-  writeParams.len = dataLength;
-  writeParams.p_value = data;
+  if (targetConnection == NULL) return;
+  if (queue_is_empty(&targetConnection->unsentMessages)) return;
 
-  uint32_t errorCode;
-  errorCode = sd_ble_gattc_write(targetConnection->handle, &writeParams);
-  if (errorCode == BLE_ERROR_NO_TX_BUFFERS) {
-    if (!push_onto_queue(&targetConnection->unsentMessages, data, dataLength)) {
-      disconnect_from_peer(targetConnection->handle);
-      log("*********** DISCONNECTING due to full message queue");
-    } else {
-      char *nodeName = malloc(NODE_NAME_SIZE);
-      set_node_name_from_device_id(targetConnection->deviceId, nodeName);
-      log ("********** DEVICE %s, SIZE OF QUEUE: %u", nodeName, targetConnection->unsentMessages.count);
-      free(nodeName);
+  uint8_t *p_data = malloc(MAX_QUEUE_DATA_LENGTH);
+  uint16_t dataLength = 0;
+
+  if (peek_from_queue(&targetConnection->unsentMessages, p_data, &dataLength)) {
+    ble_gattc_write_params_t writeParams;
+    memset(&writeParams, 0, sizeof(writeParams));
+    writeParams.write_op = BLE_GATT_OP_WRITE_CMD;
+    writeParams.handle = characteristicHandles.value_handle;
+    writeParams.offset = 0;
+    writeParams.len = dataLength;
+    writeParams.p_value = p_data;
+
+    uint32_t errorCode;
+    errorCode = sd_ble_gattc_write(targetConnection->handle, &writeParams);
+    if (errorCode == NRF_SUCCESS) {
+      pop_from_queue(&targetConnection->unsentMessages);
     }
+  }
+  free(p_data);
+}
+
+
+void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength, messagePriority priority)
+{
+  if (push_onto_queue(&targetConnection->unsentMessages, data, dataLength, priority)) {
+    send_message_from_connection_queue(targetConnection);
   } else {
-    EC(errorCode);
+    disconnect_from_peer(targetConnection->handle);
   }
 }
 
 
-void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
+void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength, messagePriority priority)
 {
   connection *targetConnection = &activeConnections->central;
   if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
-    send_to_single_connection(targetConnection, data, dataLength);
+    send_to_single_connection(targetConnection, data, dataLength, priority);
   }
 
   for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
     targetConnection = &activeConnections->peripheral[i];
     if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
-      send_to_single_connection(targetConnection, data, dataLength);
+      send_to_single_connection(targetConnection, data, dataLength, priority);
     }
   }
 }
 
-
-void retry_send_to_single_connection(connection *targetConnection, uint8_t messageCount)
-{
-  if (targetConnection != NULL) {
-    if (queue_is_empty(&targetConnection->unsentMessages)) return;
-
-    for (int i = 0; i < messageCount; i++) {
-      uint8_t *retryData = malloc(MAX_QUEUE_DATA_LENGTH);
-      uint16_t retryDataLength = 0;
-      if (pop_from_queue(&targetConnection->unsentMessages, retryData, &retryDataLength)) {
-        send_to_single_connection(targetConnection, retryData, retryDataLength);
-      }
-      free(retryData);
-    }
-  }
-}
 
 void propagate_family_id(uint16_t originHandle)
 {
   BleMessageSetFamilyIDReq request;
   memset(&request, 0, sizeof(request));
-  request.familyID = familyId;
   request.head.messageType = SetFamilyID;
-  uint8_t *data = (uint8_t *) &request;
+  request.familyID = familyId;
 
-  send_to_all_connections(originHandle, data, sizeof(request));
+  send_to_all_connections(originHandle, (uint8_t *) &request, sizeof(request), MESSAGE_PRIORITY_HIGH);
 }
 
 
@@ -151,7 +144,7 @@ void broadcast_message(char* message)
   request.head.messageType = Broadcast;
   memcpy(request.message, message, BROADCAST_SIZE);
 
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request));
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(request), MESSAGE_PRIORITY_NORMAL);
 }
 
 
@@ -197,7 +190,7 @@ void broadcast_heartbeat(void *data, uint16_t dataLength)
 
 void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *heartbeat) {
   log_heartbeat_info(heartbeat);
-  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(BleMessageHeartbeatReq));
+  send_to_all_connections(originHandle, (uint8_t *)heartbeat, sizeof(BleMessageHeartbeatReq), MESSAGE_PRIORITY_NORMAL);
 }
 
 
@@ -209,7 +202,7 @@ void broadcast_vote(unsigned short voterId)
   request.deviceId = deviceId;
   request.voterId = voterId;
 
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(BleMessageVoteReq));
+  log_and_propagate_vote(BLE_CONN_HANDLE_INVALID, &request);
 }
 
 
@@ -219,7 +212,7 @@ void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
 
   log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", votingNodeName, request->voterId);
   free(votingNodeName);
-  send_to_all_connections(originHandle, (uint8_t *)request, sizeof(BleMessageVoteReq));
+  send_to_all_connections(originHandle, (uint8_t *)request, sizeof(BleMessageVoteReq), MESSAGE_PRIORITY_NORMAL);
 }
 
 
@@ -232,5 +225,5 @@ void share_connection_info(connection *targetConnection)
   request.minorVersion = APP_VERSION_SUB;
   request.deviceId = deviceId;
 
-  send_to_single_connection(targetConnection, (uint8_t *)&request, sizeof(request));
+  send_to_single_connection(targetConnection, (uint8_t *)&request, sizeof(request), MESSAGE_PRIORITY_NORMAL);
 }

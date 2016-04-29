@@ -362,7 +362,9 @@ void handle_buffers_freed_event(void * data, uint16_t dataLength)
 
   uint8_t freeBuffers = bleEvent->evt.common_evt.params.tx_complete.count;
   connection *targetConnection = find_active_connection_by_handle(bleEvent->evt.common_evt.conn_handle);
-  retry_send_to_single_connection(targetConnection, freeBuffers);
+  for (int i = 0; i < freeBuffers; i++) {
+    send_message_from_connection_queue(targetConnection);
+  }
 }
 
 

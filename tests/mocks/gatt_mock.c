@@ -32,7 +32,11 @@ void share_connection_info(connection *targetConnection) {
   check_expected_ptr(targetConnection);
 }
 
-void retry_send_to_single_connection(connection *targetConnection, uint8_t messageCount) {
+void retry_send_to_single_connection(connection *targetConnection, uint8_t messageCount, messagePriority priority) {
+  check_expected_ptr(targetConnection);
+}
+
+void send_message_from_connection_queue(connection *targetConnection) {
   check_expected_ptr(targetConnection);
 }
 

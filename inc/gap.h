@@ -4,7 +4,6 @@
 
 #include <nrf_soc.h>
 #include <softdevice_handler.h>
-#include <nrf_delay.h>
 #include <app_util.h>
 #include <app_error.h>
 #include <ble.h>

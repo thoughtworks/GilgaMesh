@@ -1,5 +1,4 @@
 #include <connection.h>
-#include <stdlib.h>
 
 static inline uint32_t get_device_id() {
   // define out direct device memory access when testing

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -16,6 +18,12 @@
 typedef void (* uart_event_handler) (uint8_t rx_byte);
 
 typedef enum {
+  NFC_STATUS_DISABLED,
+  NFC_STATUS_WORKING,
+  NFC_STATUS_ERROR
+} nfcStatus;
+
+typedef enum {
     DOWN,
     NO_PARAM,
     NOT_WRITTEN_80,
@@ -30,6 +38,7 @@ unsigned short get_id(uint8_t *response, size_t response_length);
 void manage_badge_reading();
 void initialize_uart_nfc();
 setup_state_t get_setup_state();
+nfcStatus get_nfc_status();
 void setup();
 void setup_state_machine();
 void in_list_passive_target();

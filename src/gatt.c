@@ -1,10 +1,8 @@
 #include <gatt.h>
 #include <version.h>
-#include <stdlib.h>
 #include <votes.h>
 #include <sdk_common.h>
 #include <gap.h>
-#include <connection.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -160,8 +158,13 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
     set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
   }
 
-  log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u, \"votes\": %u}",
-      nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion, request->voteCount);
+  char *nfcEnabled = (request->nfc == NFC_STATUS_DISABLED) ? "false" : "true";
+  char *nfcWorking = (request->nfc != NFC_STATUS_WORKING)  ? "false" : "true";
+
+  log("HEARTBEAT: {\"id\": \"%s\", \"parentId\": \"%s\", \"family\": %u, \"version\": %u.%u, \"votes\": %u, "
+              "\"nfcEnabled\": %s, \"nfcWorking\": %s}",
+      nodeName, parentNodeName, familyId, request->majorVersion, request->minorVersion, request->voteCount,
+      nfcEnabled, nfcWorking);
 
   free(nodeName);
   free(parentNodeName);
@@ -183,6 +186,7 @@ void broadcast_heartbeat(void *data, uint16_t dataLength)
     request.centralConnectionDeviceId = activeConnections->central.deviceId;
   }
   request.voteCount = get_vote_count();
+  request.nfc = get_nfc_status();
 
   log_and_propagate_heartbeat(BLE_CONN_HANDLE_INVALID, &request);
 }

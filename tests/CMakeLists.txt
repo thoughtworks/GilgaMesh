@@ -120,3 +120,9 @@ add_executable(QueueTest ${TestFramework_SOURCES}
     unit/QueueTest.c)
 target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
+
+add_executable(VotesTest ${TestFramework_SOURCES}
+    ${SRC_PATH}/votes.c
+    unit/VotesTest.c)
+target_link_libraries(VotesTest cmocka)
+GEN_OUTPUTS(VotesTest)

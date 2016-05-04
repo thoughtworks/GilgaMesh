@@ -13,6 +13,8 @@
 
 void timer_initialize(void);
 void turn_off_voting_notification(void);
+void turn_on_buffer_clear_timeout(void);
+void turn_off_buffer_clear_timeout(void);
 
 
 #endif

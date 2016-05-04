@@ -9,6 +9,7 @@ uint32_t initialize() {
   initialize_uart_nfc();
   power_down();
   buzzer_initialize();
+  user_votes_initialize();
 #endif
 
 #ifndef NO_TERMINAL

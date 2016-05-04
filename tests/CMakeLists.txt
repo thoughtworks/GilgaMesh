@@ -85,8 +85,8 @@ target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
 add_executable(ConversionTest ${TestFramework_SOURCES}
-        ${SRC_PATH}/conversion.c
-        unit/ConversionTest.c)
+    ${SRC_PATH}/conversion.c
+    unit/ConversionTest.c)
 target_link_libraries(ConversionTest cmocka)
 GEN_OUTPUTS(ConversionTest)
 
@@ -122,7 +122,15 @@ target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
 
 add_executable(VotesTest ${TestFramework_SOURCES}
+    mocks/timer_mock.c
+    ${SRC_PATH}/linked_list.c
     ${SRC_PATH}/votes.c
     unit/VotesTest.c)
 target_link_libraries(VotesTest cmocka)
 GEN_OUTPUTS(VotesTest)
+
+add_executable(LinkedListTest ${TestFramework_SOURCES}
+    ${SRC_PATH}/linked_list.c
+    unit/LinkedListTest.c)
+target_link_libraries(LinkedListTest cmocka)
+GEN_OUTPUTS(LinkedListTest)

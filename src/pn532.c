@@ -492,7 +492,6 @@ void nfcEventHandler(uint8_t rx_byte) {
       if (grab_state == end_grabbing) {
         if (id_exists_in_response(data_dump1, four_frame_data_dump_size)) {
           uint16_t voterId = get_id(data_dump1, four_frame_data_dump_size);
-//                    broadcast_vote(voterId);
           if (save_vote(voterId)) {
             show_vote_feedback();
           } else {

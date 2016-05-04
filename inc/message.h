@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pn532.h"
+#include "votes.h"
 
 #define NODE_NAME_SIZE                 8
 #define BROADCAST_SIZE                 12
@@ -55,7 +56,7 @@ typedef struct {
 typedef struct {
   BleMessageHead head;
   uint32_t deviceId;
-  uint16_t voterId;
+  userVote vote;
 }__attribute__ ((packed)) BleMessageVoteReq;
 
 

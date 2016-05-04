@@ -1,6 +1,5 @@
 #include <gatt.h>
 #include <version.h>
-#include <votes.h>
 #include <sdk_common.h>
 #include <gap.h>
 
@@ -198,13 +197,19 @@ void log_and_propagate_heartbeat(uint16_t originHandle, BleMessageHeartbeatReq *
 }
 
 
-void broadcast_vote(unsigned short voterId)
+void broadcast_vote(void *data, uint16_t dataLength)
 {
+  UNUSED_PARAMETER(data);
+  UNUSED_PARAMETER(dataLength);
+
+  userVote *voteToSend = get_first_vote();
+  if (voteToSend == NULL) return;
+
   BleMessageVoteReq request;
   memset(&request, 0, sizeof(request));
   request.head.messageType = Vote;
   request.deviceId = deviceId;
-  request.voterId = voterId;
+  request.vote = *voteToSend;
 
   log_and_propagate_vote(BLE_CONN_HANDLE_INVALID, &request);
 }
@@ -214,7 +219,7 @@ void log_and_propagate_vote(uint16_t originHandle, BleMessageVoteReq *request) {
   char *votingNodeName = malloc(NODE_NAME_SIZE);
   set_node_name_from_device_id(request->deviceId, votingNodeName);
 
-  log("VOTE: {\"node\": \"%s\", \"voterId\": \"%u\"}", votingNodeName, request->voterId);
+  log("VOTE: {\"id\": \"%s\", \"voterId\": \"%u\", \"hitCount\": %u}", votingNodeName, request->vote.voterId, request->vote.hitCount);
   free(votingNodeName);
   send_to_all_connections(originHandle, (uint8_t *)request, sizeof(BleMessageVoteReq), MESSAGE_PRIORITY_NORMAL);
 }

@@ -131,6 +131,7 @@ function helptext {
     echo "Available commands are:"
     echo "    ut                Run all unit tests"
     echo "    d                 Deploy to all connected nrf51 prototype boards"
+    echo "    c                 Compile without deployment"
     echo "    cs                Compile for Seeed production board"
     echo "    cd                Compile and deploy current code to all connected devices"
     echo "    cds               Compile and deploy current code to one device via swd"
@@ -200,6 +201,8 @@ case "$1" in
     d) deploy
     ;;
     dn) deploy-nfc
+    ;;
+    c) compile
     ;;
     cs) compile-seeed
     ;;

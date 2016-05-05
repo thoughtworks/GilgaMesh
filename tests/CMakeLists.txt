@@ -55,6 +55,7 @@ add_executable(GapTest ${TestFramework_SOURCES}
     mocks/error_mock.c
     mocks/connection_mock.c
     mocks/gatt_mock.c
+    mocks/votes_mock.c
     ${SRC_PATH}/gap.c
     unit/GapTest.c)
 target_link_libraries(GapTest cmocka)

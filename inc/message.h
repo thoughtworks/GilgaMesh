@@ -12,7 +12,8 @@ typedef enum {
   Broadcast = 2,
   ConnectionInfo = 3,
   Heartbeat = 4,
-  Vote = 5
+  Vote = 5,
+  VoteAcknowledgement = 6
 } BleMessageType;
 
 // This is a message head.all request message struct must declare this head first.
@@ -58,5 +59,4 @@ typedef struct {
   uint32_t deviceId;
   userVote vote;
 }__attribute__ ((packed)) BleMessageVoteReq;
-
 

@@ -16,3 +16,7 @@ uint16_t get_vote_count()
 {
   return mock_type(uint16_t);
 }
+
+bool remove_vote(userVote *vote) {
+
+}

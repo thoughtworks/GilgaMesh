@@ -39,4 +39,7 @@ void send_message_from_connection_queue(connection *targetConnection) {
   check_expected_ptr(targetConnection);
 }
 
+void propagate_vote_acknowledgement(uint16_t originHandle, BleMessageVoteReq *request) {
+}
+
 #endif

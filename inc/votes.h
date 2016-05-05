@@ -7,7 +7,7 @@
 
 typedef struct {
   uint16_t voterId;
-  uint16_t hitCount;
+  uint16_t hitCount; // does this need to be uint16_t? also what happens with overflow? we should handle that
 }__attribute__ ((packed)) userVote;
 
 

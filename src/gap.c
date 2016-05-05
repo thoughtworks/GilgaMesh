@@ -293,6 +293,18 @@ void receive_vote(ble_evt_t *bleEvent) {
 }
 
 
+void receive_vote_acknowledgement(ble_evt_t *bleEvent) {
+  BleMessageVoteReq *request = (BleMessageVoteReq *) bleEvent->evt.gatts_evt.params.write.data;
+  if (request->deviceId == deviceId) {
+    // turn off vote sending timer
+    remove_vote(&request->vote);
+    // then send the next one
+  } else {
+    propagate_vote_acknowledgement(bleEvent->evt.gatts_evt.conn_handle, request);
+  }
+}
+
+
 void set_family_id(ble_evt_t *bleEvent) {
 	uint16_t connectionHandle = bleEvent->evt.gap_evt.conn_handle;
 	BleMessageSetFamilyIDReq *req = (BleMessageSetFamilyIDReq *) bleEvent->evt.gatts_evt.params.write.data;
@@ -339,6 +351,9 @@ void handle_write_event(void * data, uint16_t dataLength)
       break;
     case Vote:
       receive_vote(bleEvent);
+      break;
+    case VoteAcknowledgement:
+      receive_vote_acknowledgement(bleEvent);
       break;
     default:
       log("unknown message type: %d", head->messageType);

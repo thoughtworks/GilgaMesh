@@ -55,6 +55,7 @@ add_executable(GapTest ${TestFramework_SOURCES}
     mocks/error_mock.c
     mocks/connection_mock.c
     mocks/gatt_mock.c
+    mocks/timer_mock.c
     mocks/votes_mock.c
     ${SRC_PATH}/gap.c
     unit/GapTest.c)
@@ -69,6 +70,7 @@ add_executable(GattTest ${TestFramework_SOURCES}
     mocks/gap_mock.c
     mocks/pn532_mock.c
     mocks/queue_mock.c
+    mocks/timer_mock.c
     mocks/votes_mock.c
     ${SRC_PATH}/gatt.c
     unit/GattTest.c)
@@ -92,6 +94,7 @@ target_link_libraries(ConversionTest cmocka)
 GEN_OUTPUTS(ConversionTest)
 
 add_executable(TerminalTest ${TestFramework_SOURCES}
+    mocks/logger_mock.c
     mocks/dfu_mock.c
     mocks/simple_uart_mock.c
     mocks/conversion_mock.c

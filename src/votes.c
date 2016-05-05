@@ -12,6 +12,7 @@ void user_votes_initialize(void) {
   memset(&userVotes, 0, sizeof(userVotes));
   memset(&buffer, 0, sizeof(buffer));
   userVotes.maxSize = MAX_VOTE_COUNT;
+  turn_on_send_vote_timeout();
 }
 
 bool buffer_is_empty() {

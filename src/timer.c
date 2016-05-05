@@ -58,6 +58,14 @@ void send_vote_timer_handler(void *context) {
   app_sched_event_put(NULL, 0, broadcast_vote);
 }
 
+void turn_on_send_vote_timeout() {
+  EC(app_timer_start(sendVoteTimerId, APP_TIMER_TICKS(MS_RATE_TO_SEND_VOTE, ATTR_TIMER_PRESCALER), NULL));
+}
+
+void turn_off_send_vote_timeout() {
+  EC(app_timer_stop(sendVoteTimerId));
+}
+
 void timer_initialize(void) {
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
   APP_TIMER_APPSH_INIT(ATTR_TIMER_PRESCALER, MAX_TIMERS, QUEUE_SIZE, false);
@@ -70,8 +78,7 @@ void timer_initialize(void) {
 
   EC(app_timer_create(&clearVoteBufferTimerId, APP_TIMER_MODE_SINGLE_SHOT, clear_vote_buffer_timer_handler));
 
-  EC(app_timer_create(&sendVoteTimerId, APP_TIMER_MODE_REPEATED, send_vote_timer_handler));
-  EC(app_timer_start(sendVoteTimerId, APP_TIMER_TICKS(MS_RATE_TO_SEND_VOTE, ATTR_TIMER_PRESCALER), NULL));
+  EC(app_timer_create(&sendVoteTimerId, APP_TIMER_MODE_SINGLE_SHOT, send_vote_timer_handler));
 #endif
 
   EC(app_timer_create(&heartbeatTimerId, APP_TIMER_MODE_REPEATED, heartbeat_timer_handler));

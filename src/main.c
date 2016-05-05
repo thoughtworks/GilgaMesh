@@ -5,6 +5,8 @@ static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
 uint32_t initialize() {
 
+  timer_initialize();
+
 #ifdef NFC_DEBUG
   initialize_uart_nfc();
   power_down();
@@ -15,8 +17,6 @@ uint32_t initialize() {
 #ifndef NO_TERMINAL
   terminal_initialize();
 #endif
-
-  timer_initialize();
 
   connections_initialize();
   ble_initialize();

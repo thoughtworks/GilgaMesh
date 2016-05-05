@@ -1,5 +1,6 @@
 #include <gap.h>
 #include <app_scheduler.h>
+#include <timer.h>
 
 const ble_gap_conn_params_t meshConnectionParams =
 {
@@ -296,9 +297,9 @@ void receive_vote(ble_evt_t *bleEvent) {
 void receive_vote_acknowledgement(ble_evt_t *bleEvent) {
   BleMessageVoteReq *request = (BleMessageVoteReq *) bleEvent->evt.gatts_evt.params.write.data;
   if (request->deviceId == deviceId) {
-    // turn off vote sending timer
+    turn_off_send_vote_timeout();
     remove_vote(&request->vote);
-    // then send the next one
+    broadcast_vote(NULL, 0);
   } else {
     propagate_vote_acknowledgement(bleEvent->evt.gatts_evt.conn_handle, request);
   }

@@ -31,6 +31,7 @@ uint32_t command_execute(char **parsedCommandArray, uint8_t numberOfItems) {
     return COMMAND_SUCCESS;
   }
   else if (strcmp(parsedCommandArray[0], "vack") == 0) {
+    log("received vote acknowledgement!");
     broadcast_vote_acknowledgement(parsedCommandArray[1], parsedCommandArray[2], parsedCommandArray[3]);
     return COMMAND_SUCCESS;
   }

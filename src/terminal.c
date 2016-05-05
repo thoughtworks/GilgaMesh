@@ -113,6 +113,21 @@ static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {
    return argumentCount;
 }
 
+void execute_command() {
+  char readBuffer[READ_BUFFER_SIZE] = {0};
+  char *parsedCommand[MAX_ARGUMENTS + 1]; // first element is the command
+
+  if (!read_terminal(readBuffer)) { // empty command -> clear screen
+    terminal_clear();
+    return;
+  }
+
+  uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
+
+  command_execute(parsedCommand, numberOfArguments);
+  simple_uart_putstring((const uint8_t *) "\r\n");
+}
+
 void terminal_process_input(void)
 {
    if (!is_terminal_initialized) { return; }
@@ -120,19 +135,10 @@ void terminal_process_input(void)
    uint8_t leadingCharacter = 0;
    simple_uart_get_with_timeout(TERMINAL_READ_TIMEOUT_US, &leadingCharacter);
    if(leadingCharacter == 0x1b) { // ESC pressed
-      print_prompt();
-
-      char readBuffer[READ_BUFFER_SIZE] = {0};
-      char *parsedCommand[MAX_ARGUMENTS + 1]; // first element is the command
-
-      if(!read_terminal(readBuffer)) { // empty command -> clear screen
-         terminal_clear();
-         return;
-      }
-
-      uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
-
-      command_execute(parsedCommand, numberOfArguments);
-      simple_uart_putstring((const uint8_t*) "\r\n");
+     print_prompt();
+     execute_command();
+   } else if (leadingCharacter == 0x7E) {
+     log("message from nodejs");
+     execute_command();
    }
 }

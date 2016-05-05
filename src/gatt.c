@@ -2,8 +2,8 @@
 #include <version.h>
 #include <sdk_common.h>
 #include <gap.h>
-#include <message.h>
 #include <app_scheduler.h>
+#include <timer.h>
 
 ble_gatts_char_handles_t characteristicHandles;
 
@@ -229,15 +229,18 @@ void broadcast_vote(void *data, uint16_t dataLength)
   UNUSED_PARAMETER(dataLength);
 
   userVote *voteToSend = get_first_vote();
-  if (voteToSend == NULL) return;
 
-  BleMessageVoteReq request;
-  memset(&request, 0, sizeof(request));
-  request.head.messageType = Vote;
-  request.deviceId = deviceId;
-  request.vote = *voteToSend;
+  if (voteToSend != NULL) {
+    BleMessageVoteReq request;
+    memset(&request, 0, sizeof(request));
+    request.head.messageType = Vote;
+    request.deviceId = deviceId;
+    request.vote = *voteToSend;
 
-  log_and_propagate_vote(BLE_CONN_HANDLE_INVALID, &request);
+    log_and_propagate_vote(BLE_CONN_HANDLE_INVALID, &request);
+  }
+
+  turn_on_send_vote_timeout();
 }
 
 

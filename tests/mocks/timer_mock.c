@@ -15,3 +15,11 @@ void turn_on_buffer_clear_timeout() {
 void turn_off_buffer_clear_timeout() {
 
 }
+
+void turn_on_send_vote_timeout(){
+
+}
+
+void turn_off_send_vote_timeout() {
+
+}

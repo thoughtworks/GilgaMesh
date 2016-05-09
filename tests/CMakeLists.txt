@@ -126,6 +126,9 @@ target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
 
 add_executable(VotesTest ${TestFramework_SOURCES}
+    mocks/sdk/pstorage_mock.c
+    mocks/error_mock.c
+    mocks/logger_mock.c
     mocks/timer_mock.c
     ${SRC_PATH}/linked_list.c
     ${SRC_PATH}/votes.c

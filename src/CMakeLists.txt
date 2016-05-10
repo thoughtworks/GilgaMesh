@@ -69,7 +69,7 @@ macro(GEN_OUTPUTS target)
         COMMAND ${READELF} -h ${target} > ${BUILD_PATH}/${name}.header
     )
     add_custom_target(
-        ${name}_outputs ALL DEPENDS ${name}_copy ${name}.size ${name}.bin ${name}.hex ${name}.header ${name}.dump
+        ${name}_outputs ALL DEPENDS ${name}_copy ${name}.size ${name}.bin ${name}.hex ${name}.header #${name}.dump
     )
 
 endmacro(GEN_OUTPUTS)

@@ -1,8 +1,0 @@
-si SWD
-speed 1000
-device nrf51822
-selemu USB
-loadfile _build/Debug/MeshyMesh.hex
-r
-g
-exit

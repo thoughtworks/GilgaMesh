@@ -64,7 +64,8 @@ include_directories(${SOFTDEVICE}/include/nrf51)
 include_directories(mocks/include)
 
 # add sdk11 mock implementations
-# list(APPEND TestFramework_SOURCES "mocks/sdk11/some_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/app_error_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/nrf_log_mock.c")
 
 ###############################################################################################
 # add unit tests and mocks they need

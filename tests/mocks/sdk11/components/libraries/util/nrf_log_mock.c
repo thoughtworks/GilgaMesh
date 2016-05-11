@@ -1,7 +1,9 @@
 #include <nrf_log.h>
 #include "cmocka_includes.h"
 
-uint32_t log_rtt_init(void);
+uint32_t log_rtt_init(void) {
+   return mock_type(uint32_t);
+}
 
 void log_rtt_printf(int terminal_index, char * format_msg, ...) {
 

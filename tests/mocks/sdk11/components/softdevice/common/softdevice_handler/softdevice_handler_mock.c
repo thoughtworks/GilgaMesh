@@ -17,7 +17,11 @@ uint32_t softdevice_handler_sd_disable(void){
    return mock_type(bool);
 }
 
-uint32_t softdevice_sys_evt_handler_set(sys_evt_handler_t sys_evt_handler){
+uint32_t softdevice_sys_evt_handler_set(sys_evt_handler_t sys_evt_handler) {
+   return mock_type(bool);
+}
+
+uint32_t softdevice_ble_evt_handler_set(ble_evt_handler_t ble_evt_handler) {
    return mock_type(bool);
 }
 

@@ -67,10 +67,11 @@ include_directories(mocks/include)
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_sdm_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/app_error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/nrf_log_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_mock.c")
 
 ###############################################################################################
 # add unit tests and mocks they need

@@ -1,5 +1,19 @@
 #pragma once
 
+/* Family selection for family includes. */
+#if defined (NRF51)
+#include <nrf51.h>
+#include <nrf51_bitfields.h>
+#include <nrf51_deprecated.h>
+#elif defined (NRF52)
+#include <nrf52.h>
+   #include <nrf52_bitfields.h>
+   #include <nrf51_to_nrf52.h>
+   #include <nrf52_name_change.h>
+#else
+   #error "Device family must be defined. See nrf.h."
+#endif /* NRF51, NRF52 */
+
 #include <app_error.h>
 #include <app_timer.h>
 #include <app_util.h>
@@ -17,6 +31,7 @@
 
 #include "boards.h"
 #include "bsp.h"
+#include "util.h"
 
 #define NRF_UICR_BOOT_START_ADDRESS         (NRF_UICR_BASE + 0x14) // Register where the bootloader start address is stored in the UICR register.
 #define BOOTLOADER_REGION_START 0x1B000                            // this needs to match the FLASH ORIGIN address in the linker script
@@ -27,4 +42,5 @@
 
 uint32_t initialize();
 uint32_t run();
-int main(void);
+void panic();
+int main(int argc, char **argv);

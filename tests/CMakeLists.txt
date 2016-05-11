@@ -1,0 +1,78 @@
+cmake_minimum_required(VERSION 3.2)
+
+# generate outputs macro
+macro(GEN_OUTPUTS target)
+    get_filename_component(name ${target} NAME_WE)
+    #copy test executables
+    add_custom_command(
+        OUTPUT ${name}_copy_tests DEPENDS ${target}
+        COMMAND mkdir -p ${BUILD_PATH}/tests
+        COMMAND cp ${target} ${BUILD_PATH}/tests/${target}
+    )
+    add_custom_target(
+        ${name}_outputs ALL DEPENDS ${name}_copy_tests
+    )
+endmacro(GEN_OUTPUTS)
+
+#set compiler and linker options
+SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -D${TARGET_BOARD} -DNRF_LOG_USES_RTT -DSVCALL_AS_NORMAL_FUNCTION -DBOARD_PCA10028 -DSOFTDEVICE_PRESENT -DNRF51 -D__HEAP_SIZE=0 -DS130 -DSWI_DISABLE0 -DBSP_UART_SUPPORT -DTESTING -DNO_LOG_OUTPUT -std=gnu11 -g3 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -fno-move-loop-invariants -Wextra -Wno-attributes -Wno-old-style-declaration -Og -fno-exceptions -fprofile-arcs -ftest-coverage")
+SET(CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage")
+
+# include cmocka test framework
+include_directories(${DEPLOY_PATH}/cmocka/include)
+link_directories(${DEPLOY_PATH}/cmocka/lib)
+
+# production code headers
+include_directories(${INC_PATH})
+include_directories(${CONFIG_PATH})
+
+# includes for real nordic sdk11 headers
+include_directories(${COMPONENTS}/ble/ble_radio_notification)
+include_directories(${COMPONENTS}/ble/common)
+include_directories(${COMPONENTS}/ble/ble_db_discovery)
+include_directories(${COMPONENTS}/ble/device_manager)
+include_directories(${COMPONENTS}/device)
+include_directories(${COMPONENTS}/libraries/scheduler)
+include_directories(${COMPONENTS}/libraries/timer)
+include_directories(${COMPONENTS}/libraries/button)
+include_directories(${COMPONENTS}/libraries/util)
+include_directories(${COMPONENTS}/libraries/gpiote)
+include_directories(${COMPONENTS}/libraries/ppi)
+include_directories(${COMPONENTS}/libraries/pwm)
+include_directories(${COMPONENTS}/libraries/scheduler)
+include_directories(${COMPONENTS}/libraries/uart)
+include_directories(${COMPONENTS}/softdevice/common/softdevice_handler)
+include_directories(${COMPONENTS}/toolchain)
+include_directories(${COMPONENTS}/toolchain/arm)
+include_directories(${COMPONENTS}/toolchain/gcc)
+include_directories(${COMPONENTS}/toolchain/CMSIS/Include)
+include_directories(${COMPONENTS}/drivers_nrf/pstorage)
+include_directories(${COMPONENTS}/drivers_nrf/hal)
+include_directories(${COMPONENTS}/drivers_nrf/config)
+include_directories(${COMPONENTS}/drivers_nrf/common)
+include_directories(${COMPONENTS}/drivers_nrf/delay)
+include_directories(${COMPONENTS}/drivers_nrf/gpiote)
+include_directories(${COMPONENTS}/drivers_nrf/uart)
+include_directories(${COMPONENTS}/drivers_nrf/ppi)
+include_directories(${COMPONENTS}/drivers_nrf/timer)
+include_directories(${COMPONENTS}/drivers_nrf/clock)
+include_directories(${EXTERNAL}/segger_rtt)
+include_directories(${SOFTDEVICE}/include)
+include_directories(${SOFTDEVICE}/include/nrf51)
+
+# include project mock headers
+include_directories(mocks/include)
+
+# add sdk11 mock implementations
+# list(APPEND TestFramework_SOURCES "mocks/example_mock.c")
+
+
+###############################################################################################
+# add unit tests and mocks they need
+
+add_executable(MainTest ${TestFramework_SOURCES}
+    ${SRC_PATH}/main.c
+    unit/MainTest.c)
+target_link_libraries(MainTest cmocka)
+GEN_OUTPUTS(MainTest)
+

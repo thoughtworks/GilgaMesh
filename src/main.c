@@ -9,6 +9,8 @@
 // thus written to UICR when MeshyMesh is flashed into the chip. */
 
 volatile uint32_t m_uicr_bootloader_start_address  __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
+int bootloader_arg_count;
+char** bootloader_arguments;
 
 static void bsp_event_handler(bsp_event_t event)
 {
@@ -36,7 +38,7 @@ static void buttons_leds_init()
   APP_ERROR_CHECK(err_code);
 }
 
-static void panic()
+void panic()
 {
   bsp_indication_set(BSP_INDICATE_FATAL_ERROR);
   for(;;) { }
@@ -78,8 +80,6 @@ void init_softdevice() {
   // Subscribe for BLE events.
   err_code = softdevice_ble_evt_handler_set(ble_evt_dispatch);
   APP_ERROR_CHECK(err_code);
-
-  return err_code;
 }
 
 uint32_t initialize() {
@@ -112,8 +112,11 @@ uint32_t run() {
   return NRF_SUCCESS;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+  bootloader_arg_count = argc;
+  bootloader_arguments = argv;
+
   boot();
 
   for(;;) {

@@ -40,7 +40,10 @@
 #define PERIPHERAL_LINK_COUNT   0    // Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
 
-uint32_t initialize();
+void initialize();
 uint32_t run();
 void panic();
-int main(int argc, char **argv);
+
+#ifndef TESTING
+int main();
+#endif

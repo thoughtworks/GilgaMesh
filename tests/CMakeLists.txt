@@ -64,13 +64,13 @@ include_directories(${SOFTDEVICE}/include/nrf51)
 include_directories(mocks/include)
 
 # add sdk11 mock implementations
-# list(APPEND TestFramework_SOURCES "mocks/example_mock.c")
-
+# list(APPEND TestFramework_SOURCES "mocks/sdk11/some_mock.c")
 
 ###############################################################################################
 # add unit tests and mocks they need
 
 add_executable(MainTest ${TestFramework_SOURCES}
+    mocks/bsp_mock.c
     ${SRC_PATH}/main.c
     unit/MainTest.c)
 target_link_libraries(MainTest cmocka)

@@ -9,12 +9,9 @@
 // thus written to UICR when MeshyMesh is flashed into the chip. */
 
 volatile uint32_t m_uicr_bootloader_start_address  __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
-int bootloader_arg_count;
-char** bootloader_arguments;
 
 static void bsp_event_handler(bsp_event_t event)
 {
-  ret_code_t err_code;
   switch (event)
   {
     case BSP_EVENT_KEY_0:
@@ -82,15 +79,10 @@ void init_softdevice() {
   APP_ERROR_CHECK(err_code);
 }
 
-uint32_t initialize() {
-
-  ret_code_t err_code;
-
+void initialize() {
   APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
   buttons_leds_init();
   init_softdevice();
-
-  return NRF_SUCCESS;
 }
 
 static void power_manage(void)
@@ -112,14 +104,13 @@ uint32_t run() {
   return NRF_SUCCESS;
 }
 
-int main(int argc, char **argv)
+#ifndef TESTING // exclude entry point from unit tests
+int main()
 {
-  bootloader_arg_count = argc;
-  bootloader_arguments = argv;
-
   boot();
 
   for(;;) {
     run();
   }
 }
+#endif

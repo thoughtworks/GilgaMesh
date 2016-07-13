@@ -78,8 +78,21 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 
 add_executable(MainTest ${TestFramework_SOURCES}
     mocks/bsp_mock.c
+    mocks/command_mock.c
+    mocks/terminal_mock.c
     ${SRC_PATH}/main.c
     unit/MainTest.c)
 target_link_libraries(MainTest cmocka)
 GEN_OUTPUTS(MainTest)
+
+add_executable(CommandTest ${TestFramework_SOURCES}
+#        mocks/connection_mock.c
+#        mocks/gap_mock.c
+#        mocks/gatt_mock.c
+#        mocks/heartbeat_mock.c
+        mocks/terminal_mock.c
+        ${SRC_PATH}/command.c
+        unit/CommandTest.c)
+target_link_libraries(CommandTest cmocka)
+GEN_OUTPUTS(CommandTest)
 

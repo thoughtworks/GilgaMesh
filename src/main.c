@@ -11,7 +11,9 @@
 // address to the UICR register. This value will be written in the HEX file and
 // thus written to UICR when MeshyMesh is flashed into the chip. */
 
+#ifndef TESTING
 volatile uint32_t m_uicr_bootloader_start_address  __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
+#endif
 
 static void bsp_event_handler(bsp_event_t event)
 {
@@ -57,7 +59,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 
 static void sys_evt_dispatch(uint32_t sys_evt)
 {
-  pstorage_sys_event_handler(sys_evt);
+
 }
 
 uint32_t init_softdevice() {
@@ -105,24 +107,23 @@ uint32_t init_softdevice() {
 
 void initialize() {
 
-  NRF_LOG_PRINTF("Init scheduler... ");
-  APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
-  NRF_LOG_PRINTF("Ok\r\n");
-
-  NRF_LOG_PRINTF("Init timers... ");
-  APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);
-  NRF_LOG_PRINTF("Ok\r\n");
+//  NRF_LOG_PRINTF("Init scheduler... ");
+//  APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
+//
+//  NRF_LOG_PRINTF("Init timers... ");
+//  APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);
 
   NRF_LOG_PRINTF("Init buttons and leds... ");
   buttons_leds_init();
-  NRF_LOG_PRINTF("Ok\r\n");
 
   NRF_LOG_PRINTF("Init softdevice... \r\n");
   init_softdevice();
-  NRF_LOG_PRINTF("Softdevice initialized.\r\n");
 
   NRF_LOG_PRINTF("Init terminal... \r\n");
   terminal_initialize();
+
+  NRF_LOG_PRINTF("Init command... \r\n");
+  command_initialize();
 }
 
 static void power_manage(void)

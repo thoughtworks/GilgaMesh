@@ -51,38 +51,48 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 
 }
 
-void init_softdevice() {
-  uint32_t err_code;
-  sd_mbr_command_t com = {SD_MBR_COMMAND_INIT_SD, };
+uint32_t init_softdevice() {
+  uint32_t err_code = NRF_SUCCESS;
+
   nrf_clock_lf_cfg_t clock_lf_cfg = NRF_CLOCK_LFCLKSRC;
 
   // Initialize SoftDevice.
-  err_code = sd_mbr_command(&com);
-  APP_ERROR_CHECK(err_code);
-
-  err_code = sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START);
-  APP_ERROR_CHECK(err_code);
-
-  SOFTDEVICE_HANDLER_APPSH_INIT(&clock_lf_cfg, true);
+  CHECK_RAM_START_ADDR(CENTRAL_LINK_COUNT,PERIPHERAL_LINK_COUNT);
+  NRF_LOG_PRINTF("  * SD handler init\r\n");
+  SOFTDEVICE_HANDLER_INIT(&clock_lf_cfg, NULL);
 
   ble_enable_params_t ble_enable_params;
+  NRF_LOG_PRINTF("  * SD get default config\r\n");
   err_code = softdevice_enable_get_default_config(CENTRAL_LINK_COUNT,
                                                   PERIPHERAL_LINK_COUNT,
                                                   &ble_enable_params);
   APP_ERROR_CHECK(err_code);
 
+  // Enable BLE stack.
+  NRF_LOG_PRINTF("  * SD enable\r\n");
   err_code = softdevice_enable(&ble_enable_params);
   APP_ERROR_CHECK(err_code);
 
   // Subscribe for BLE events.
   err_code = softdevice_ble_evt_handler_set(ble_evt_dispatch);
+  NRF_LOG_PRINTF("  * SD event subscribe\r\n");
   APP_ERROR_CHECK(err_code);
+
+  return err_code;
 }
 
 void initialize() {
+  NRF_LOG_PRINTF("Init timer... ");
   APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
+  NRF_LOG_PRINTF("Ok\r\n");
+
+  NRF_LOG_PRINTF("Init buttons and leds... ");
   buttons_leds_init();
+  NRF_LOG_PRINTF("Ok\r\n");
+
+  NRF_LOG_PRINTF("Init softdevice... \r\n");
   init_softdevice();
+  NRF_LOG_PRINTF("Softdevice initialized.\r\n");
 }
 
 static void power_manage(void)
@@ -93,9 +103,9 @@ static void power_manage(void)
 
 void boot() {
   NRF_LOG_INIT();
-  NRF_LOG_PRINTF("MeshyMesh is booting... ");
+  NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
   initialize();
-  NRF_LOG_PRINTF("READY.\r\n");
+  NRF_LOG_PRINTF("System ready.\r\n");
 }
 
 uint32_t run() {

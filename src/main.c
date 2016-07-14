@@ -1,5 +1,7 @@
 #include <main.h>
 #include <softdevice_handler_appsh.h>
+#include <app_timer_appsh.h>
+#include <app_scheduler.h>
 
 #define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
@@ -41,7 +43,8 @@ void panic()
   for(;;) { }
 }
 
-void softdevice_assert_callback(uint32_t id, uint32_t pc, uint32_t info)
+
+void softdevice_fault_callback(uint32_t id, uint32_t pc, uint32_t info)
 {
   for(;;) { }
 }
@@ -51,39 +54,62 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 
 }
 
+static void sys_evt_dispatch(uint32_t sys_evt)
+{
+  pstorage_sys_event_handler(sys_evt);
+}
+
 uint32_t init_softdevice() {
   uint32_t err_code = NRF_SUCCESS;
-
+  sd_mbr_command_t com = {SD_MBR_COMMAND_INIT_SD, };
   nrf_clock_lf_cfg_t clock_lf_cfg = NRF_CLOCK_LFCLKSRC;
 
   // Initialize SoftDevice.
-  CHECK_RAM_START_ADDR(CENTRAL_LINK_COUNT,PERIPHERAL_LINK_COUNT);
-  NRF_LOG_PRINTF("  * SD handler init\r\n");
-  SOFTDEVICE_HANDLER_INIT(&clock_lf_cfg, NULL);
+  NRF_LOG_PRINTF("  * mbr initialization\r\n");
+  err_code = sd_mbr_command(&com);
+  APP_ERROR_CHECK(err_code);
+
+  NRF_LOG_PRINTF("  * vector table\r\n");
+  err_code = sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START);
+  APP_ERROR_CHECK(err_code);
+
+  // Initialize the SoftDevice handler module.
+  NRF_LOG_PRINTF("  * softdevice handler\r\n");
+  SOFTDEVICE_HANDLER_APPSH_INIT(&clock_lf_cfg, true);
 
   ble_enable_params_t ble_enable_params;
-  NRF_LOG_PRINTF("  * SD get default config\r\n");
+  NRF_LOG_PRINTF("  * BLE params: maximum of %d central and %d periheral connections\r\n", CENTRAL_LINK_COUNT, PERIPHERAL_LINK_COUNT);
   err_code = softdevice_enable_get_default_config(CENTRAL_LINK_COUNT,
                                                   PERIPHERAL_LINK_COUNT,
                                                   &ble_enable_params);
   APP_ERROR_CHECK(err_code);
 
   // Enable BLE stack.
-  NRF_LOG_PRINTF("  * SD enable\r\n");
+  NRF_LOG_PRINTF("  * enable softdevice\r\n");
   err_code = softdevice_enable(&ble_enable_params);
   APP_ERROR_CHECK(err_code);
 
-  // Subscribe for BLE events.
+  // Register with the SoftDevice handler module for BLE events.
+  NRF_LOG_PRINTF("  * register BLE event handler\r\n");
   err_code = softdevice_ble_evt_handler_set(ble_evt_dispatch);
-  NRF_LOG_PRINTF("  * SD event subscribe\r\n");
+  APP_ERROR_CHECK(err_code);
+
+  // Register with the SoftDevice handler module for BLE events.
+  NRF_LOG_PRINTF("  * register system event handler\r\n");
+  err_code = softdevice_sys_evt_handler_set(sys_evt_dispatch);
   APP_ERROR_CHECK(err_code);
 
   return err_code;
 }
 
 void initialize() {
-  NRF_LOG_PRINTF("Init timer... ");
-  APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, NULL);
+
+  NRF_LOG_PRINTF("Init scheduler... ");
+  APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
+  NRF_LOG_PRINTF("Ok\r\n");
+
+  NRF_LOG_PRINTF("Init timers... ");
+  APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);
   NRF_LOG_PRINTF("Ok\r\n");
 
   NRF_LOG_PRINTF("Init buttons and leds... ");

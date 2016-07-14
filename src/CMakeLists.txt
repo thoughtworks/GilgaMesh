@@ -23,9 +23,9 @@ find_program(AS ${TOOLS_PATH}/arm-none-eabi-as)
 find_program(READELF ${TOOLS_PATH}/arm-none-eabi-readelf)
 
 # set compiler options
-SET(CMAKE_C_FLAGS_DEBUG "-DNRF_LOG_USES_RTT -DBOARD_PCA10028 -DSOFTDEVICE_PRESENT -DNRF51 -D__HEAP_SIZE=0 -DS130 -DBLE_STACK_SUPPORT_REQD -DSWI_DISABLE0 -DBSP_UART_SUPPORT -mcpu=cortex-m0 -mthumb -mabi=aapcs --std=gnu11 -Wall -O0 -g3 -mfloat-abi=soft -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-builtin --short-enums")
-SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-std=gnu11 -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -DNRF_LOG_USES_RTT -DSOFTDEVICE_PRESENT -DS130 -D DEBUG -g -O0 -D${TARGET_BOARD} -DNRF51 -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
-SET(CMAKE_C_FLAGS_RELEASE "-std=gnu11 -smcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -DNRF_LOG_USES_RTT -DSOFTDEVICE_PRESENT -DS130 -D NDEBUG -O3 -D${TARGET_BOARD} -DNRF51 -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
+SET(CMAKE_C_FLAGS_DEBUG "-DNRF_LOG_USES_RTT -DBOARD_PCA10028 -DSOFTDEVICE_PRESENT -DNRF51 -D__HEAP_SIZE=0 -DS130 -DBLE_STACK_SUPPORT_REQD -DSWI_DISABLE0 -DBSP_UART_SUPPORT -mcpu=cortex-m0 -mthumb -mabi=aapcs --std=gnu11 -Wall -Os -g3 -mfloat-abi=soft -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-builtin --short-enums")
+SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-std=gnu11 -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -DNRF_LOG_USES_RTT -DSOFTDEVICE_PRESENT -DS130 -D DEBUG -g -Os -D${TARGET_BOARD} -DNRF51 -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
+SET(CMAKE_C_FLAGS_RELEASE "-std=gnu11 -smcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -DNRF_LOG_USES_RTT -DSOFTDEVICE_PRESENT -DS130 -D NDEBUG -Os -D${TARGET_BOARD} -DNRF51 -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
 SET(CMAKE_C_FLAGS_MINSIZEREL "-std=gnu11 -mcpu=cortex-m0 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -flto -fno-move-loop-invariants -Wextra -g3 -DBLE_STACK_SUPPORT_REQD -DNRF_LOG_USES_RTT -DSOFTDEVICE_PRESENT -DS130 -D NDEBUG -Os -D${TARGET_BOARD} -DNRF51 -w -fabi-version=0 -fno-exceptions -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics -DDEST_BOARD_ID=0")
 
 # set linker options
@@ -122,7 +122,9 @@ link_directories(${COMPONENTS}/toolchain/gcc)
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/common/nrf_drv_common.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/delay/nrf_delay.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/gpiote/nrf_drv_gpiote.c")
+list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/pstorage/pstorage_raw.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/timer/app_timer.c")
+list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/timer/app_timer_appsh.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/button/app_button.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/util/app_error.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/gpiote/app_gpiote.c")

@@ -2,6 +2,7 @@
 #include <softdevice_handler_appsh.h>
 #include <app_timer_appsh.h>
 #include <app_scheduler.h>
+#include <terminal.h>
 
 #define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
@@ -119,6 +120,9 @@ void initialize() {
   NRF_LOG_PRINTF("Init softdevice... \r\n");
   init_softdevice();
   NRF_LOG_PRINTF("Softdevice initialized.\r\n");
+
+  NRF_LOG_PRINTF("Init terminal... \r\n");
+  terminal_initialize();
 }
 
 static void power_manage(void)

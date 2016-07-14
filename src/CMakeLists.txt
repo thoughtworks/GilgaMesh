@@ -143,6 +143,7 @@ set_property(SOURCE gcc_startup_nrf51.s PROPERTY LANGUAGE C)
 
 # add project sources
 list(APPEND MeshyMesh_SOURCES "bsp.c")
+list(APPEND MeshyMesh_SOURCES "conversion.c")
 list(APPEND MeshyMesh_SOURCES "rtc.c")
 list(APPEND MeshyMesh_SOURCES "command.c")
 list(APPEND MeshyMesh_SOURCES "terminal.c")

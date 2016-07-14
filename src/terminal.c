@@ -101,7 +101,7 @@ void terminal_initialize(void)
    terminal_putstring(__TIME__);
 
    terminal_putstring(", nRF51s ");
-   terminal_putstring(dfu_device_name_with_id());
+   //terminal_putstring(dfu_device_name_with_id());
    terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
 
 }

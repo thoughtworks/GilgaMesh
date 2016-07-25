@@ -1,12 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include <string.h>
 
-#include <gatt.h>
+typedef void (*mesh_command_handler)(char **parsedCommandArray);
 
-
-#define COMMAND_SUCCESS 0
-
-
-uint32_t command_execute(char** parsedCommandArray, uint8_t numberOfItems);
+void command_initialize(void);
+void command_execute(char** parsedCommandArray, uint8_t numberOfItems);
+void mesh_add_terminal_command(char* commandName, char* commandDescription, mesh_command_handler callback);

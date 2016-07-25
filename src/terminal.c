@@ -1,4 +1,7 @@
-#include <terminal.h>
+#include "terminal.h"
+
+#include <nrf_log.h>
+#include <stdlib.h>
 
 #ifdef NRF_LOG_USES_RTT
 #define COMMAND_TERMINATOR 0xA
@@ -18,7 +21,7 @@ void terminal_put(const uint8_t character) {
   }
 }
 
-void terminal_putstring(const uint8_t* string) {
+void terminal_putstring(char* string) {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
     NRF_LOG_PRINTF(string);
@@ -34,7 +37,7 @@ uint8_t terminal_get() {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
     while (!NRF_LOG_HAS_INPUT()) { } // Emulate blocking UART behavior
-    NRF_LOG_READ_INPUT(&retval);
+    NRF_LOG_READ_INPUT((char *) &retval);
 #else
     retval = simple_uart_get();
 #endif
@@ -46,7 +49,7 @@ void terminal_get_with_timeout(uint8_t* character) {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
     if (NRF_LOG_HAS_INPUT()) {
-      NRF_LOG_READ_INPUT(character);
+      NRF_LOG_READ_INPUT((char *) character);
     }
 #else
     simple_uart_get_with_timeout(TERMINAL_READ_TIMEOUT_US, character);
@@ -56,11 +59,11 @@ void terminal_get_with_timeout(uint8_t* character) {
 }
 
 static void print_prompt() {
-  terminal_putstring((const uint8_t*) TERMINAL_PROMPT);
+  terminal_putstring(TERMINAL_PROMPT);
 }
 
 static void send_command_mode_ack() {
-  terminal_putstring((const uint8_t*) COMMAND_MODE_ACK);
+  terminal_putstring(COMMAND_MODE_ACK);
 }
 
 void terminal_clear() {
@@ -74,35 +77,36 @@ void terminal_clear() {
 #endif
 }
 
-void terminal_initialize(void)
-{
+void terminal_initialize(void) {
 #ifndef NRF_LOG_USES_RTT
   simple_uart_config(RTS_PIN_NUMBER, TX_PIN_NUMBER, CTS_PIN_NUMBER, RX_PIN_NUMBER, HWFC);
 #endif
-   is_terminal_initialized = true;
+  is_terminal_initialized = true;
 
-   terminal_clear();
+  char mainVersion[4];
+  char subVersion[4];
+  terminal_clear();
 
-   terminal_putstring("    __  __        _        __  __        _\r\n");
-   terminal_putstring("   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
-   terminal_putstring("   | |\\/| / -_|_-< ' \\ || | |\\/| / -_|_-< ' \\ \r\n");
-   terminal_putstring("   |_|  |_\\___/__/_||_\\_, |_|  |_\\___/__/_||_| ");
-   terminal_putstring("v");
-   terminal_putstring(int_to_string(APP_VERSION_MAIN));
-   terminal_putstring(".");
-   terminal_putstring(int_to_string(APP_VERSION_SUB));
-   terminal_putstring("\r\n");
-   terminal_putstring("                        |__/\r\n");
+  terminal_putstring("    __  __        _        __  __        _\r\n");
+  terminal_putstring("   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
+  terminal_putstring("   | |\\/| / -_|_-< ' \\ || | |\\/| / -_|_-< ' \\ \r\n");
+  terminal_putstring("   |_|  |_\\___/__/_||_\\_, |_|  |_\\___/__/_||_| ");
+  terminal_putstring("v");
+  terminal_putstring(itoa(APP_VERSION_MAIN, mainVersion, 10));
+  terminal_putstring(".");
+  terminal_putstring(itoa(APP_VERSION_SUB, subVersion, 10));
+  terminal_putstring("\r\n");
+  terminal_putstring("                        |__/\r\n");
 
 
-   terminal_putstring("  compile date: ");
-   terminal_putstring(__DATE__);
-   terminal_putstring(" ");
-   terminal_putstring(__TIME__);
+  terminal_putstring("  compile date: ");
+  terminal_putstring(__DATE__);
+  terminal_putstring(" ");
+  terminal_putstring(__TIME__);
 
-   terminal_putstring(", nRF51s ");
-   //terminal_putstring(dfu_device_name_with_id());
-   terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
+  terminal_putstring(", nRF51s ");
+  //terminal_putstring(dfu_device_name_with_id());
+  terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
 
 }
 

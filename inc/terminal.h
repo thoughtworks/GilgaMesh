@@ -13,7 +13,7 @@
 #define TERMINAL_READ_TIMEOUT_US 10
 
 void terminal_put(const uint8_t character);
-void terminal_putstring(const uint8_t* string);
+void terminal_putstring(char* string);
 uint8_t terminal_get();
 void terminal_get_with_timeout(uint8_t* character);
 void terminal_clear();

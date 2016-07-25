@@ -128,8 +128,10 @@ void initialize() {
 
 static void power_manage(void)
 {
-  ret_code_t err_code = sd_app_evt_wait();
-  APP_ERROR_CHECK(err_code);
+  terminal_process_input();
+
+//  ret_code_t err_code = sd_app_evt_wait();
+//  APP_ERROR_CHECK(err_code);
 }
 
 void boot() {

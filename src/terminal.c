@@ -199,17 +199,16 @@ void execute_command() {
 }
 
 
-void terminal_process_input(void)
-{
-   if (!is_terminal_initialized) { return; }
+void terminal_process_input(void) {
+  if (!is_terminal_initialized) { return; }
 
-   uint8_t leadingCharacter = 0;
-   terminal_get_with_timeout(&leadingCharacter);
-   if(leadingCharacter == 0x1b) { // ESC pressed
-     print_prompt();
-     execute_command();
-   } else if (leadingCharacter == 0x7E) {
-     send_command_mode_ack();
-     execute_command();
-   }
+  uint8_t leadingCharacter = 0;
+  terminal_get_with_timeout(&leadingCharacter);
+  if (leadingCharacter == 0x1b) { // ESC pressed
+    print_prompt();
+    execute_command();
+  } else if (leadingCharacter == 0x7E) {
+    send_command_mode_ack();
+    execute_command();
+  }
 }

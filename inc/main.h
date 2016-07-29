@@ -15,7 +15,7 @@
 #endif /* NRF51, NRF52 */
 
 #include <app_error.h>
-#include <app_timer.h>
+#include <app_timer_appsh.h>
 #include <app_util.h>
 #include <ble.h>
 #include <ble_db_discovery.h>
@@ -30,7 +30,6 @@
 #include <softdevice_handler.h>
 
 #include "boards.h"
-#include "bsp.h"
 #include "util.h"
 
 #define NRF_UICR_BOOT_START_ADDRESS         (NRF_UICR_BASE + 0x14) // Register where the bootloader start address is stored in the UICR register.

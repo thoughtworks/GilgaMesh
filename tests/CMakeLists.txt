@@ -27,35 +27,35 @@ include_directories(${INC_PATH})
 include_directories(${CONFIG_PATH})
 
 # includes for real nordic sdk11 headers
+include_directories(${COMPONENTS}/ble/ble_db_discovery)
 include_directories(${COMPONENTS}/ble/ble_radio_notification)
 include_directories(${COMPONENTS}/ble/common)
-include_directories(${COMPONENTS}/ble/ble_db_discovery)
 include_directories(${COMPONENTS}/ble/device_manager)
 include_directories(${COMPONENTS}/device)
-include_directories(${COMPONENTS}/libraries/scheduler)
-include_directories(${COMPONENTS}/libraries/timer)
 include_directories(${COMPONENTS}/libraries/button)
-include_directories(${COMPONENTS}/libraries/util)
 include_directories(${COMPONENTS}/libraries/gpiote)
+include_directories(${COMPONENTS}/libraries/low_power_pwm)
 include_directories(${COMPONENTS}/libraries/ppi)
 include_directories(${COMPONENTS}/libraries/pwm)
 include_directories(${COMPONENTS}/libraries/scheduler)
+include_directories(${COMPONENTS}/libraries/timer)
 include_directories(${COMPONENTS}/libraries/uart)
+include_directories(${COMPONENTS}/libraries/util)
 include_directories(${COMPONENTS}/softdevice/common/softdevice_handler)
 include_directories(${COMPONENTS}/toolchain)
+include_directories(${COMPONENTS}/toolchain/CMSIS/Include)
 include_directories(${COMPONENTS}/toolchain/arm)
 include_directories(${COMPONENTS}/toolchain/gcc)
-include_directories(${COMPONENTS}/toolchain/CMSIS/Include)
-include_directories(${COMPONENTS}/drivers_nrf/pstorage)
-include_directories(${COMPONENTS}/drivers_nrf/hal)
-include_directories(${COMPONENTS}/drivers_nrf/config)
+include_directories(${COMPONENTS}/drivers_nrf/clock)
 include_directories(${COMPONENTS}/drivers_nrf/common)
+include_directories(${COMPONENTS}/drivers_nrf/config)
 include_directories(${COMPONENTS}/drivers_nrf/delay)
 include_directories(${COMPONENTS}/drivers_nrf/gpiote)
-include_directories(${COMPONENTS}/drivers_nrf/uart)
+include_directories(${COMPONENTS}/drivers_nrf/hal)
 include_directories(${COMPONENTS}/drivers_nrf/ppi)
+include_directories(${COMPONENTS}/drivers_nrf/pstorage)
 include_directories(${COMPONENTS}/drivers_nrf/timer)
-include_directories(${COMPONENTS}/drivers_nrf/clock)
+include_directories(${COMPONENTS}/drivers_nrf/uart)
 include_directories(${EXTERNAL}/segger_rtt)
 include_directories(${SOFTDEVICE}/include)
 include_directories(${SOFTDEVICE}/include/nrf51)
@@ -67,6 +67,8 @@ include_directories(mocks/include)
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_sdm_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/low_power_pwm/low_power_pwm_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/scheduler/app_scheduler_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/app_error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/nrf_log_mock.c")
@@ -77,8 +79,8 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 # add unit tests and mocks they need
 
 add_executable(MainTest ${TestFramework_SOURCES}
-    mocks/bsp_mock.c
     mocks/command_mock.c
+    mocks/led_mock.c
     mocks/terminal_mock.c
     ${SRC_PATH}/main.c
     unit/MainTest.c)
@@ -95,4 +97,10 @@ add_executable(CommandTest ${TestFramework_SOURCES}
         unit/CommandTest.c)
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
+
+add_executable(LedTest ${TestFramework_SOURCES}
+        ${SRC_PATH}/led.c
+        unit/LedTest.c)
+target_link_libraries(LedTest cmocka)
+GEN_OUTPUTS(LedTest)
 

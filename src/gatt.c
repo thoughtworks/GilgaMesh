@@ -169,7 +169,7 @@ void handle_write_event(void * data, uint16_t dataLength)
 
   switch (head->messageType) {
     case StartDFU:  // reboot the device into dfu mode
-      restart_in_bootloader_mode();
+//      restart_in_bootloader_mode();
       break;
     case SetFamilyID: // no longer used
       break;
@@ -181,7 +181,7 @@ void handle_write_event(void * data, uint16_t dataLength)
       update_connection_info(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gatts_evt.params.write.data);
       break;
     case Heartbeat:
-      receive_heartbeat(bleEvent->evt.gatts_evt.params.write.data);
+//      receive_heartbeat(bleEvent->evt.gatts_evt.params.write.data);
       propagate_message_to_central(&bleEvent->evt.gatts_evt);
       break;
 //    case Vote:

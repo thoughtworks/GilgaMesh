@@ -65,6 +65,7 @@ include_directories(mocks/include)
 
 # add sdk11 mock implementations
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_sdm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/low_power_pwm/low_power_pwm_mock.c")

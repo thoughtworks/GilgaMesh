@@ -4,12 +4,15 @@
 #include <softdevice_handler_appsh.h>
 #include <connection.h>
 #include <gap.h>
+#include <nrf_nvic.h>
 #include "error.h"
 #include "led.h"
 #include "terminal.h"
 
 #define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
+
+static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
 // This variable ensures that the linker script will write the bootloader start
 // address to the UICR register. This value will be written in the HEX file and
@@ -119,11 +122,25 @@ void initialize() {
 }
 
 uint32_t run() {
+  uint32_t error_code;
+
   terminal_process_input();
   app_sched_execute();
 
-//  ret_code_t err_code = sd_app_evt_wait();
-//  APP_ERROR_CHECK(err_code);
+  sizeOfCurrentEvent = sizeOfEvent;
+  error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
+
+  if (error_code== NRF_SUCCESS) {
+    handle_gap_event(currentEvent);
+  }
+
+  else if (error_code == NRF_ERROR_NOT_FOUND) {
+    EC(sd_app_evt_wait());
+    EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
+
+  } else {
+    EC(error_code);
+  }
 
   return NRF_SUCCESS;
 }

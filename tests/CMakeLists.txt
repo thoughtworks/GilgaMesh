@@ -119,3 +119,8 @@ add_executable(LedTest ${TestFramework_SOURCES}
 target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 
+add_executable(QueueTest ${TestFramework_SOURCES}
+    ${SRC_PATH}/queue.c
+    unit/QueueTest.c)
+target_link_libraries(QueueTest cmocka)
+GEN_OUTPUTS(QueueTest)

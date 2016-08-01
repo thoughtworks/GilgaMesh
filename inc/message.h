@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #define NODE_NAME_SIZE                    8
 #define BROADCAST_SIZE                    12
 

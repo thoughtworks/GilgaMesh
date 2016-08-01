@@ -3,6 +3,7 @@
 #include <sdk_common.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <connection.h>
 #include "terminal.h"
 
 typedef struct {
@@ -33,7 +34,7 @@ void command_initialize() {
 
   mesh_add_terminal_command("help", "Print this help text",     print_help);
 //  mesh_add_terminal_command("bro",  "Broadcast a message",      broadcast_logging_message);
-//  mesh_add_terminal_command("cons", "Print all connections",    print_all_connections);
+  mesh_add_terminal_command("cons", "Print all connections",    print_all_connections);
 //  mesh_add_terminal_command("adv",  "Check advertising status", check_advertising_status);
 //  mesh_add_terminal_command("scan", "Check scanning status",    check_scanning_status);
 //  mesh_add_terminal_command("hb",   "Heartbeat on/off",         toggle_heartbeats);

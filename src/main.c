@@ -2,6 +2,7 @@
 
 #include <app_scheduler.h>
 #include <softdevice_handler_appsh.h>
+#include <connection.h>
 #include "error.h"
 #include "led.h"
 #include "terminal.h"
@@ -68,7 +69,7 @@ void softdevice_initialize() {
   NRF_LOG_PRINTF("  * register BLE event handler\r\n");
   EC(softdevice_ble_evt_handler_set(ble_evt_dispatch));
 
-  // Register with the SoftDevice handler module for BLE events.
+  // Register with the SoftDevice handler module for system events.
   NRF_LOG_PRINTF("  * register system event handler\r\n");
   EC(softdevice_sys_evt_handler_set(sys_evt_dispatch));
 }
@@ -95,6 +96,9 @@ void initialize() {
 
   NRF_LOG_PRINTF("Init leds... \r\n");
   led_initialize();
+
+  NRF_LOG_PRINTF("Init connections... \r\n");
+  connections_initialize();
 
   NRF_LOG_PRINTF("System ready.\r\n");
 }

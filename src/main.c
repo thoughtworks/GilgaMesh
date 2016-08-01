@@ -3,6 +3,7 @@
 #include <app_scheduler.h>
 #include <softdevice_handler_appsh.h>
 #include <connection.h>
+#include <gap.h>
 #include "error.h"
 #include "led.h"
 #include "terminal.h"
@@ -99,6 +100,20 @@ void initialize() {
 
   NRF_LOG_PRINTF("Init connections... \r\n");
   connections_initialize();
+
+  NRF_LOG_PRINTF("Init GAP... \r\n");
+  gap_initialize();
+
+  NRF_LOG_PRINTF("Init GATT... \r\n");
+  gatt_initialize();
+
+#ifdef IS_PROD_BOARD
+  NRF_LOG_PRINTF("Start BLE advertising... \r\n");
+  start_advertising();
+#else
+  NRF_LOG_PRINTF("Start BLE scanning... \r\n");
+  start_scanning();
+#endif
 
   NRF_LOG_PRINTF("System ready.\r\n");
 }

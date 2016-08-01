@@ -27,8 +27,6 @@
 
 #ifdef BOARD_SEEED_1_1
 #define CLOCK_TYPE      NRF_CLOCK_LFCLKSRC_SYNTH_250_PPM
-#else
-#define CLOCK_TYPE      NRF_CLOCK_LFCLKSRC_XTAL_20_PPM
 #endif
 
 typedef struct
@@ -76,7 +74,7 @@ static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
 static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;
 static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 
-void ble_initialize(void);
+void gap_initialize(void);
 void set_advertising_data(void);
 void start_advertising(void);
 void start_scanning(void);

@@ -4,7 +4,7 @@
 
 #if defined(TESTING) && !defined(GAP_TEST)
 
-void ble_initialize(void) {
+void gap_initialize(void) {
 }
 
 void set_advertising_data(void) {

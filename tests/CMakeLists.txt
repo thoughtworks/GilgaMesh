@@ -81,6 +81,8 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 add_executable(MainTest ${TestFramework_SOURCES}
     mocks/connection_mock.c
     mocks/command_mock.c
+    mocks/gap_mock.c
+    mocks/gatt_mock.c
     mocks/led_mock.c
     mocks/terminal_mock.c
     ${SRC_PATH}/main.c

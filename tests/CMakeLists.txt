@@ -79,6 +79,7 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 # add unit tests and mocks they need
 
 add_executable(MainTest ${TestFramework_SOURCES}
+    mocks/connection_mock.c
     mocks/command_mock.c
     mocks/led_mock.c
     mocks/terminal_mock.c
@@ -87,10 +88,22 @@ add_executable(MainTest ${TestFramework_SOURCES}
 target_link_libraries(MainTest cmocka)
 GEN_OUTPUTS(MainTest)
 
+add_executable(ConnectionTest ${TestFramework_SOURCES}
+#    mocks/error_mock.c
+#    mocks/logger_mock.c
+    mocks/led_mock.c
+    mocks/gap_mock.c
+    mocks/gatt_mock.c
+    ${SRC_PATH}/conversion.c
+    ${SRC_PATH}/connection.c
+    unit/ConnectionTest.c)
+target_link_libraries(ConnectionTest cmocka)
+GEN_OUTPUTS(ConnectionTest)
+
 add_executable(CommandTest ${TestFramework_SOURCES}
-#        mocks/connection_mock.c
-#        mocks/gap_mock.c
-#        mocks/gatt_mock.c
+        mocks/connection_mock.c
+        mocks/gap_mock.c
+        mocks/gatt_mock.c
 #        mocks/heartbeat_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/command.c

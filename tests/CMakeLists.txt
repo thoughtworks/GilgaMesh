@@ -106,7 +106,7 @@ add_executable(CommandTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
-#        mocks/heartbeat_mock.c
+        mocks/heartbeat_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/command.c
         unit/CommandTest.c)

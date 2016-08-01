@@ -131,7 +131,7 @@ void scheduled_broadcast_request(void *data, uint16_t dataLength) {
 void broadcast_logging_message(char **parsedCommandArray)
 {
   if (strlen(parsedCommandArray[0]) > BROADCAST_SIZE) {
-    log("ERROR: Broadcast message longer than %u characters", BROADCAST_SIZE);
+    NRF_LOG_PRINTF("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_SIZE);
     return;
   }
 
@@ -199,7 +199,7 @@ void handle_write_event(void * data, uint16_t dataLength)
 //
 //      break;
     default:
-      log("unknown message type: %d", head->messageType);
+      NRF_LOG_PRINTF("unknown message type: %d\r\n", head->messageType);
       break;
   }
 }

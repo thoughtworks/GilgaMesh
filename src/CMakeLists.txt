@@ -154,6 +154,7 @@ list(APPEND MeshyMesh_SOURCES "gatt.c")
 #list(APPEND MeshyMesh_SOURCES "heartbeat.c")
 list(APPEND MeshyMesh_SOURCES "led.c")
 list(APPEND MeshyMesh_SOURCES "terminal.c")
+list(APPEND MeshyMesh_SOURCES "queue.c")
 list(APPEND MeshyMesh_SOURCES "main.c")
 
 add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES})

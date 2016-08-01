@@ -104,13 +104,13 @@ void start_advertising(void) {
 
 void check_advertising_status(char** parserCommandArray) {
   if (central_connection_active()) {
-    log("Advertising status: NOT APPLICABLE - central connection slot filled");
+    NRF_LOG_PRINTF("Advertising status: NOT APPLICABLE - central connection slot filled\r\n");
   } else {
     uint32_t errorCode = sd_ble_gap_adv_start(&meshAdvertisingParams);
     if (errorCode == NRF_SUCCESS) {
-      log("Advertising status: RESTARTED");
+      NRF_LOG_PRINTF("Advertising status: RESTARTED\r\n");
     } else {
-      log("Advertising status: RUNNING OR UNABLE TO START");
+      NRF_LOG_PRINTF("Advertising status: RUNNING OR UNABLE TO START\r\n");
     }
   }
 }
@@ -118,13 +118,13 @@ void check_advertising_status(char** parserCommandArray) {
 
 void check_scanning_status(char** parserCommandArray) {
   if (all_peripheral_connections_active()) {
-    log("Scanning status NOT APPLICABLE: peripheral connection slots filled");
+    NRF_LOG_PRINTF("Scanning status NOT APPLICABLE: peripheral connection slots filled\r\n");
   } else {
     uint32_t errorCode = sd_ble_gap_scan_start(&meshScanningParams);
     if (errorCode == NRF_SUCCESS) {
-      log("Scanning status: RESTARTED");
+      NRF_LOG_PRINTF("Scanning status: RESTARTED\r\n");
     } else {
-      log("Scanning status: RUNNING OR UNABLE TO START");
+      NRF_LOG_PRINTF("Scanning status: RUNNING OR UNABLE TO START\r\n");
     }
   }
 }
@@ -137,7 +137,7 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report) {
   if (adv_data->manufacturerData.typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
   if (adv_data->manufacturerData.manufacturerId != MANUFACTURER_ID) return false;
 
-  log("UNCONNECTED NODE: {\"id\": \"%s\", \"version\": %u.%u}",
+  NRF_LOG_PRINTF("UNCONNECTED NODE: {\"id\": \"%s\", \"version\": %u.%u}\r\n",
       adv_data->deviceData.deviceName, adv_data->manufacturerData.majorVersion,
       adv_data->manufacturerData.minorVersion);
 
@@ -245,7 +245,7 @@ void receive_broadcast_message(uint8_t *request) {
     content[i] = msg->message[i];
   }
 
-  log("***** RECEIVED Broadcast message: %s", content);
+  NRF_LOG_PRINTF("***** RECEIVED Broadcast message: %s\r\n", content);
 }
 
 
@@ -291,6 +291,6 @@ void handle_gap_event(ble_evt_t * bleEvent)
     app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_buffers_freed_event);
 
   } else {
-    log("GAP: Unhandled event: %s", getBleEventNameString(bleEvent->header.evt_id));
+    NRF_LOG_PRINTF("GAP: Unhandled event: %s\r\n", getBleEventNameString(bleEvent->header.evt_id));
   }
 }

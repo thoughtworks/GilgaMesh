@@ -31,17 +31,17 @@ void panic()
 
 void softdevice_fault_callback(uint32_t id, uint32_t pc, uint32_t info)
 {
-  for(;;) { }
+  app_error_fault_handler(id, pc, info); // delegate to error module
 }
 
 static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 {
-
+  handle_gap_event(p_ble_evt); // delegate to gap module
 }
 
 static void sys_evt_dispatch(uint32_t sys_evt)
 {
-
+  pstorage_sys_event_handler(sys_evt); // delegate to pstorage
 }
 
 void softdevice_initialize() {

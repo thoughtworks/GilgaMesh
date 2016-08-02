@@ -62,12 +62,16 @@ include_directories(${SOFTDEVICE}/include/nrf51)
 
 # include project mock headers
 include_directories(mocks/include)
+include_directories(mocks/fakeS130_v201/include)
 
 # add sdk11 mock implementations
-list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_gattc_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_gatts_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_l2cap_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_sdm_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_sdm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/scheduler/app_scheduler_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")

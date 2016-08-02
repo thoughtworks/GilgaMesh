@@ -11,3 +11,5 @@
 static const char HEX_DIGITS[16] = "0123456789ABCDEF";
 
 char* int_to_string(uint16_t i);
+void set_node_name_from_device_id(uint32_t deviceId, char *nodeName);
+

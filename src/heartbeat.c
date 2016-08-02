@@ -21,8 +21,8 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
   char *nfcEnabled = (request->nfc == NFC_STATUS_DISABLED) ? "false" : "true";
   char *nfcWorking = (request->nfc != NFC_STATUS_WORKING)  ? "false" : "true";
 
-  log("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\", \"votes\": %u, "
-              "\"nfcEnabled\": %s, \"nfcWorking\": %s}",
+  NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\", \"votes\": %u, "
+              "\"nfcEnabled\": %s, \"nfcWorking\": %s}\r\n",
       nodeName, request->deviceId, parentNodeName, request->majorVersion, request->minorVersion, request->voteCount,
       nfcEnabled, nfcWorking);
 

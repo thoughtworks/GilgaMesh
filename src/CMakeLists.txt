@@ -144,7 +144,7 @@ list(APPEND MeshyMesh_SOURCES "${EXTERNAL}/segger_rtt/SEGGER_RTT_printf.c")
 list(APPEND MeshyMesh_SOURCES "gcc_startup_nrf51.s")
 set_property(SOURCE gcc_startup_nrf51.s PROPERTY LANGUAGE C)
 
-# add project sources
+# add mesh sources
 list(APPEND MeshyMesh_SOURCES "command.c")
 list(APPEND MeshyMesh_SOURCES "connection.c")
 list(APPEND MeshyMesh_SOURCES "conversion.c")
@@ -152,10 +152,12 @@ list(APPEND MeshyMesh_SOURCES "error.c")
 list(APPEND MeshyMesh_SOURCES "gap.c")
 list(APPEND MeshyMesh_SOURCES "gatt.c")
 list(APPEND MeshyMesh_SOURCES "heartbeat.c")
-list(APPEND MeshyMesh_SOURCES "led.c")
 list(APPEND MeshyMesh_SOURCES "terminal.c")
 list(APPEND MeshyMesh_SOURCES "queue.c")
 list(APPEND MeshyMesh_SOURCES "main.c")
+
+# add application sources
+list(APPEND MeshyMesh_SOURCES "app/led.c")
 
 add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES})
 GEN_OUTPUTS(${OUTPUT_FILE_NAME}.elf)

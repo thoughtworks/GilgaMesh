@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pn532.h"
-#include "votes.h"
+#include "app/pn532.h"
+#include "app/votes.h"
 
 #define NODE_NAME_SIZE                    8
 #define BROADCAST_SIZE                    12

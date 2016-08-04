@@ -98,7 +98,7 @@ GEN_OUTPUTS(MainTest)
 add_executable(ConnectionTest ${TestFramework_SOURCES}
 #    mocks/error_mock.c
 #    mocks/logger_mock.c
-    mocks/led_mock.c
+    mocks/app/led_mock.c
     mocks/gap_mock.c
     mocks/gatt_mock.c
     ${SRC_PATH}/conversion.c
@@ -119,8 +119,8 @@ target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
 add_executable(LedTest ${TestFramework_SOURCES}
-        ${SRC_PATH}/led.c
-        unit/LedTest.c)
+        ${SRC_PATH}/app/led.c
+        unit/app/LedTest.c)
 target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 

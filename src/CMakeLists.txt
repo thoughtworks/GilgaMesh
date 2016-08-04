@@ -144,6 +144,11 @@ list(APPEND MeshyMesh_SOURCES "${EXTERNAL}/segger_rtt/SEGGER_RTT_printf.c")
 list(APPEND MeshyMesh_SOURCES "gcc_startup_nrf51.s")
 set_property(SOURCE gcc_startup_nrf51.s PROPERTY LANGUAGE C)
 
+# add system shim sources
+list(APPEND MeshyMesh_SOURCES "system/delay.c")
+list(APPEND MeshyMesh_SOURCES "system/gpio.c")
+list(APPEND MeshyMesh_SOURCES "system/platform.c")
+
 # add mesh sources
 list(APPEND MeshyMesh_SOURCES "command.c")
 list(APPEND MeshyMesh_SOURCES "connection.c")

@@ -4,7 +4,6 @@
 #include <softdevice_handler_appsh.h>
 #include <connection.h>
 #include <gap.h>
-#include <nrf_nvic.h>
 #include "error.h"
 #include "terminal.h"
 #include "app/led.h"
@@ -136,7 +135,7 @@ uint32_t run() {
 
   else if (error_code == NRF_ERROR_NOT_FOUND) {
     EC(sd_app_evt_wait());
-    EC(sd_nvic_ClearPendingIRQ(SD_EVT_IRQn));
+    EC(sys_ClearPendingIRQ(SD_EVT_IRQn));
 
   } else {
     EC(error_code);

@@ -148,6 +148,7 @@ set_property(SOURCE gcc_startup_nrf51.s PROPERTY LANGUAGE C)
 list(APPEND MeshyMesh_SOURCES "system/delay.c")
 list(APPEND MeshyMesh_SOURCES "system/gpio.c")
 list(APPEND MeshyMesh_SOURCES "system/platform.c")
+list(APPEND MeshyMesh_SOURCES "system/storage.c")
 
 # add mesh sources
 list(APPEND MeshyMesh_SOURCES "command.c")

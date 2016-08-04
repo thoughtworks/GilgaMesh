@@ -8,6 +8,8 @@
 #include "terminal.h"
 #include "app/led.h"
 
+#include "system/storage.h"
+
 #define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
 
@@ -40,7 +42,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt)
 
 static void sys_evt_dispatch(uint32_t sys_evt)
 {
-  pstorage_sys_event_handler(sys_evt); // delegate to pstorage
+  sys_handle_storage_event(sys_evt); // delegate to pstorage
 }
 
 void softdevice_initialize() {

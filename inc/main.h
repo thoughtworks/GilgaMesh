@@ -26,7 +26,6 @@
 #include <nrf_log.h>
 #include <nrf_mbr.h>
 #include <nrf_sdm.h>
-#include <pstorage.h>
 #include <softdevice_handler.h>
 
 #include "boards.h"

@@ -83,21 +83,22 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
 
 ###############################################################################################
 # add unit tests and mocks they need
 
-#add_executable(MainTest ${TestFramework_SOURCES}
-#    mocks/connection_mock.c
-#    mocks/command_mock.c
-#    mocks/gap_mock.c
-#    mocks/gatt_mock.c
-#    mocks/terminal_mock.c
-#    mocks/app/led_mock.c
-#    ${SRC_PATH}/main.c
-#    unit/MainTest.c)
-#target_link_libraries(MainTest cmocka)
-#GEN_OUTPUTS(MainTest)
+add_executable(MainTest ${TestFramework_SOURCES}
+    mocks/connection_mock.c
+    mocks/command_mock.c
+    mocks/gap_mock.c
+    mocks/gatt_mock.c
+    mocks/terminal_mock.c
+    mocks/app/led_mock.c
+    ${SRC_PATH}/main.c
+    unit/MainTest.c)
+target_link_libraries(MainTest cmocka)
+GEN_OUTPUTS(MainTest)
 
 add_executable(ConnectionTest ${TestFramework_SOURCES}
 #    mocks/error_mock.c

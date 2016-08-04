@@ -62,7 +62,6 @@ include_directories(${SOFTDEVICE}/include/nrf51)
 
 # include project mock headers
 include_directories(mocks/include)
-include_directories(mocks/fakeS130_v201/include)
 
 # add sdk11 mock implementations
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_mock.c")
@@ -80,20 +79,25 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/nrf_log
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_mock.c")
 
+#add system shim mock implementations
+list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
+
 ###############################################################################################
 # add unit tests and mocks they need
 
-add_executable(MainTest ${TestFramework_SOURCES}
-    mocks/connection_mock.c
-    mocks/command_mock.c
-    mocks/gap_mock.c
-    mocks/gatt_mock.c
-    mocks/led_mock.c
-    mocks/terminal_mock.c
-    ${SRC_PATH}/main.c
-    unit/MainTest.c)
-target_link_libraries(MainTest cmocka)
-GEN_OUTPUTS(MainTest)
+#add_executable(MainTest ${TestFramework_SOURCES}
+#    mocks/connection_mock.c
+#    mocks/command_mock.c
+#    mocks/gap_mock.c
+#    mocks/gatt_mock.c
+#    mocks/terminal_mock.c
+#    mocks/app/led_mock.c
+#    ${SRC_PATH}/main.c
+#    unit/MainTest.c)
+#target_link_libraries(MainTest cmocka)
+#GEN_OUTPUTS(MainTest)
 
 add_executable(ConnectionTest ${TestFramework_SOURCES}
 #    mocks/error_mock.c

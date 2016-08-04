@@ -6,12 +6,13 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "app_util_platform.h"
 #include "app_error.h"
 #include "nrf.h"
-#include "nrf_delay.h"
-#include "nrf_gpio.h"
 #include "simple_uart.h"
+
+#include "system/delay.h"
+#include "system/gpio.h"
+#include "system/platform.h"
 
 typedef void (* uart_event_handler) (uint8_t rx_byte);
 

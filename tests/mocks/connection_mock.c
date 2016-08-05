@@ -43,5 +43,10 @@ void print_all_connections(char** parsedCommandArray) {
   check_expected_ptr(parsedCommandArray);
 }
 
-void update_connection_info(uint16_t connectionHandle, uint8_t *request) { }
+MessagePropagationType update_connection_info(uint16_t connectionHandle, uint8_t *dataPacket) {
+  check_expected(connectionHandle);
+  check_expected_ptr(dataPacket);
+  return DoNotPropagate;
+}
+
 void share_connection_info(connection *targetConnection) { }

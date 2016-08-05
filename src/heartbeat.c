@@ -52,8 +52,10 @@ void broadcast_heartbeat(void *data, uint16_t dataLength)
   send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(request));
 }
 
-void receive_heartbeat(uint8_t *heartbeat) {
-  log_heartbeat_info((BleMessageHeartbeatReq *)heartbeat);
+MessagePropagationType receive_heartbeat(uint16_t connectionHandle, uint8_t *dataPacket) {
+  UNUSED_PARAMETER(connectionHandle);
+  log_heartbeat_info((BleMessageHeartbeatReq *)dataPacket);
+  return PropagateToCentral;
 }
 
 

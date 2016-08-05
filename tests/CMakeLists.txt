@@ -124,6 +124,16 @@ add_executable(CommandTest ${TestFramework_SOURCES}
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
+add_executable(GattTest ${TestFramework_SOURCES}
+        mocks/connection_mock.c
+        mocks/gap_mock.c
+        mocks/heartbeat_mock.c
+        mocks/queue_mock.c
+        ${SRC_PATH}/gatt.c
+        unit/GattTest.c)
+target_link_libraries(GattTest cmocka)
+GEN_OUTPUTS(GattTest)
+
 add_executable(LedTest ${TestFramework_SOURCES}
         ${SRC_PATH}/app/led.c
         unit/app/LedTest.c)

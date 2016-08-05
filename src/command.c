@@ -64,6 +64,6 @@ void mesh_add_terminal_command(char* commandName, char* commandDescription, mesh
   newCommand->callback = commandCallback;
 
   commandCount++;
-  commands = realloc(commands, commandCount * sizeof(meshCommand));
+  commands = realloc(commands, commandCount * sizeof(meshCommand*));
   commands[commandCount - 1] = newCommand;
 }

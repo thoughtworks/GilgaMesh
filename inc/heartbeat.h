@@ -4,4 +4,4 @@
 #include "queue.h"
 
 void broadcast_heartbeat(void *data, uint16_t dataLength);
-void receive_heartbeat(uint8_t *heartbeat);
+MessagePropagationType receive_heartbeat(uint16_t connectionHandle, uint8_t *dataPacket);

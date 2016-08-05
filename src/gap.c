@@ -236,8 +236,9 @@ void handle_disconnection_event(void * bleEvent, uint16_t dataLength) {
 }
 
 
-void receive_broadcast_message(uint8_t *request) {
-  BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) request;
+MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint8_t *dataPacket) {
+  UNUSED_PARAMETER(connectionHandle);
+  BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) dataPacket;
 
   char content[BROADCAST_SIZE + 1];
   content[BROADCAST_SIZE] = 0; // append string termination
@@ -246,6 +247,8 @@ void receive_broadcast_message(uint8_t *request) {
   }
 
   NRF_LOG_PRINTF("***** RECEIVED Broadcast message: %s\r\n", content);
+
+  return PropagateToAll;
 }
 
 

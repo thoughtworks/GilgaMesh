@@ -50,12 +50,13 @@ void broadcast_group_value_update(char* nodeIdStr, char* newFieldStr, bool isGro
   app_sched_event_put(&request, sizeof(BleMessageGroupValueReq), scheduled_broadcast_request);
 }
 
-bool receive_group_value_update(uint8_t *request) {
-  BleMessageGroupValueReq *req = (BleMessageGroupValueReq *) request;
+MessagePropagationType receive_group_value_update(uint16_t connectionHandle, uint8_t *dataPacket) {
+  UNUSED_PARAMETER(connectionHandle);
+  BleMessageGroupValueReq *req = (BleMessageGroupValueReq *) dataPacket;
   if (req->deviceId == deviceId) {
     if (req->setGroup) update_voting_group(req->newGroup);
     if (req->setValue) update_voting_value(req->newValue);
-    return true;
+    return DoNotPropagate;
   }
-  return false;
+  return PropagateToAll;
 }

@@ -1,11 +1,16 @@
 #pragma once
 
 #include "app/pn532.h"
-#include "app/votes.h"
+//#include "app/votes.h"
 
 #define NODE_NAME_SIZE                    8
 #define BROADCAST_SIZE                    12
 
+typedef enum {
+  DoNotPropagate,
+  PropagateToAll,
+  PropagateToCentral
+} MessagePropagationType;
 
 typedef enum {
   SetFamilyID = 0, // no longer used
@@ -50,17 +55,17 @@ typedef struct {
   nfcStatus nfc;
 }__attribute__ ((packed)) BleMessageHeartbeatReq;
 
-typedef struct {
-  BleMessageHead head;
-  uint32_t deviceId;
-  userVote vote;
-}__attribute__ ((packed)) BleMessageVoteReq;
-
-typedef struct {
-  BleMessageHead head;
-  uint32_t deviceId;
-  userVoteAck voteAck;
-}__attribute__ ((packed)) BleMessageVoteAckReq;
+//typedef struct {
+//  BleMessageHead head;
+//  uint32_t deviceId;
+//  userVote vote;
+//}__attribute__ ((packed)) BleMessageVoteReq;
+//
+//typedef struct {
+//  BleMessageHead head;
+//  uint32_t deviceId;
+//  userVoteAck voteAck;
+//}__attribute__ ((packed)) BleMessageVoteAckReq;
 
 typedef struct {
   BleMessageHead head;

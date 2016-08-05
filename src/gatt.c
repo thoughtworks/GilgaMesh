@@ -2,11 +2,25 @@
 #include <gap.h>
 #include <timer.h>
 #include <heartbeat.h>
+#include <message.h>
 
+typedef struct {
+  BleMessageType messageType;
+  write_event_handler handler;
+} writeEvent;
+
+uint8_t writeEventCount = 0;
 ble_gatts_char_handles_t characteristicHandles;
+static writeEvent** writeEvents;
 
-void gatt_initialize()
-{
+
+void initialize_write_events() {
+  add_write_event(Broadcast, receive_broadcast_message);
+  add_write_event(ConnectionInfo, update_connection_info);
+  add_write_event(Heartbeat, receive_heartbeat);
+}
+
+void gatt_initialize() {
   ble_uuid_t serviceUUID;
   memset(&serviceUUID, 0, sizeof(serviceUUID));
 
@@ -62,6 +76,8 @@ void gatt_initialize()
   EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
 
 //  turn_on_heartbeats();
+
+  initialize_write_events();
 }
 
 
@@ -164,43 +180,33 @@ void handle_write_event(void * data, uint16_t dataLength)
 {
   UNUSED_PARAMETER(dataLength);
   ble_evt_t *bleEvent = (ble_evt_t *)data;
+  uint8_t messageType = bleEvent->evt.gatts_evt.params.write.data[0];
 
-  BleMessageHead* head = (BleMessageHead*) bleEvent->evt.gatts_evt.params.write.data;
-
-  switch (head->messageType) {
-    case StartDFU:  // reboot the device into dfu mode
-//      restart_in_bootloader_mode();
-      break;
-    case SetFamilyID: // no longer used
-      break;
-    case Broadcast:
-      receive_broadcast_message(bleEvent->evt.gatts_evt.params.write.data);
-      propagate_message(&bleEvent->evt.gatts_evt);
-      break;
-    case ConnectionInfo:
-      update_connection_info(bleEvent->evt.gap_evt.conn_handle, bleEvent->evt.gatts_evt.params.write.data);
-      break;
-    case Heartbeat:
-      receive_heartbeat(bleEvent->evt.gatts_evt.params.write.data);
-      propagate_message_to_central(&bleEvent->evt.gatts_evt);
-      break;
-//    case Vote:
-//      receive_vote(bleEvent->evt.gatts_evt.params.write.data);
-//      propagate_message_to_central(&bleEvent->evt.gatts_evt);
-//      break;
-//    case VoteAcknowledgement:
-//      if(!receive_vote_acknowledgement(bleEvent->evt.gatts_evt.params.write.data)) {
-//        propagate_message(&bleEvent->evt.gatts_evt);
-//      }
-//      break;
-//    case SetVoteConfiguration:
-//      if(!receive_group_value_update(bleEvent->evt.gatts_evt.params.write.data)) {
-//        propagate_message(&bleEvent->evt.gatts_evt);
-//
-//      break;
-    default:
-      NRF_LOG_PRINTF("unknown message type: %d\r\n", head->messageType);
-      break;
+  for(int i = 0; i < writeEventCount; i++) {
+    writeEvent *registeredEvent = writeEvents[i];
+    if(registeredEvent->messageType == messageType) {
+      MessagePropagationType propagationType = registeredEvent->handler(bleEvent->evt.gap_evt.conn_handle,
+                                                                        bleEvent->evt.gatts_evt.params.write.data);
+      if (propagationType == PropagateToCentral) {
+        propagate_message_to_central(&bleEvent->evt.gatts_evt);
+      }
+      else if(propagationType == PropagateToAll) {
+        propagate_message(&bleEvent->evt.gatts_evt);
+      }
+      return;
+    }
   }
+  
+  NRF_LOG_PRINTF("unknown message type: %d\r\n", messageType);
+}
+
+void add_write_event(uint8_t type, write_event_handler handler) {
+  writeEvent *newWriteEvent = malloc(sizeof(writeEvent));
+  newWriteEvent->messageType = type;
+  newWriteEvent->handler = handler;
+
+  writeEventCount++;
+  writeEvents = realloc(writeEvents, writeEventCount * sizeof(writeEvent*));
+  writeEvents[writeEventCount - 1] = newWriteEvent;
 }
 

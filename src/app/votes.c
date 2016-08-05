@@ -163,8 +163,10 @@ void broadcast_vote(void *data, uint16_t dataLength) {
 }
 
 
-void receive_vote(uint8_t *request) {
-  log_vote((BleMessageVoteReq *)request);
+MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket) {
+  UNUSED_PARAMETER(connectionHandle);
+  log_vote((BleMessageVoteReq *)dataPacket);
+  return PropagateToCentral;
 }
 
 void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestring_t timestampStr) {
@@ -179,12 +181,13 @@ void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestrin
   app_sched_event_put(&request, sizeof(BleMessageVoteAckReq), scheduled_broadcast_request);
 }
 
-bool receive_vote_acknowledgement(uint8_t *request) {
-  BleMessageVoteAckReq *voteAckReq = (BleMessageVoteAckReq *) request;
+MessagePropagationType receive_vote_acknowledgement(uint16_t connectionHandle, uint8_t *dataPacket) {
+  UNUSED_PARAMETER(connectionHandle);
+  BleMessageVoteAckReq *voteAckReq = (BleMessageVoteAckReq *) dataPacket;
   if (voteAckReq->deviceId == deviceId) {
     voteAckBuffer = voteAckReq->voteAck;
     get_first_vote(NULL, 0);
-    return true;
+    return DoNotPropagate;
   }
-  return false;
+  return PropagateToAll;
 }

@@ -48,5 +48,5 @@ bool central_connection_active(void);
 bool peripheral_connections_active(void);
 bool all_peripheral_connections_active(void);
 char* get_connection_info(connection *conn, char* result);
-void update_connection_info(uint16_t connectionHandle, uint8_t *request);
+MessagePropagationType update_connection_info(uint16_t connectionHandle, uint8_t *dataPacket);
 void share_connection_info(connection *targetConnection);

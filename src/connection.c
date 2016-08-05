@@ -82,14 +82,15 @@ ConnectionType unset_connection(uint16_t connectionHandle) {
 }
 
 
-void update_connection_info(uint16_t connectionHandle, uint8_t *request) {
-  BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *)request;
+MessagePropagationType update_connection_info(uint16_t connectionHandle, uint8_t *dataPacket) {
+  BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *)dataPacket;
   connection *conn = find_active_connection_by_handle(connectionHandle);
   if (conn != 0) {
     conn->majorVersion = msg->majorVersion;
     conn->minorVersion = msg->minorVersion;
     conn->deviceId = msg->deviceId;
   }
+  return DoNotPropagate;
 }
 
 

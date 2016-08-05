@@ -36,5 +36,5 @@ bool vote_storage_is_full(void);
 void set_vote_metadata(voteMetadata *metadata);
 void broadcast_vote(void *data, uint16_t dataLength);
 void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestring_t timestampStr);
-void receive_vote(uint8_t *request);
-bool receive_vote_acknowledgement(uint8_t *request);
+MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket);
+MessagePropagationType receive_vote_acknowledgement(uint16_t connectionHandle, uint8_t *dataPacket);

@@ -3,4 +3,9 @@
 #include <cmocka_includes.h>
 
 void broadcast_heartbeat(void *data, uint16_t dataLength){ }
-void receive_heartbeat(uint8_t *heartbeat){ }
+
+MessagePropagationType receive_heartbeat(uint16_t connectionHandle, uint8_t *dataPacket){
+  check_expected(connectionHandle);
+  check_expected_ptr(dataPacket);
+  return DoNotPropagate;
+}

@@ -14,8 +14,10 @@
 #define FOO_CHARACTERISTIC_MAX_LENGTH  40
 #define FOO_CHARACTERISTIC_DESCRIPTION "meshData"
 
+typedef MessagePropagationType (*write_event_handler)(uint16_t connectionHandle, uint8_t *dataPacket);
 
 void gatt_initialize(void);
+void initialize_write_events(void);
 void broadcast_logging_message(char **parsedCommandArray);
 void propagate_message(ble_gatts_evt_t *gattsEvent);
 void send_message_from_connection_queue(connection *targetConnection);

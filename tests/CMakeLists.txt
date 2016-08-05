@@ -89,26 +89,27 @@ list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
 # add unit tests and mocks they need
 
 add_executable(MainTest ${TestFramework_SOURCES}
-    mocks/connection_mock.c
-    mocks/command_mock.c
-    mocks/gap_mock.c
-    mocks/gatt_mock.c
-    mocks/terminal_mock.c
-    mocks/app/led_mock.c
-    ${SRC_PATH}/main.c
-    unit/MainTest.c)
+        mocks/connection_mock.c
+        mocks/command_mock.c
+        mocks/error_mock.c
+        mocks/gap_mock.c
+        mocks/gatt_mock.c
+        mocks/terminal_mock.c
+        mocks/app/led_mock.c
+        ${SRC_PATH}/main.c
+        unit/MainTest.c)
 target_link_libraries(MainTest cmocka)
 GEN_OUTPUTS(MainTest)
 
 add_executable(ConnectionTest ${TestFramework_SOURCES}
-#    mocks/error_mock.c
-#    mocks/logger_mock.c
-    mocks/app/led_mock.c
-    mocks/gap_mock.c
-    mocks/gatt_mock.c
-    ${SRC_PATH}/conversion.c
-    ${SRC_PATH}/connection.c
-    unit/ConnectionTest.c)
+        #    mocks/error_mock.c
+        #    mocks/logger_mock.c
+        mocks/app/led_mock.c
+        mocks/gap_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/conversion.c
+        ${SRC_PATH}/connection.c
+        unit/ConnectionTest.c)
 target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
@@ -130,7 +131,7 @@ target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 
 add_executable(QueueTest ${TestFramework_SOURCES}
-    ${SRC_PATH}/queue.c
-    unit/QueueTest.c)
+        ${SRC_PATH}/queue.c
+        unit/QueueTest.c)
 target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)

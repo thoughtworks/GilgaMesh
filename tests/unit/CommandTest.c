@@ -50,21 +50,21 @@ static void test_command_responds_to_hb() {
 static void test_command_responds_to_help() {
   char* data[1] = { "help" };
 
-  expect_any_count(terminal_putstring, string, 2);
+  expect_any_count(terminal_putstring, string, 6);
   command_execute(data, 1);
 }
 
 static void test_command_prints_help_when_command_is_unrecognized() {
   char* data[1] = { "xyz" };
 
-  expect_any_count(terminal_putstring, string, 2);
+  expect_any_count(terminal_putstring, string, 6);
   command_execute(data, 1);
 }
 
 static void test_command_responds_to_new_commands() {
   char* data[1] = { "foo" };
 
-  expect_any_count(terminal_putstring, string, 2);
+  expect_any_count(terminal_putstring, string, 6);
   command_execute(data, 1);
 
   mesh_add_terminal_command("foo", "Does some stuff", foo_callback);
@@ -74,10 +74,10 @@ static void test_command_responds_to_new_commands() {
 
 int RunCommandTest(void) {
   const struct CMUnitTest tests[] = {
-//          cmocka_unit_test(test_command_responds_to_bro),
-//          cmocka_unit_test(test_command_responds_to_cons),
-//          cmocka_unit_test(test_command_responds_to_adv),
-//          cmocka_unit_test(test_command_responds_to_scan),
+          cmocka_unit_test(test_command_responds_to_bro),
+          cmocka_unit_test(test_command_responds_to_cons),
+          cmocka_unit_test(test_command_responds_to_adv),
+          cmocka_unit_test(test_command_responds_to_scan),
 //          cmocka_unit_test(test_command_responds_to_hb),
           cmocka_unit_test(test_command_responds_to_help),
           cmocka_unit_test(test_command_prints_help_when_command_is_unrecognized),

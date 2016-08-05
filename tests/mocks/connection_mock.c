@@ -39,6 +39,9 @@ char *get_connection_info(connection *conn, char *result) {
   return mock_type(char *);
 }
 
-void print_all_connections(char** parsedCommandArray) { }
+void print_all_connections(char** parsedCommandArray) {
+  check_expected_ptr(parsedCommandArray);
+}
+
 void update_connection_info(uint16_t connectionHandle, uint8_t *request) { }
 void share_connection_info(connection *targetConnection) { }

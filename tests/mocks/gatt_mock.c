@@ -4,8 +4,11 @@
 
 #if defined(TESTING) && !defined(GATT_TEST)
 
+void broadcast_logging_message(char **parsedCommandArray) {
+  check_expected_ptr(parsedCommandArray);
+}
+
 void gatt_initialize(void) { }
-void broadcast_logging_message(char **parsedCommandArray) { }
 void propagate_message(ble_gatts_evt_t *gattsEvent) { }
 void send_message_from_connection_queue(connection *targetConnection){ }
 void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength) { }

@@ -4,7 +4,6 @@
 #include <softdevice_handler_appsh.h>
 #include <connection.h>
 #include <gap.h>
-#include "error.h"
 #include "terminal.h"
 #include "app/led.h"
 

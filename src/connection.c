@@ -1,5 +1,5 @@
-#include <connection.h>
-#include <gap.h>
+#include "connection.h"
+#include "gap.h"
 
 static inline uint32_t get_device_id() {
   // define out direct device memory access when testing
@@ -109,24 +109,31 @@ char* get_connection_type_name(connection *conn) {
 
 char* get_connection_info(connection *conn, char* result) {
   if (conn->active){
-    uint8_t *addr = conn->address.addr;
+    char handle[6];
+    sprintf(handle, "%u", conn->handle);
+
     strcpy(result, "\n\r   [");
     strcat(result, get_connection_type_name(conn));
     strcat(result, "] [");
-    strcat(result, int_to_string(conn->handle));
+    strcat(result, handle);
     strcat(result, "] ");
     if (conn->deviceId != 0) {
+      char version[9];
+      sprintf(version, "v%u.%u", conn->majorVersion, conn->minorVersion);
+
       char *nodeName = malloc(NODE_NAME_SIZE);
       set_node_name_from_device_id(conn->deviceId, nodeName);
       strcat(result, nodeName);
-      strcat(result, ", v");
-      strcat(result, int_to_string(conn->majorVersion));
-      strcat(result, ".");
-      strcat(result, int_to_string(conn->minorVersion));
+      strcat(result, ", ");
+      strcat(result, version);
       free(nodeName);
     } else {
+      uint8_t *addr = conn->address.addr;
       for (int i = 0; i < 6; i++){
-        strcat(result, int_to_string((uint16_t)(*addr+i)));
+        char address[4];
+        sprintf(address, "%u", (uint8_t)(addr[i]));
+
+        strcat(result, address);
         strcat(result, " ");
       }
     }

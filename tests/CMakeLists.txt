@@ -91,6 +91,7 @@ list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
 add_executable(MainTest ${TestFramework_SOURCES}
     mocks/connection_mock.c
     mocks/command_mock.c
+    mocks/error_mock.c
     mocks/gap_mock.c
     mocks/gatt_mock.c
     mocks/terminal_mock.c

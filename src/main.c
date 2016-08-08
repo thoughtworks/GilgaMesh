@@ -102,6 +102,9 @@ void initialize() {
   NRF_LOG_PRINTF("Init leds... \r\n");
   led_initialize();
 
+  NRF_LOG_PRINTF("Init real time clock... \r\n");
+  rtc_init();
+
   NRF_LOG_PRINTF("Init connections... \r\n");
   connections_initialize();
 

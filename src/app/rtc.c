@@ -325,6 +325,21 @@ void rtc_get_timestamp(timestamp_t stamp) {
   stamp[7] = (uint8_t)(system_time.clock_time.millis & 0x00FF);
 }
 
+void rtc_timestamp_to_timestring(timestamp_t stamp, timestring_t string) {
+  for(int i = 0 ; i < TIMESTAMP_SIZE ; i++) {
+    sprintf(string + 2 * i, "%02X", stamp[i]);
+  }
+  string[TIMESTRING_SIZE_INCLUDING_NULL - 1] = 0; // terminate with null
+}
+
+void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp) {
+  for(int i = 0 ; i < TIMESTAMP_SIZE ; i++) { // ignore the last (null) character
+      stamp[i] = hex_digit_to_uint8(string[2 * i]) << 4; // tens
+    stamp[i] += hex_digit_to_uint8(string[2 * i + 1]); // add units
+  }
+}
+
+
 void rtc_print_status() {
 #ifdef SEEED_RTC
   if(is_seeed_rtc_connected) {

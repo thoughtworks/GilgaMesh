@@ -130,5 +130,9 @@ void rtc_print_status();
 void rtc_set_field(char* field, char* value);
 void rtc_print_date_and_time();
 void rtc_get_timestamp(timestamp_t stamp);
+void rtc_timestamp_to_timestring(timestamp_t stamp, timestring_t string);
+void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp);
 
 void rtc_periodic_update_handler();
+
+

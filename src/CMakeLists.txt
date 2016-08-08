@@ -160,10 +160,12 @@ list(APPEND MeshyMesh_SOURCES "gatt.c")
 list(APPEND MeshyMesh_SOURCES "heartbeat.c")
 list(APPEND MeshyMesh_SOURCES "terminal.c")
 list(APPEND MeshyMesh_SOURCES "queue.c")
+
 list(APPEND MeshyMesh_SOURCES "main.c")
 
 # add application sources
 list(APPEND MeshyMesh_SOURCES "app/led.c")
+list(APPEND MeshyMesh_SOURCES "app/rtc.c")
 
 add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES})
 GEN_OUTPUTS(${OUTPUT_FILE_NAME}.elf)

@@ -37,8 +37,7 @@
 #define CENTRAL_LINK_COUNT      3    // Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT   1    // Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define SCHED_MAX_EVENT_DATA_SIZE       MAX(APP_TIMER_SCHED_EVT_SIZE,\
-                                            BLE_STACK_HANDLER_SCHED_EVT_SIZE)       /**< Maximum size of scheduler events. */
+#define SCHED_MAX_EVENT_DATA_SIZE       (sizeof(ble_evt_t))                         /**< Maximum size of scheduler events. */
 #define SCHED_QUEUE_SIZE                10                                          /**< Maximum number of events in the scheduler queue. */
 
 

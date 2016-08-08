@@ -276,22 +276,22 @@ void handle_buffers_freed_event(void * data, uint16_t dataLength)
 void handle_gap_event(ble_evt_t * bleEvent)
 {
   if (bleEvent->header.evt_id == BLE_GAP_EVT_ADV_REPORT){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_advertising_report_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_advertising_report_event));
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_CONNECTED){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_connection_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_connection_event));
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_DISCONNECTED){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_disconnection_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_disconnection_event));
 
   } else if (bleEvent->header.evt_id == BLE_GATTS_EVT_WRITE){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_write_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_write_event));
 
   } else if (bleEvent->header.evt_id == BLE_GAP_EVT_TIMEOUT){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_connection_timeout_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_connection_timeout_event));
 
   } else if (bleEvent->header.evt_id == BLE_EVT_TX_COMPLETE){
-    app_sched_event_put(bleEvent, sizeof(ble_evt_hdr_t) + bleEvent->header.evt_len, handle_buffers_freed_event);
+    EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_buffers_freed_event));
 
   } else {
     NRF_LOG_PRINTF("GAP: Unhandled event: %s\r\n", getBleEventNameString(bleEvent->header.evt_id));

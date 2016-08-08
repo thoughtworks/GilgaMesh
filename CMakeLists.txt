@@ -21,6 +21,7 @@ SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 # set target hardware type
 if(IS_PRODUCTION_BOARD)
     SET(TARGET_BOARD       BOARD_SEEED)
+    add_definitions(-DIS_PROD_BOARD)
 else()
     SET(TARGET_BOARD       BOARD_PCA10028)
 endif()

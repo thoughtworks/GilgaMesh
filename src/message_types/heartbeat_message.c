@@ -2,8 +2,7 @@
 #include <conversion.h>
 #include <gatt.h>
 #include <version.h>
-#include <sdk_common.h>
-#include "heartbeat.h"
+#include "message_types/heartbeat_message.h"
 
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request)
@@ -31,7 +30,7 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
 }
 
 
-void broadcast_heartbeat(void *data, uint16_t dataLength)
+void send_heartbeat_message(void *data, uint16_t dataLength)
 {
   UNUSED_PARAMETER(data);
   UNUSED_PARAMETER(dataLength);
@@ -52,7 +51,7 @@ void broadcast_heartbeat(void *data, uint16_t dataLength)
   send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(request));
 }
 
-MessagePropagationType receive_heartbeat(uint16_t connectionHandle, uint8_t *dataPacket) {
+MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint8_t *dataPacket) {
   UNUSED_PARAMETER(connectionHandle);
   log_heartbeat_info((BleMessageHeartbeatReq *)dataPacket);
   return PropagateToCentral;

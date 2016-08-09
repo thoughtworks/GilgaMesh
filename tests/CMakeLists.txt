@@ -116,10 +116,11 @@ target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
 add_executable(CommandTest ${TestFramework_SOURCES}
+        mocks/message_types/broadcast_message_mock.c
+        mocks/message_types/heartbeat_message_mock.c
         mocks/connection_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
-        mocks/heartbeat_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/command.c
         unit/CommandTest.c)
@@ -127,9 +128,11 @@ target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
 add_executable(GattTest ${TestFramework_SOURCES}
+        mocks/message_types/broadcast_message_mock.c
+        mocks/message_types/heartbeat_message_mock.c
+        mocks/message_types/handshake_message_mock.c
         mocks/connection_mock.c
         mocks/gap_mock.c
-        mocks/heartbeat_mock.c
         mocks/queue_mock.c
         ${SRC_PATH}/gatt.c
         unit/GattTest.c)

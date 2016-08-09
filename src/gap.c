@@ -1,5 +1,6 @@
-#include <gap.h>
+#include "gap.h"
 #include <app_scheduler.h>
+#include "message_types/handshake_message.h"
 
 
 const ble_gap_conn_params_t meshConnectionParams =
@@ -209,7 +210,7 @@ void handle_connection_event(void * data, uint16_t dataLength) {
 #endif
   }
 
-  share_connection_info(newConnection);
+  send_handshake_message(newConnection);
   print_all_connections(NULL);
 
 #ifdef IS_PROD_BOARD
@@ -233,22 +234,6 @@ void handle_disconnection_event(void * bleEvent, uint16_t dataLength) {
   }
 
   print_all_connections(NULL);
-}
-
-
-MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint8_t *dataPacket) {
-  UNUSED_PARAMETER(connectionHandle);
-  BleMessageBroadcastReq *msg = (BleMessageBroadcastReq *) dataPacket;
-
-  char content[BROADCAST_SIZE + 1];
-  content[BROADCAST_SIZE] = 0; // append string termination
-  for (int i = 0 ; i < BROADCAST_SIZE ; i++) {
-    content[i] = msg->message[i];
-  }
-
-  NRF_LOG_PRINTF("***** RECEIVED Broadcast message: %s\r\n", content);
-
-  return PropagateToAll;
 }
 
 

@@ -14,7 +14,7 @@
 #include <gatt.h>
 #include <logger.h>
 #include <connection.h>
-#include <message.h>
+#include <message_types/message.h>
 #include <error.h>
 #include <version.h>
 
@@ -83,4 +83,3 @@ void check_advertising_status(char **parsedCommandArray);
 void check_scanning_status(char **parsedCommandArray);
 void disconnect_from_peer(uint16_t connectionHandle);
 void handle_gap_event(ble_evt_t * bleEvent);
-MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint8_t *dataPacket);

@@ -5,10 +5,10 @@
 #include <ble_gap.h>
 #include <nrf_soc.h>
 
-#include <conversion.h>
-#include <logger.h>
-#include <message.h>
-#include <queue.h>
+#include "conversion.h"
+#include "logger.h"
+#include "message_types/message.h"
+#include "queue.h"
 
 #define ATTR_MAX_CENTRAL_CONNS         1
 #define ATTR_MAX_PERIPHERAL_CONNS      3
@@ -48,5 +48,3 @@ bool central_connection_active(void);
 bool peripheral_connections_active(void);
 bool all_peripheral_connections_active(void);
 char* get_connection_info(connection *conn, char* result);
-MessagePropagationType update_connection_info(uint16_t connectionHandle, uint8_t *dataPacket);
-void share_connection_info(connection *targetConnection);

@@ -6,7 +6,7 @@
 #include "ble.h"
 #include "feedback.h"
 #include "gatt.h"
-#include "heartbeat.h"
+#include "message_types/heartbeat_message.h"
 
 
 #define MAX_TIMERS 7
@@ -46,7 +46,7 @@ void nfc_event_handler(void *context) {
 }
 
 void heartbeat_timer_handler(void *context) {
-  app_sched_event_put(NULL, 0, broadcast_heartbeat);
+  app_sched_event_put(NULL, 0, send_heartbeat_message);
 }
 
 void turn_on_buzzer_feedback_timeout() {

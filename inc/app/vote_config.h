@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "message.h"
+#include "message_types/message.h"
 
 typedef struct {
   uint8_t group;

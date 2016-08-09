@@ -1,8 +1,8 @@
 #include <gatt.h>
 #include <gap.h>
-#include <timer.h>
-#include <heartbeat.h>
-#include <message.h>
+#include <message_types/heartbeat_message.h>
+#include <message_types/broadcast_message.h>
+#include <message_types/handshake_message.h>
 
 typedef struct {
   BleMessageType messageType;
@@ -16,8 +16,8 @@ static writeEvent** writeEvents;
 
 void initialize_write_events() {
   add_write_event(Broadcast, receive_broadcast_message);
-  add_write_event(ConnectionInfo, update_connection_info);
-  add_write_event(Heartbeat, receive_heartbeat);
+  add_write_event(Handshake, receive_handshake_message);
+  add_write_event(Heartbeat, receive_heartbeat_message);
 }
 
 void gatt_initialize() {
@@ -141,22 +141,6 @@ void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t data
 
 void scheduled_broadcast_request(void *data, uint16_t dataLength) {
   send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)data, dataLength);
-}
-
-
-void broadcast_logging_message(char **parsedCommandArray)
-{
-  if (strlen(parsedCommandArray[0]) > BROADCAST_SIZE) {
-    NRF_LOG_PRINTF("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_SIZE);
-    return;
-  }
-
-  BleMessageBroadcastReq request;
-  memset(&request, 0, sizeof(request));
-  request.head.messageType = Broadcast;
-  memcpy(request.message, parsedCommandArray[0], BROADCAST_SIZE);
-
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageBroadcastReq));
 }
 
 

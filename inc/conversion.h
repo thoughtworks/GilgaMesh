@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "message.h"
+#include "message_types/message.h"
 
 static const char HEX_DIGITS[16] = "0123456789ABCDEF";
 

@@ -82,18 +82,6 @@ ConnectionType unset_connection(uint16_t connectionHandle) {
 }
 
 
-MessagePropagationType update_connection_info(uint16_t connectionHandle, uint8_t *dataPacket) {
-  BleMessageConnectionInfoReq *msg = (BleMessageConnectionInfoReq *)dataPacket;
-  connection *conn = find_active_connection_by_handle(connectionHandle);
-  if (conn != 0) {
-    conn->majorVersion = msg->majorVersion;
-    conn->minorVersion = msg->minorVersion;
-    conn->deviceId = msg->deviceId;
-  }
-  return DoNotPropagate;
-}
-
-
 char* get_connection_type_name(connection *conn) {
   switch (conn->type)
   {
@@ -179,16 +167,3 @@ bool all_peripheral_connections_active() {
   }
   return true;
 }
-
-
-void share_connection_info(connection *targetConnection) {
-  BleMessageConnectionInfoReq request;
-  memset(&request, 0, sizeof(request));
-  request.head.messageType = ConnectionInfo;
-  request.majorVersion = APP_VERSION_MAIN;
-  request.minorVersion = APP_VERSION_SUB;
-  request.deviceId = deviceId;
-
-  send_to_single_connection(targetConnection, (uint8_t *)&request, sizeof(request));
-}
-

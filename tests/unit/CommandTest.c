@@ -15,7 +15,7 @@ static void foo_callback(char **parsedCommandArray) {
 static void test_command_responds_to_bro() {
   char* data[2] = { "bro", "foo" };
 
-  expect_value(broadcast_logging_message, parsedCommandArray, data);
+  expect_value(send_broadcast_message, parsedCommandArray, data);
   command_execute(data, 2);
 }
 

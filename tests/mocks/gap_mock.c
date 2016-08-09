@@ -12,12 +12,6 @@ void check_scanning_status(char **parsedCommandArray) {
   check_expected_ptr(parsedCommandArray);
 }
 
-MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint8_t *dataPacket) {
-  check_expected(connectionHandle);
-  check_expected_ptr(dataPacket);
-  return DoNotPropagate;
-}
-
 void gap_initialize(void) { }
 void set_advertising_data(void) { }
 void start_advertising(void) { }

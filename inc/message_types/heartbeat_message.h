@@ -9,8 +9,8 @@ typedef struct {
   uint32_t centralConnectionDeviceId;
   uint8_t majorVersion;
   uint8_t minorVersion;
-  uint16_t voteCount;
-  nfcStatus nfc;
+//  uint16_t voteCount;
+//  nfcStatus nfc;
 }__attribute__ ((packed)) BleMessageHeartbeatReq;
 
 

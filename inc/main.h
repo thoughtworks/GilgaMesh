@@ -20,6 +20,7 @@
 #include <ble.h>
 #include <ble_db_discovery.h>
 #include <ble_hci.h>
+#include <ctype.h>
 #include <device_manager.h>
 #include <nordic_common.h>
 #include <nrf_gpio.h>

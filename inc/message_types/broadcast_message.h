@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include "message.h"
 
 #define BROADCAST_MESSAGE_MAX_SIZE  12

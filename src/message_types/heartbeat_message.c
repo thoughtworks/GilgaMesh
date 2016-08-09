@@ -1,12 +1,11 @@
-#include <logger.h>
-#include <conversion.h>
-#include <gatt.h>
-#include <version.h>
 #include "message_types/heartbeat_message.h"
+#include <stdlib.h>
+#include "conversion.h"
+#include "gatt.h"
+#include "version.h"
 
 
-void log_heartbeat_info(BleMessageHeartbeatReq *request)
-{
+void log_heartbeat_info(BleMessageHeartbeatReq *request) {
   char *nodeName = malloc(NODE_NAME_SIZE);
   char *parentNodeName = malloc(NODE_NAME_SIZE);
 
@@ -17,21 +16,23 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request)
     set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
   }
 
-  char *nfcEnabled = (request->nfc == NFC_STATUS_DISABLED) ? "false" : "true";
-  char *nfcWorking = (request->nfc != NFC_STATUS_WORKING)  ? "false" : "true";
+//  char *nfcEnabled = (request->nfc == NFC_STATUS_DISABLED) ? "false" : "true";
+//  char *nfcWorking = (request->nfc != NFC_STATUS_WORKING)  ? "false" : "true";
+//
+//  NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\", \"votes\": %u, "
+//              "\"nfcEnabled\": %s, \"nfcWorking\": %s}\r\n",
+//      nodeName, request->deviceId, parentNodeName, request->majorVersion, request->minorVersion, request->voteCount,
+//      nfcEnabled, nfcWorking);
 
-  NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\", \"votes\": %u, "
-              "\"nfcEnabled\": %s, \"nfcWorking\": %s}\r\n",
-      nodeName, request->deviceId, parentNodeName, request->majorVersion, request->minorVersion, request->voteCount,
-      nfcEnabled, nfcWorking);
+  NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
+      nodeName, request->deviceId, parentNodeName, request->majorVersion, request->minorVersion);
 
   free(nodeName);
   free(parentNodeName);
 }
 
 
-void send_heartbeat_message(void *data, uint16_t dataLength)
-{
+void send_heartbeat_message(void *data, uint16_t dataLength) {
   UNUSED_PARAMETER(data);
   UNUSED_PARAMETER(dataLength);
 
@@ -44,8 +45,8 @@ void send_heartbeat_message(void *data, uint16_t dataLength)
   if (central_connection_active() && (activeConnections->central.deviceId != 0)) {
     request.centralConnectionDeviceId = activeConnections->central.deviceId;
   }
-  request.voteCount = get_vote_count();
-  request.nfc = get_nfc_status();
+//  request.voteCount = get_vote_count();
+//  request.nfc = get_nfc_status();
 
   log_heartbeat_info(&request);
   send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(request));

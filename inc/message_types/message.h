@@ -1,8 +1,5 @@
 #pragma once
 
-#include "app/pn532.h"
-//#include "app/votes.h"
-
 #define NODE_NAME_SIZE  8
 
 typedef enum {
@@ -33,13 +30,13 @@ typedef struct {
 //  uint32_t deviceId;
 //  userVoteAck voteAck;
 //}__attribute__ ((packed)) BleMessageVoteAckReq;
-
-typedef struct {
-  BleMessageHead head;
-  uint32_t deviceId;
-  bool setGroup;
-  uint8_t newGroup;
-  bool setValue;
-  uint8_t newValue;
-}__attribute__ ((packed)) BleMessageGroupValueReq;
-
+//
+//typedef struct {
+//  BleMessageHead head;
+//  uint32_t deviceId;
+//  bool setGroup;
+//  uint8_t newGroup;
+//  bool setValue;
+//  uint8_t newValue;
+//}__attribute__ ((packed)) BleMessageGroupValueReq;
+//

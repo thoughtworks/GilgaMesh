@@ -127,6 +127,15 @@ add_executable(CommandTest ${TestFramework_SOURCES}
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
+add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
+        mocks/connection_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/conversion.c
+        ${SRC_PATH}/message_types/heartbeat_message.c
+        unit/message_types/HeartbeatMessageTest.c)
+target_link_libraries(HeartbeatMessageTest cmocka)
+GEN_OUTPUTS(HeartbeatMessageTest)
+
 add_executable(GattTest ${TestFramework_SOURCES}
         mocks/message_types/broadcast_message_mock.c
         mocks/message_types/heartbeat_message_mock.c

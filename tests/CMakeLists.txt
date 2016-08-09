@@ -103,6 +103,14 @@ add_executable(MainTest ${TestFramework_SOURCES}
 target_link_libraries(MainTest cmocka)
 GEN_OUTPUTS(MainTest)
 
+add_executable(BroadcastMessageTest ${TestFramework_SOURCES}
+        mocks/connection_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/message_types/broadcast_message.c
+        unit/message_types/BroadcastMessageTest.c)
+target_link_libraries(BroadcastMessageTest cmocka)
+GEN_OUTPUTS(BroadcastMessageTest)
+
 add_executable(ConnectionTest ${TestFramework_SOURCES}
         #    mocks/error_mock.c
         #    mocks/logger_mock.c

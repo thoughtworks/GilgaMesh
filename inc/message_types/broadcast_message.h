@@ -7,7 +7,7 @@
 
 typedef struct {
   BleMessageHead head;
-  uint8_t message[BROADCAST_MESSAGE_MAX_SIZE];
+  uint8_t message[BROADCAST_MESSAGE_MAX_SIZE + 1];
 }__attribute__ ((packed)) BleMessageBroadcastReq;
 
 

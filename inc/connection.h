@@ -10,9 +10,9 @@
 #include "message_types/message.h"
 #include "queue.h"
 
-#define ATTR_MAX_CENTRAL_CONNS         1
-#define ATTR_MAX_PERIPHERAL_CONNS      3
-#define ATTR_MAX_CONNECTIONS           ATTR_MAX_CENTRAL_CONNS + ATTR_MAX_PERIPHERAL_CONNS
+#define MAX_CENTRAL_CONNECTIONS        1
+#define MAX_PERIPHERAL_CONNECTIONS     3
+#define MAX_TOTAL_CONNECTIONS          MAX_CENTRAL_CONNECTIONS + MAX_PERIPHERAL_CONNECTIONS
 
 typedef enum {INVALID, CENTRAL, PERIPHERAL} ConnectionType;
 
@@ -31,7 +31,7 @@ typedef struct
 typedef struct
 {
     connection central;
-    connection peripheral[ATTR_MAX_PERIPHERAL_CONNS];
+    connection peripheral[MAX_PERIPHERAL_CONNECTIONS];
 } connections;
 
 uint32_t deviceId;

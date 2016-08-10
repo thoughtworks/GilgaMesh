@@ -42,7 +42,7 @@ connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t dev
 
 
 connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     if (!activeConnections->peripheral[i].active){
       set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
       return &activeConnections->peripheral[i];
@@ -60,7 +60,7 @@ connection* find_active_connection_by_handle(uint16_t connectionHandle) {
   if (central->active && central->handle == connectionHandle){
     return central;
   }
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     connection *peripheral = &activeConnections->peripheral[i];
     if (peripheral->active && peripheral->handle == connectionHandle){
       return peripheral;
@@ -154,7 +154,7 @@ bool central_connection_active() {
 
 
 bool peripheral_connections_active() {
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     if (activeConnections->peripheral[i].active) return true;
   }
   return false;
@@ -162,7 +162,7 @@ bool peripheral_connections_active() {
 
 
 bool all_peripheral_connections_active() {
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     if (!(activeConnections->peripheral[i].active)) return false;
   }
   return true;

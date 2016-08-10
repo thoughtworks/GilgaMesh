@@ -33,10 +33,7 @@
 #include "util.h"
 
 #define NRF_UICR_BOOT_START_ADDRESS         (NRF_UICR_BASE + 0x14) // Register where the bootloader start address is stored in the UICR register.
-#define BOOTLOADER_REGION_START 0x1B000                            // this needs to match the FLASH ORIGIN address in the linker script
 
-#define CENTRAL_LINK_COUNT      3    // Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
-#define PERIPHERAL_LINK_COUNT   1    // Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
 #define SCHED_MAX_EVENT_DATA_SIZE       (sizeof(ble_evt_t))                         /**< Maximum size of scheduler events. */
 #define SCHED_QUEUE_SIZE                10                                          /**< Maximum number of events in the scheduler queue. */

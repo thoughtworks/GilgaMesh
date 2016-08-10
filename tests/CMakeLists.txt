@@ -94,6 +94,7 @@ add_executable(MainTest ${TestFramework_SOURCES}
     mocks/error_mock.c
     mocks/gap_mock.c
     mocks/gatt_mock.c
+    mocks/softdevice_mock.c
     mocks/terminal_mock.c
     mocks/app/led_mock.c
     mocks/app/rtc_mock.c

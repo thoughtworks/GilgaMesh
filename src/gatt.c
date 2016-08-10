@@ -130,7 +130,7 @@ void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t data
 {
   send_to_central_connection(originHandle, data, dataLength);
 
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     connection *targetConnection = &activeConnections->peripheral[i];
     if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
       send_to_single_connection(targetConnection, data, dataLength);

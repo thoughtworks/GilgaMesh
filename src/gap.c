@@ -62,6 +62,16 @@ void gap_initialize(void){
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
 
   EC(sd_ble_gap_ppcp_set(&meshConnectionParams));
+
+#ifdef IS_PROD_BOARD
+  NRF_LOG_PRINTF("Start BLE advertising... \r\n");
+  start_advertising();
+#else
+  NRF_LOG_PRINTF("Start BLE scanning... \r\n");
+  start_scanning();
+#endif
+
+
 }
 
 
@@ -182,7 +192,7 @@ void disconnect_from_peer(uint16_t connectionHandle) {
 
 void disconnect_from_all_peers() {
   if (central_connection_active()) disconnect_from_peer(activeConnections->central.handle);
-  for (int i = 0; i < ATTR_MAX_PERIPHERAL_CONNS; i++){
+  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     connection *peripheralConnection = &activeConnections->peripheral[i];
     if (peripheralConnection->active) disconnect_from_peer(peripheralConnection->handle);
   }

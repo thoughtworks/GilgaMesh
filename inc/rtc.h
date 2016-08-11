@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <nrf_log.h>
 
 typedef struct {
   uint16_t millis;
@@ -132,6 +133,7 @@ void rtc_print_date_and_time();
 void rtc_get_timestamp(timestamp_t stamp);
 void rtc_timestamp_to_timestring(timestamp_t stamp, timestring_t string);
 void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp);
+bool rtc_is_equal_timestamp(timestamp_t a, timestamp_t b);
 
 void rtc_periodic_update_handler();
 

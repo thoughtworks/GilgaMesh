@@ -18,23 +18,23 @@ static PCF85063TPState_t rtc_state;
 
 static void twi_event_handler(nrf_drv_twi_evt_t *twiEvent) {
   if(twiEvent->type == NRF_DRV_TWI_TX_DONE) {
-    log("I2C: Sent LEN: %d DATA: %d", twiEvent->length, *(twiEvent->p_data));
+    NRF_LOG_PRINTF("I2C: Sent LEN: %d DATA: %d\r\n", twiEvent->length, *(twiEvent->p_data));
   }
   else if(twiEvent->type == NRF_DRV_TWI_RX_DONE) {
-    log("I2C: Received LEN: %d DATA: %d", twiEvent->length, *(twiEvent->p_data));
+    NRF_LOG_PRINTF("I2C: Received LEN: %d DATA: %d\r\n", twiEvent->length, *(twiEvent->p_data));
   }
   else if(twiEvent->type == NRF_DRV_TWI_ERROR) {
     if(twiEvent->error_src == NRF_TWI_ERROR_ADDRESS_NACK) {
-      log("I2C: Address error");
+      NRF_LOG_PRINTF("I2C: Address error\r\n");
     }
     else if(twiEvent->error_src == NRF_TWI_ERROR_OVERRUN_NACK) {
-      log("I2C: Data overrun error");
+      NRF_LOG_PRINTF("I2C: Data overrun error\r\n");
     }
     else if(twiEvent->error_src == NRF_TWI_ERROR_DATA_NACK) {
-      log("I2C: Data NACK error");
+      NRF_LOG_PRINTF("I2C: Data NACK error\r\n");
     }
     else {
-      log("I2C: Unknown error");
+      NRF_LOG_PRINTF("I2C: Unknown error\r\n");
     }
   }
 }
@@ -100,38 +100,38 @@ static void print_seeed_rtc_state() {
   read_seeed_rtc_state();
 
   if(is_seeed_rtc_connected) {
-    log("RTC Control_1 CS:%d 12H:%d CIE:%d SR:%d STOP:%d TEST:%d", rtc_state.register_0.CAP_SEL,
+    NRF_LOG_PRINTF("RTC Control_1 CS:%d 12H:%d CIE:%d SR:%d STOP:%d TEST:%d\r\n", rtc_state.register_0.CAP_SEL,
         rtc_state.register_0.AM_PM,
         rtc_state.register_0.CIE,
         rtc_state.register_0.SR,
         rtc_state.register_0.STOP,
         rtc_state.register_0.EXT_TEST);
-    log("RTC Control_2 COF:%d TF:%d HMI:%d MI:%d", rtc_state.register_1.COF,
+    NRF_LOG_PRINTF("RTC Control_2 COF:%d TF:%d HMI:%d MI:%d\r\n", rtc_state.register_1.COF,
         rtc_state.register_1.TF,
         rtc_state.register_1.HMI,
         rtc_state.register_1.MI);
-    log("RTC Offset: %d", rtc_state.register_2.Offset);
-    log("RTC RAM_byte: %d", rtc_state.register_3.RAM_byte);
-    log("RTC Seconds OS:%d SECONDS:%d%d", rtc_state.register_4.OS,
+    NRF_LOG_PRINTF("RTC Offset: %d\r\n", rtc_state.register_2.Offset);
+    NRF_LOG_PRINTF("RTC RAM_byte: %d\r\n", rtc_state.register_3.RAM_byte);
+    NRF_LOG_PRINTF("RTC Seconds OS:%d SECONDS:%d%d\r\n", rtc_state.register_4.OS,
         rtc_state.register_4.TENS,
         rtc_state.register_4.UNIT);
-    log("RTC Minutes: %d%d", rtc_state.register_5.TENS,
+    NRF_LOG_PRINTF("RTC Minutes: %d%d\r\n", rtc_state.register_5.TENS,
         rtc_state.register_5.UNIT);
-    log("RTC Hours: %d%d", rtc_state.register_6.TENS,
+    NRF_LOG_PRINTF("RTC Hours: %d%d\r\n", rtc_state.register_6.TENS,
         rtc_state.register_6.UNIT);
-    log("RTC Days: %d%d", rtc_state.register_7.TENS,
+    NRF_LOG_PRINTF("RTC Days: %d%d\r\n", rtc_state.register_7.TENS,
         rtc_state.register_7.UNIT);
-    log("RTC Weekdays: %d", rtc_state.register_8.UNIT);
-    log("RTC Months: %d%d", rtc_state.register_9.TENS,
+    NRF_LOG_PRINTF("RTC Weekdays: %d\r\n", rtc_state.register_8.UNIT);
+    NRF_LOG_PRINTF("RTC Months: %d%d\r\n", rtc_state.register_9.TENS,
         rtc_state.register_9.UNIT);
-    log("RTC Years: 20%d%d", rtc_state.register_A.TENS,
+    NRF_LOG_PRINTF("RTC Years: 20%d%d\r\n", rtc_state.register_A.TENS,
         rtc_state.register_A.UNIT);
   }
 };
 
 static void seeed_rtc_init() {
   uint32_t err_code;
-  log("Initializing Seeed RTC");
+  NRF_LOG_PRINTF("Initializing Seeed RTC\r\n");
 
   err_code = nrf_drv_twi_init(&rtcInterface, &rtcConfig, NULL);
   APP_ERROR_CHECK(err_code);
@@ -220,7 +220,7 @@ void rtc_periodic_update_handler() {
 }
 
 void rtc_print_date_and_time() {
-  log("System time is: %d/%d/%d %02d:%02d:%02d.%03d Offset: %d minutes to UTC", system_time.clock_time.month
+  NRF_LOG_PRINTF("System time is: %d/%d/%d %02d:%02d:%02d.%03d Offset: %d minutes to UTC\r\n", system_time.clock_time.month
                                                                               , system_time.clock_time.day
                                                                               , system_time.clock_time.year
                                                                               , system_time.clock_time.hours
@@ -233,7 +233,7 @@ void rtc_print_date_and_time() {
   timestring_t timestring;
   rtc_get_timestamp(timestamp);
   rtc_timestamp_to_timestring(timestamp, timestring);
-  log("Timestamp: %s", timestring);
+  NRF_LOG_PRINTF("Timestamp: %s\r\n", timestring);
 }
 
 void rtc_set_field(char* field, char* value) {
@@ -290,7 +290,7 @@ void rtc_set_field(char* field, char* value) {
     max = 63;
   }
   else {
-    log("No such field.");
+    NRF_LOG_PRINTF("No such field.\r\n");
     return;
   }
 
@@ -306,7 +306,7 @@ void rtc_set_field(char* field, char* value) {
       intvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
       nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &intvalue, 1, false);
     } else {
-      log("Value out of range.");
+      NRF_LOG_PRINTF("Value out of range.\r\n");
     }
   }
 
@@ -339,6 +339,16 @@ void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp) {
   }
 }
 
+bool rtc_is_equal_timestamp(timestamp_t a, timestamp_t b)
+{
+  bool retval = true;
+
+  for(int i = 0 ; i < 8 ; i++) {
+    retval &= (a[i] == b[i]);
+  }
+
+  return retval;
+}
 
 void rtc_print_status() {
 #ifdef SEEED_RTC
@@ -346,10 +356,10 @@ void rtc_print_status() {
     print_seeed_rtc_state();
   }
   else {
-    log("Seeed RTC not responding.");
+    NRF_LOG_PRINTF("Seeed RTC not responding.\r\n");
   }
 #else
-  terminal_putstring("No RTC detected.");
+  terminal_putstring("No RTC detected.\r\n");
 #endif // SEEED_RTC
   rtc_print_date_and_time();
 }

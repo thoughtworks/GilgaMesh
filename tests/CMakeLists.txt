@@ -55,6 +55,7 @@ include_directories(${COMPONENTS}/drivers_nrf/hal)
 include_directories(${COMPONENTS}/drivers_nrf/ppi)
 include_directories(${COMPONENTS}/drivers_nrf/pstorage)
 include_directories(${COMPONENTS}/drivers_nrf/timer)
+include_directories(${COMPONENTS}/drivers_nrf/twi_master)
 include_directories(${COMPONENTS}/drivers_nrf/uart)
 include_directories(${EXTERNAL}/segger_rtt)
 include_directories(${SOFTDEVICE}/include)
@@ -170,6 +171,14 @@ add_executable(LedTest ${TestFramework_SOURCES}
         unit/app/LedTest.c)
 target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
+
+add_executable(RTCTest ${TestFramework_SOURCES}
+    mocks/terminal_mock.c
+    ${SRC_PATH}/conversion.c
+    ${SRC_PATH}/app/rtc.c
+    unit/app/RTCTest.c)
+target_link_libraries(RTCTest cmocka)
+GEN_OUTPUTS(RTCTest)
 
 add_executable(QueueTest ${TestFramework_SOURCES}
         ${SRC_PATH}/queue.c

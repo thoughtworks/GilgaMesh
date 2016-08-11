@@ -2,10 +2,12 @@
 #include <sdk_common.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "connection.h"
-#include "gap.h"
-#include "message_types/broadcast_message.h"
+#include <connection.h>
+#include <gatt.h>
+#include <gap.h>
+#include <rtc.h>
 #include "terminal.h"
+#include "message_types/broadcast_message.h"
 
 typedef struct {
   char* name;

@@ -66,28 +66,11 @@ void initialize() {
   NRF_LOG_PRINTF("System ready.\r\n");
 }
 
-uint32_t run() {
-  uint32_t error_code;
-
+void run() {
   terminal_process_input();
   app_sched_execute();
 
-  sizeOfCurrentEvent = sizeOfEvent;
-  error_code = sd_ble_evt_get(currentEventBuffer, &sizeOfCurrentEvent);
-
-  if (error_code== NRF_SUCCESS) {
-    handle_gap_event(currentEvent);
-  }
-
-  else if (error_code == NRF_ERROR_NOT_FOUND) {
-    EC(sd_app_evt_wait());
-    EC(sys_ClearPendingIRQ(SD_EVT_IRQn));
-
-  } else {
-    EC(error_code);
-  }
-
-  return NRF_SUCCESS;
+  EC(sd_app_evt_wait());
 }
 
 #ifndef TESTING // exclude entry point from unit tests

@@ -40,7 +40,7 @@
 
 
 void initialize();
-uint32_t run();
+void run();
 void panic();
 
 #ifndef TESTING

@@ -17,7 +17,7 @@ void send_handshake_message(connection *targetConnection) {
 MessagePropagationType receive_handshake_message(uint16_t connectionHandle, uint8_t *dataPacket) {
   BleMessageHandshakeReq *msg = (BleMessageHandshakeReq *)dataPacket;
   connection *conn = find_active_connection_by_handle(connectionHandle);
-  if (conn != 0) {
+  if (conn != NULL) {
     conn->majorVersion = msg->majorVersion;
     conn->minorVersion = msg->minorVersion;
     conn->deviceId = msg->deviceId;

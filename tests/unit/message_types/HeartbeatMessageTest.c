@@ -6,6 +6,7 @@
 #include "connection.h"
 
 static BleMessageHeartbeatReq mockRequest;
+static uint32_t centralDeviceId = 12345;
 
 static int test_setup(void **state) {
   memset(&mockRequest, 0, sizeof(mockRequest));
@@ -13,38 +14,12 @@ static int test_setup(void **state) {
   mockRequest.majorVersion = APP_VERSION_MAIN;
   mockRequest.minorVersion = APP_VERSION_SUB;
   mockRequest.deviceId = deviceId;
+  mockRequest.centralConnectionDeviceId = centralDeviceId;
   return 0;
 }
 
 static void test_send_heartbeat_message_sends_data_to_central_connection() {
-  will_return(central_connection_active, false);
-
-  expect_value(send_to_central_connection, originHandle, BLE_CONN_HANDLE_INVALID);
-  expect_memory(send_to_central_connection, data, &mockRequest, sizeof(mockRequest));
-  expect_value(send_to_central_connection, dataLength, sizeof(mockRequest));
-  send_heartbeat_message(NULL, 0);
-}
-
-static void test_send_heartbeat_message_includes_central_connection_info_if_present() {
-  will_return(central_connection_active, true);
-
-  uint32_t centralDeviceId = 12345;
-  mockRequest.centralConnectionDeviceId = centralDeviceId;
-  activeConnections = calloc(1, sizeof(connections));
-  activeConnections->central.deviceId = centralDeviceId;
-
-  expect_value(send_to_central_connection, originHandle, BLE_CONN_HANDLE_INVALID);
-  expect_memory(send_to_central_connection, data, &mockRequest, sizeof(mockRequest));
-  expect_value(send_to_central_connection, dataLength, sizeof(mockRequest));
-  send_heartbeat_message(NULL, 0);
-}
-
-static void test_send_heartbeat_message_does_not_include_central_connection_info_if_not_present() {
-  will_return(central_connection_active, true);
-
-  uint32_t centralDeviceId = 0;
-  activeConnections = calloc(1, sizeof(connections));
-  activeConnections->central.deviceId = centralDeviceId;
+  will_return(get_central_connection_device_id, centralDeviceId);
 
   expect_value(send_to_central_connection, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_memory(send_to_central_connection, data, &mockRequest, sizeof(mockRequest));
@@ -59,8 +34,6 @@ static void test_receive_heartbeat_message_propagates_to_central_connection() {
 int RunHeartbeatMessageTest(void) {
   const struct CMUnitTest tests[] = {
           cmocka_unit_test_setup(test_send_heartbeat_message_sends_data_to_central_connection, test_setup),
-          cmocka_unit_test_setup(test_send_heartbeat_message_includes_central_connection_info_if_present, test_setup),
-          cmocka_unit_test_setup(test_send_heartbeat_message_does_not_include_central_connection_info_if_not_present, test_setup),
           cmocka_unit_test_setup(test_receive_heartbeat_message_propagates_to_central_connection, test_setup),
   };
 

@@ -4,12 +4,12 @@
 
 void connections_initialize(void) { }
 
-connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
+connection* set_central_connection(uint16_t connectionHandle) {
   check_expected(connectionHandle);
   return mock_ptr_type(connection *);
 }
 
-connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
+connection* set_peripheral_connection(uint16_t connectionHandle) {
   check_expected(connectionHandle);
   return mock_ptr_type(connection *);
 }
@@ -37,6 +37,14 @@ bool all_peripheral_connections_active(void) {
 
 char *get_connection_info(connection *conn, char *result) {
   return mock_type(char *);
+}
+
+bool is_connection_active(uint16_t connectionHandle) {
+  return mock_type(bool);
+}
+
+uint32_t get_central_connection_device_id(void) {
+  return mock_type(uint32_t);
 }
 
 void print_all_connections(char** parsedCommandArray) {

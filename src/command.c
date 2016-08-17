@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <connection.h>
-#include <gatt.h>
 #include <gap.h>
-#include <rtc.h>
 #include "terminal.h"
 #include "message_types/broadcast_message.h"
 

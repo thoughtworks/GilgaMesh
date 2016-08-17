@@ -21,29 +21,23 @@ typedef struct
     bool active;
     uint16_t handle;
     ConnectionType type;
-    ble_gap_addr_t address;
     uint32_t deviceId;
     uint8_t majorVersion;
     uint8_t minorVersion;
     transmissionPacketQueue unsentMessages;
-} connection;
-
-typedef struct
-{
-    connection central;
-    connection peripheral[MAX_PERIPHERAL_CONNECTIONS];
-} connections;
+}__attribute__ ((packed)) connection;
 
 uint32_t deviceId;
 char *nodeName;
-connections *activeConnections;
 
 void connections_initialize(void);
-connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
-connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress);
+connection *set_central_connection(uint16_t connectionHandle);
+connection *set_peripheral_connection(uint16_t connectionHandle);
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(char **parsedCommandArray);
 connection* find_active_connection_by_handle(uint16_t connectionHandle);
 bool central_connection_active(void);
 bool all_peripheral_connections_active(void);
+bool is_connection_active(uint16_t connectionHandle);
+uint32_t get_central_connection_device_id(void);
 void print_single_connection_info(uint16_t connectionHandle);

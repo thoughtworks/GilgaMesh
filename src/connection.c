@@ -2,6 +2,13 @@
 #include "connection.h"
 #include "gap.h"
 
+typedef struct {
+  connection central;
+  connection peripheral[MAX_PERIPHERAL_CONNECTIONS];
+}__attribute__ ((packed)) connections;
+
+static connections *activeConnections;
+
 static inline uint32_t get_device_id() {
   // define out direct device memory access when testing
   #ifdef TESTING
@@ -21,37 +28,26 @@ void connections_initialize() {
 }
 
 
-void set_connection(connection *localConnection, uint16_t connectionHandle, ble_gap_addr_t deviceAddress, ConnectionType type) {
-  memcpy(&localConnection->address, &deviceAddress, sizeof(deviceAddress));
+void set_connection(connection *localConnection, uint16_t connectionHandle, ConnectionType type) {
   memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
   localConnection->type = type;
   localConnection->active = true;
 }
 
 
-connection* set_central_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
-  if (activeConnections->central.active){
-    // Need better error handling for this...
-    NRF_LOG_PRINTF("CONNECTION: Attempt to add central connection, but no slots are free!\r\n");
-    return NULL;
-
-  } else {
-    set_connection(&activeConnections->central, connectionHandle, deviceAddress, CENTRAL);
-    return &activeConnections->central;
-  }
+connection* set_central_connection(uint16_t connectionHandle) {
+  set_connection(&activeConnections->central, connectionHandle, CENTRAL);
+  return &activeConnections->central;
 }
 
 
-connection* set_peripheral_connection(uint16_t connectionHandle, ble_gap_addr_t deviceAddress) {
+connection* set_peripheral_connection(uint16_t connectionHandle) {
   for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
     if (!activeConnections->peripheral[i].active){
-      set_connection(&activeConnections->peripheral[i], connectionHandle, deviceAddress, PERIPHERAL);
+      set_connection(&activeConnections->peripheral[i], connectionHandle, PERIPHERAL);
       return &activeConnections->peripheral[i];
     }
   }
-
-  // Need better error handling for this...
-  NRF_LOG_PRINTF("CONNECTION: Attempt to add peripheral connection, but no slots are free!\r\n");
   return NULL;
 }
 
@@ -97,41 +93,32 @@ char* get_connection_type_name(uint16_t connHandle) {
 
 
 void print_single_connection_info(uint16_t connectionHandle) {
+  if (!is_connection_active(connectionHandle)) return;
+
   char result[50];
-  if (ble_conn_state_status(connectionHandle) == BLE_CONN_STATUS_CONNECTED){
-    char handle[6];
-    sprintf(handle, "%u", connectionHandle);
+  char handle[6];
+  sprintf(handle, "%u", connectionHandle);
 
-    strcpy(result, "   [");
-    strcat(result, get_connection_type_name(connectionHandle));
-    strcat(result, "] [");
-    strcat(result, handle);
-    strcat(result, "] ");
-    connection* conn = find_active_connection_by_handle(connectionHandle);
-    if (conn->deviceId != 0) {
-      char version[9];
-      sprintf(version, "v%u.%u", conn->majorVersion, conn->minorVersion);
+  strcpy(result, "   [");
+  strcat(result, get_connection_type_name(connectionHandle));
+  strcat(result, "] [");
+  strcat(result, handle);
+  strcat(result, "] ");
+  connection *conn = find_active_connection_by_handle(connectionHandle);
+  if (conn->deviceId != 0) {
+    char version[9];
+    sprintf(version, "v%u.%u", conn->majorVersion, conn->minorVersion);
 
-      char *nodeName = malloc(NODE_NAME_SIZE);
-      set_node_name_from_device_id(conn->deviceId, nodeName);
-      strcat(result, nodeName);
-      strcat(result, ", ");
-      strcat(result, version);
-      free(nodeName);
-    } else {
-      uint8_t *addr = conn->address.addr;
-      for (int i = 0; i < 6; i++){
-        char address[4];
-        sprintf(address, "%u", (uint8_t)(addr[i]));
-
-        strcat(result, address);
-        strcat(result, " ");
-      }
-    }
-    strcat(result, "\0");
+    char *nodeName = malloc(NODE_NAME_SIZE);
+    set_node_name_from_device_id(conn->deviceId, nodeName);
+    strcat(result, nodeName);
+    strcat(result, ", ");
+    strcat(result, version);
+    free(nodeName);
   } else {
-    strcpy(result, " ");
+    strcat(result, "Unknown Node");
   }
+  strcat(result, "\0");
 
   NRF_LOG_PRINTF("%s\r\n", result);
 }
@@ -148,19 +135,20 @@ bool all_peripheral_connections_active() {
   return ble_conn_state_n_centrals() >= MAX_PERIPHERAL_CONNECTIONS;
 }
 
+bool is_connection_active(uint16_t connectionHandle) {
+  return ble_conn_state_status(connectionHandle) == BLE_CONN_STATUS_CONNECTED;
+}
+
+uint32_t get_central_connection_device_id() {
+  return activeConnections->central.deviceId;
+}
+
 void print_all_connections(char** commandArray) {
   UNUSED_PARAMETER(commandArray);
 
-  if (!is_connected()) {
-    NRF_LOG_PRINTF("Connection details: DISCONNECTED\r\n");
-    return;
-  }
-
-  NRF_LOG_PRINTF("Connection details: \r\n");
+  NRF_LOG_PRINTF("Connection details: %s\r\n", is_connected() ? "" : "DISCONNECTED");
   sdk_mapped_flags_key_list_t connKeyList = ble_conn_state_conn_handles();
   for (int i = 0; i < connKeyList.len; i++) {
-    if (ble_conn_state_status(connKeyList.flag_keys[i]) == BLE_CONN_STATUS_CONNECTED) {
-      print_single_connection_info(connKeyList.flag_keys[i]);
-    }
+    print_single_connection_info(connKeyList.flag_keys[i]);
   }
 }

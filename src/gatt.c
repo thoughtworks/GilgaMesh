@@ -3,6 +3,7 @@
 #include <message_types/heartbeat_message.h>
 #include <message_types/broadcast_message.h>
 #include <message_types/handshake_message.h>
+#include <ble_conn_state.h>
 
 typedef struct {
   BleMessageType messageType;
@@ -118,26 +119,23 @@ void send_to_single_connection(connection *targetConnection, uint8_t *data, uint
 }
 
 
-void send_to_central_connection(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
-  connection *centralConnection = &activeConnections->central;
-  if (centralConnection->active && (originHandle != centralConnection->handle)){ //don't resend to the connection who sent it
-    send_to_single_connection(centralConnection, data, dataLength);
-  }
-}
-
-
-void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength)
-{
-  send_to_central_connection(originHandle, data, dataLength);
-
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    connection *targetConnection = &activeConnections->peripheral[i];
-    if (targetConnection->active && (originHandle != targetConnection->handle)){ //don't resend to the connection who sent it
+void send_to_multiple_connections(sdk_mapped_flags_key_list_t handles, uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
+  for (int i = 0; i < handles.len; i++){
+    uint16_t connectionHandle = handles.flag_keys[i];
+    if ((originHandle != connectionHandle) && is_connection_active(connectionHandle)){ //don't resend to the connection who sent it
+      connection *targetConnection = find_active_connection_by_handle(connectionHandle);
       send_to_single_connection(targetConnection, data, dataLength);
     }
   }
 }
 
+void send_to_central_connection(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
+  send_to_multiple_connections(ble_conn_state_central_handles(), originHandle, data, dataLength);
+}
+
+void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
+  send_to_multiple_connections(ble_conn_state_conn_handles(), originHandle, data, dataLength);
+}
 
 void scheduled_broadcast_request(void *data, uint16_t dataLength) {
   send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)data, dataLength);

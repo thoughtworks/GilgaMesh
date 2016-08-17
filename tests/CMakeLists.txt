@@ -72,6 +72,7 @@ list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_l2cap_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_sdm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk11/components/ble/common/ble_conn_state_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/scheduler/app_scheduler_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")
@@ -119,7 +120,6 @@ add_executable(ConnectionTest ${TestFramework_SOURCES}
         mocks/app/led_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
-        mocks/sdk11/components/ble/common/ble_conn_state_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/connection.c
         unit/ConnectionTest.c)

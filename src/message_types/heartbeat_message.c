@@ -34,9 +34,7 @@ void send_heartbeat_message(void *data, uint16_t dataLength) {
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
   request.deviceId = deviceId;
-  if (central_connection_active() && (activeConnections->central.deviceId != 0)) {
-    request.centralConnectionDeviceId = activeConnections->central.deviceId;
-  }
+  request.centralConnectionDeviceId = get_central_connection_device_id();
 
   log_heartbeat_info(&request);
   send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(request));

@@ -1,5 +1,7 @@
 #include "gap.h"
 #include <app_scheduler.h>
+#include <ble_conn_state.h>
+#include <sdk_mapped_flags.h>
 #include "message_types/handshake_message.h"
 
 
@@ -191,10 +193,10 @@ void disconnect_from_peer(uint16_t connectionHandle) {
 
 
 void disconnect_from_all_peers() {
-  if (central_connection_active()) disconnect_from_peer(activeConnections->central.handle);
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    connection *peripheralConnection = &activeConnections->peripheral[i];
-    if (peripheralConnection->active) disconnect_from_peer(peripheralConnection->handle);
+  sdk_mapped_flags_key_list_t connectionHandles = ble_conn_state_conn_handles();
+  for (int i = 0; i < connectionHandles.len; i++) {
+    uint16_t handle = connectionHandles.flag_keys[i];
+    if (ble_conn_state_status(handle) == BLE_CONN_STATUS_CONNECTED) disconnect_from_peer(handle);
   }
 }
 

@@ -2,26 +2,32 @@
 #include "cmocka_includes.h"
 #include "connection.h"
 
-static void CreateCentralConnection() {
-//   uint16_t centralConId = 3;
-//   ble_gap_addr_t centralAddress;
-//   centralAddress.addr_type = BLE_GAP_ADDR_TYPE_PUBLIC;
-//   centralAddress.addr[0] = 0xca;
-//   centralAddress.addr[1] = 0xfe;
-//
-//   connections_initialize();
-//   set_central_connection(centralConId, centralAddress);
-//   print_all_connections();
+static void Connection_central_connection_active_returns_true_when_parent_exists() {
+  will_return(ble_conn_state_n_peripherals, 1);
+  assert_true(central_connection_active());
 }
 
-static void connectionTestTwo() {
-   assert_false(false);
+static void Connection_central_connection_active_returns_false_when_parent_does_not_exist() {
+  will_return(ble_conn_state_n_peripherals, 0);
+  assert_false(central_connection_active());
+}
+
+static void Connection_all_peripheral_connections_active_returns_true_when_conns_maxed_out() {
+  will_return(ble_conn_state_n_centrals, MAX_PERIPHERAL_CONNECTIONS);
+  assert_true(all_peripheral_connections_active());
+}
+
+static void Connection_all_peripheral_connections_active_returns_false_when_conns_not_maxed_out() {
+  will_return(ble_conn_state_n_centrals, MAX_PERIPHERAL_CONNECTIONS-1);
+  assert_false(all_peripheral_connections_active());
 }
 
 int RunConnectionTest(void) {
    const struct CMUnitTest tests[] = {
-      cmocka_unit_test(CreateCentralConnection),
-      cmocka_unit_test(connectionTestTwo),
+      cmocka_unit_test(Connection_central_connection_active_returns_true_when_parent_exists),
+      cmocka_unit_test(Connection_central_connection_active_returns_false_when_parent_does_not_exist),
+      cmocka_unit_test(Connection_all_peripheral_connections_active_returns_true_when_conns_maxed_out),
+      cmocka_unit_test(Connection_all_peripheral_connections_active_returns_false_when_conns_not_maxed_out),
    };
 
    //set test suite name here

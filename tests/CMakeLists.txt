@@ -119,6 +119,7 @@ add_executable(ConnectionTest ${TestFramework_SOURCES}
         mocks/app/led_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
+        mocks/sdk11/components/ble/common/ble_conn_state_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/connection.c
         unit/ConnectionTest.c)

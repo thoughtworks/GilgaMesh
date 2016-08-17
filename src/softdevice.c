@@ -1,4 +1,5 @@
 #include "softdevice.h"
+#include <ble_conn_state.h>
 #include <nrf51/nrf_mbr.h>
 #include <nrf_sdm.h>
 #include <nrf_log.h>
@@ -14,6 +15,7 @@ void softdevice_fault_callback(uint32_t id, uint32_t pc, uint32_t info) {
 }
 
 static void ble_evt_dispatch(ble_evt_t * p_ble_evt) {
+  ble_conn_state_on_ble_evt(p_ble_evt);
   handle_gap_event(p_ble_evt); // delegate to gap module
 }
 

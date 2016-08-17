@@ -1,3 +1,4 @@
+#include <ble_conn_state.h>
 #include "connection.h"
 #include "gap.h"
 
@@ -82,12 +83,12 @@ ConnectionType unset_connection(uint16_t connectionHandle) {
 }
 
 
-char* get_connection_type_name(connection *conn) {
-  switch (conn->type)
+char* get_connection_type_name(uint16_t connHandle) {
+  switch (ble_conn_state_role(connHandle))
   {
-    case CENTRAL:
+    case BLE_GAP_ROLE_CENTRAL:
       return "CENTRAL";
-    case PERIPHERAL:
+    case BLE_GAP_ROLE_PERIPH:
       return "PERIPHERAL";
     default:
       return "INVALID";
@@ -95,16 +96,18 @@ char* get_connection_type_name(connection *conn) {
 }
 
 
-char* get_connection_info(connection *conn, char* result) {
-  if (conn->active){
+void print_single_connection_info(uint16_t connectionHandle) {
+  char result[50];
+  if (ble_conn_state_status(connectionHandle) == BLE_CONN_STATUS_CONNECTED){
     char handle[6];
-    sprintf(handle, "%u", conn->handle);
+    sprintf(handle, "%u", connectionHandle);
 
-    strcpy(result, "\n\r   [");
-    strcat(result, get_connection_type_name(conn));
+    strcpy(result, "   [");
+    strcat(result, get_connection_type_name(connectionHandle));
     strcat(result, "] [");
     strcat(result, handle);
     strcat(result, "] ");
+    connection* conn = find_active_connection_by_handle(connectionHandle);
     if (conn->deviceId != 0) {
       char version[9];
       sprintf(version, "v%u.%u", conn->majorVersion, conn->minorVersion);
@@ -129,41 +132,35 @@ char* get_connection_info(connection *conn, char* result) {
   } else {
     strcpy(result, " ");
   }
-  return result;
+
+  NRF_LOG_PRINTF("%s\r\n", result);
 }
 
+bool is_connected() {
+  return ble_conn_state_n_connections() > 0;
+}
+
+bool central_connection_active() {
+  return ble_conn_state_n_peripherals() > 0;
+}
+
+bool all_peripheral_connections_active() {
+  return ble_conn_state_n_centrals() >= MAX_PERIPHERAL_CONNECTIONS;
+}
 
 void print_all_connections(char** commandArray) {
-  if (!central_connection_active() && !peripheral_connections_active()) {
+  UNUSED_PARAMETER(commandArray);
+
+  if (!is_connected()) {
     NRF_LOG_PRINTF("Connection details: DISCONNECTED\r\n");
     return;
   }
 
-  char centralInfo[50], peripheral1Info[50], peripheral2Info[50], peripheral3Info[50];
-  NRF_LOG_PRINTF("Connection details: %s%s%s%s\r\n",
-      get_connection_info(&activeConnections->central, centralInfo),
-      get_connection_info(&activeConnections->peripheral[0], peripheral1Info),
-      get_connection_info(&activeConnections->peripheral[1], peripheral2Info),
-      get_connection_info(&activeConnections->peripheral[2], peripheral3Info));
-}
-
-
-bool central_connection_active() {
-  return activeConnections->central.active;
-}
-
-
-bool peripheral_connections_active() {
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    if (activeConnections->peripheral[i].active) return true;
+  NRF_LOG_PRINTF("Connection details: \r\n");
+  sdk_mapped_flags_key_list_t connKeyList = ble_conn_state_conn_handles();
+  for (int i = 0; i < connKeyList.len; i++) {
+    if (ble_conn_state_status(connKeyList.flag_keys[i]) == BLE_CONN_STATUS_CONNECTED) {
+      print_single_connection_info(connKeyList.flag_keys[i]);
+    }
   }
-  return false;
-}
-
-
-bool all_peripheral_connections_active() {
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    if (!(activeConnections->peripheral[i].active)) return false;
-  }
-  return true;
 }

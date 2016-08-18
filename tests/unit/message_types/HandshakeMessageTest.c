@@ -5,8 +5,10 @@
 
 static BleMessageHandshakeReq mockRequest;
 static connection mockConnection;
+static uint32_t deviceId;
 
 static int test_setup(void **state) {
+  deviceId = get_device_id();
   memset(&mockConnection, 0, sizeof(mockConnection));
   memset(&mockRequest, 0, sizeof(mockRequest));
   mockRequest.head.messageType = Handshake;

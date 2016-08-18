@@ -27,7 +27,6 @@ typedef struct
     transmissionPacketQueue unsentMessages;
 }__attribute__ ((packed)) connection;
 
-uint32_t deviceId;
 char *nodeName;
 
 void connections_initialize(void);

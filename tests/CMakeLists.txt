@@ -115,9 +115,8 @@ target_link_libraries(BroadcastMessageTest cmocka)
 GEN_OUTPUTS(BroadcastMessageTest)
 
 add_executable(ConnectionTest ${TestFramework_SOURCES}
-        #    mocks/error_mock.c
-        #    mocks/logger_mock.c
         mocks/app/led_mock.c
+        mocks/device_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
         ${SRC_PATH}/conversion.c
@@ -140,6 +139,7 @@ GEN_OUTPUTS(CommandTest)
 
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
+        mocks/device_mock.c
         mocks/gatt_mock.c
         ${SRC_PATH}/message_types/handshake_message.c
         unit/message_types/HandshakeMessageTest.c)
@@ -148,6 +148,7 @@ GEN_OUTPUTS(HandshakeMessageTest)
 
 add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
+        mocks/device_mock.c
         mocks/gatt_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/message_types/heartbeat_message.c

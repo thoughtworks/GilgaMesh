@@ -1,27 +1,18 @@
 #include <ble_conn_state.h>
 #include "connection.h"
+#include "device.h"
 #include "gap.h"
 
 
 static connection (*activeConnections)[MAX_TOTAL_CONNECTIONS];
 
-static inline uint32_t get_device_id() {
-  // define out direct device memory access when testing
-  #ifdef TESTING
-    return 0xDEADBEEF; // arbitrary device id for tests
-  #else
-    return NRF_FICR->DEVICEID[1];
-  #endif
-}
-
 void connections_initialize() {
-  deviceId = get_device_id();
   nodeName = malloc(NODE_NAME_SIZE);
-  set_node_name_from_device_id(deviceId, nodeName);
+  set_node_name_from_device_id(get_device_id(), nodeName);
   activeConnections = malloc(sizeof(*activeConnections));
   memset(activeConnections, 0, sizeof(*activeConnections));
 
-  NRF_LOG_PRINTF("NodeName: %s, DeviceId: %u\r\n", nodeName, deviceId);
+  NRF_LOG_PRINTF("NodeName: %s, DeviceId: %u\r\n", nodeName, get_device_id());
 }
 
 

@@ -1,6 +1,7 @@
 #include "message_types/heartbeat_message.h"
 #include <stdlib.h>
 #include "conversion.h"
+#include "device.h"
 #include "gatt.h"
 #include "version.h"
 
@@ -33,7 +34,7 @@ void send_heartbeat_message(void *data, uint16_t dataLength) {
   request.head.messageType = Heartbeat;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
-  request.deviceId = deviceId;
+  request.deviceId = get_device_id();
   request.centralConnectionDeviceId = get_central_connection_device_id();
 
   log_heartbeat_info(&request);

@@ -9,13 +9,13 @@
 #include <ble.h>
 #include <ble_gap.h>
 #include <ble_hci.h>
-//#include <pstorage_platform.h>
 
 #include <gatt.h>
 #include <logger.h>
 #include <connection.h>
 #include <message_types/message.h>
 #include <error.h>
+#include <device.h>
 #include <version.h>
 
 #define MANUFACTURER_ID                    0xC0DE
@@ -44,7 +44,7 @@ typedef struct
 {
   uint8_t length;
   uint8_t typeDefinition;
-  uint8_t deviceName[NODE_NAME_SIZE];
+  uint8_t deviceName[HEX_DEVICE_ID_LENGTH];
 }__attribute__ ((packed)) advertisingDeviceData;
 
 typedef struct

@@ -1,7 +1,5 @@
 #pragma once
 
-#define NODE_NAME_SIZE  8
-
 typedef enum {
   DoNotPropagate,
   PropagateToAll,

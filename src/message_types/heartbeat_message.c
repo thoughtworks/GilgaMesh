@@ -7,21 +7,17 @@
 
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request) {
-  char *nodeName = malloc(NODE_NAME_SIZE);
-  char *parentNodeName = malloc(NODE_NAME_SIZE);
+  char deviceId[HEX_DEVICE_ID_LENGTH];
+  get_short_hex_device_id(request->deviceId, deviceId);
+  char parentDeviceId[HEX_DEVICE_ID_LENGTH];
+  get_short_hex_device_id(request->centralConnectionDeviceId, parentDeviceId);
 
-  set_node_name_from_device_id(request->deviceId, nodeName);
   if (request->centralConnectionDeviceId == 0) {
-    strncpy(parentNodeName, "ROOT", 5);
-  } else {
-    set_node_name_from_device_id(request->centralConnectionDeviceId, parentNodeName);
+    memcpy(parentDeviceId, "ROOT", 5);
   }
 
   NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
-      nodeName, request->deviceId, parentNodeName, request->majorVersion, request->minorVersion);
-
-  free(nodeName);
-  free(parentNodeName);
+      deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
 }
 
 
@@ -34,7 +30,7 @@ void send_heartbeat_message(void *data, uint16_t dataLength) {
   request.head.messageType = Heartbeat;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
-  request.deviceId = get_device_id();
+  request.deviceId = get_raw_device_id();
   request.centralConnectionDeviceId = get_central_connection_device_id();
 
   log_heartbeat_info(&request);

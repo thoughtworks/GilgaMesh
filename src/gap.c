@@ -50,18 +50,16 @@ const ble_gap_scan_params_t meshConnectionScanningParams =
 
 
 void gap_initialize(void){
-
   EC(sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE));
-
   EC(sd_power_mode_set(NRF_POWER_MODE_LOWPWR));
 
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (const uint8_t *)nodeName, NODE_NAME_SIZE));
-
+  char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
+  char *deviceName = get_short_hex_device_id(get_raw_device_id(), short_hex_device_id);
+  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (const uint8_t *)deviceName, (uint16_t)(strlen(deviceName) + 1)));
   EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
-
   EC(sd_ble_gap_ppcp_set(&meshConnectionParams));
 
 #ifdef IS_PROD_BOARD
@@ -87,7 +85,7 @@ void set_advertising_data() {
   advertisingDeviceData deviceData;
   deviceData.length = sizeof(deviceData) - 1;
   deviceData.typeDefinition = BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME;
-  memcpy(deviceData.deviceName, nodeName, NODE_NAME_SIZE);
+  get_short_hex_device_id(get_raw_device_id(), deviceData.deviceName);
 
   advertisingServiceData serviceData;
   serviceData.length = sizeof(serviceData) - 1;
@@ -149,7 +147,7 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report) {
   if (adv_data->manufacturerData.typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
   if (adv_data->manufacturerData.manufacturerId != MANUFACTURER_ID) return false;
 
-  NRF_LOG_PRINTF("UNCONNECTED NODE: {\"id\": \"%s\", \"version\": %u.%u}\r\n",
+  NRF_LOG_PRINTF("UNCONNECTED DEVICE: {\"id\": \"%s\", \"version\": %u.%u}\r\n",
       adv_data->deviceData.deviceName, adv_data->manufacturerData.majorVersion,
       adv_data->manufacturerData.minorVersion);
 

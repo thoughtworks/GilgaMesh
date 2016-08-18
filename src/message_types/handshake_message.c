@@ -9,7 +9,7 @@ void send_handshake_message(connection *targetConnection) {
   request.head.messageType = Handshake;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
-  request.deviceId = get_device_id();
+  request.deviceId = get_raw_device_id();
 
   send_to_single_connection(targetConnection, (uint8_t *)&request, sizeof(request));
 }

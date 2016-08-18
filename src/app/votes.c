@@ -135,16 +135,14 @@ void user_votes_initialize(void) {
 void log_vote(BleMessageVoteReq *request) {
   timestring_t timestring;
 
-  char *votingNodeName = malloc(NODE_NAME_SIZE);
-  set_node_name_from_device_id(request->deviceId, votingNodeName);
+  char votingNodeName[HEX_DEVICE_ID_LENGTH];
+  get_short_hex_device_id(request->deviceId, votingNodeName);
 
   rtc_timestamp_to_timestring(request->vote.timeOfLastVote, timestring);
 
   log("VOTE: {\"id\": \"%s\", \"rawId\": %u, \"voterId\": \"%u\", \"hitCount\": %u, \"group\": %u, \"value\": %u, \"timestamp\": \"%s\"}",
       votingNodeName, request->deviceId, request->vote.voterId, request->vote.hitCount, request->vote.config.group,
       request->vote.config.value, timestring);
-
-  free(votingNodeName);
 }
 
 

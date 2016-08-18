@@ -27,8 +27,6 @@ typedef struct
     transmissionPacketQueue unsentMessages;
 }__attribute__ ((packed)) connection;
 
-char *nodeName;
-
 void connections_initialize(void);
 connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType);
 ConnectionType unset_connection(uint16_t connectionHandle);

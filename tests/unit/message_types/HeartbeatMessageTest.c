@@ -10,7 +10,7 @@ static uint32_t deviceId;
 static uint32_t centralDeviceId = 6789;
 
 static int test_setup(void **state) {
-  deviceId = get_device_id();
+  deviceId = get_raw_device_id();
   memset(&mockRequest, 0, sizeof(mockRequest));
   mockRequest.head.messageType = Heartbeat;
   mockRequest.majorVersion = APP_VERSION_MAIN;

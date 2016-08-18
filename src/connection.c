@@ -7,12 +7,12 @@
 static connection (*activeConnections)[MAX_TOTAL_CONNECTIONS];
 
 void connections_initialize() {
-  nodeName = malloc(NODE_NAME_SIZE);
-  set_node_name_from_device_id(get_device_id(), nodeName);
   activeConnections = malloc(sizeof(*activeConnections));
   memset(activeConnections, 0, sizeof(*activeConnections));
 
-  NRF_LOG_PRINTF("NodeName: %s, DeviceId: %u\r\n", nodeName, get_device_id());
+  char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
+  get_short_hex_device_id(get_raw_device_id(), short_hex_device_id);
+  NRF_LOG_PRINTF("DeviceId: pretty: %s, raw: %u\r\n", short_hex_device_id, get_raw_device_id());
 }
 
 
@@ -83,14 +83,12 @@ void print_single_connection_info(uint16_t connectionHandle) {
     char version[9];
     sprintf(version, "v%u.%u", conn->majorVersion, conn->minorVersion);
 
-    char *nodeName = malloc(NODE_NAME_SIZE);
-    set_node_name_from_device_id(conn->deviceId, nodeName);
-    strcat(result, nodeName);
+    char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
+    strcat(result, get_short_hex_device_id(conn->deviceId, short_hex_device_id));
     strcat(result, ", ");
     strcat(result, version);
-    free(nodeName);
   } else {
-    strcat(result, "Unknown Node");
+    strcat(result, "Unknown Device");
   }
   strcat(result, "\0");
 

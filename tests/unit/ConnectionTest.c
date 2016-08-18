@@ -22,12 +22,24 @@ static void Connection_all_peripheral_connections_active_returns_false_when_conn
   assert_false(all_peripheral_connections_active());
 }
 
+static void Connection_set_connection_sets_data_in_active_connections() {
+  uint16_t connectionHandle = 1234;
+  ConnectionType connectionType = CENTRAL;
+
+  connections_initialize();
+  connection* result = set_connection(connectionHandle, connectionType);
+  assert_int_equal(result->type, connectionType);
+  assert_int_equal(result->handle, connectionHandle);
+  assert_true(result->active);
+}
+
 int RunConnectionTest(void) {
    const struct CMUnitTest tests[] = {
       cmocka_unit_test(Connection_central_connection_active_returns_true_when_parent_exists),
       cmocka_unit_test(Connection_central_connection_active_returns_false_when_parent_does_not_exist),
       cmocka_unit_test(Connection_all_peripheral_connections_active_returns_true_when_conns_maxed_out),
       cmocka_unit_test(Connection_all_peripheral_connections_active_returns_false_when_conns_not_maxed_out),
+      cmocka_unit_test(Connection_set_connection_sets_data_in_active_connections),
    };
 
    //set test suite name here

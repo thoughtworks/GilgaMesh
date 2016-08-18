@@ -31,8 +31,7 @@ uint32_t deviceId;
 char *nodeName;
 
 void connections_initialize(void);
-connection *set_central_connection(uint16_t connectionHandle);
-connection *set_peripheral_connection(uint16_t connectionHandle);
+connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType);
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(char **parsedCommandArray);
 connection* find_active_connection_by_handle(uint16_t connectionHandle);

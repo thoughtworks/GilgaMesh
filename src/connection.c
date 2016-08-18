@@ -2,12 +2,8 @@
 #include "connection.h"
 #include "gap.h"
 
-typedef struct {
-  connection central;
-  connection peripheral[MAX_PERIPHERAL_CONNECTIONS];
-}__attribute__ ((packed)) connections;
 
-static connections *activeConnections;
+static connection (*activeConnections)[MAX_TOTAL_CONNECTIONS];
 
 static inline uint32_t get_device_id() {
   // define out direct device memory access when testing
@@ -22,30 +18,21 @@ void connections_initialize() {
   deviceId = get_device_id();
   nodeName = malloc(NODE_NAME_SIZE);
   set_node_name_from_device_id(deviceId, nodeName);
-  activeConnections = calloc(1, sizeof(connections));
+  activeConnections = malloc(sizeof(*activeConnections));
+  memset(activeConnections, 0, sizeof(*activeConnections));
 
   NRF_LOG_PRINTF("NodeName: %s, DeviceId: %u\r\n", nodeName, deviceId);
 }
 
 
-void set_connection(connection *localConnection, uint16_t connectionHandle, ConnectionType type) {
-  memcpy(&localConnection->handle, &connectionHandle, sizeof(connectionHandle));
-  localConnection->type = type;
-  localConnection->active = true;
-}
-
-
-connection* set_central_connection(uint16_t connectionHandle) {
-  set_connection(&activeConnections->central, connectionHandle, CENTRAL);
-  return &activeConnections->central;
-}
-
-
-connection* set_peripheral_connection(uint16_t connectionHandle) {
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    if (!activeConnections->peripheral[i].active){
-      set_connection(&activeConnections->peripheral[i], connectionHandle, PERIPHERAL);
-      return &activeConnections->peripheral[i];
+connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType) {
+  for (int i = 0; i < MAX_TOTAL_CONNECTIONS; i++){
+    connection *conn = &(*activeConnections)[i];
+    if (!conn->active){
+      conn->handle = connectionHandle;
+      conn->type = connectionType;
+      conn->active = true;
+      return conn;
     }
   }
   return NULL;
@@ -53,14 +40,10 @@ connection* set_peripheral_connection(uint16_t connectionHandle) {
 
 
 connection* find_active_connection_by_handle(uint16_t connectionHandle) {
-  connection *central = &activeConnections->central;
-  if (central->active && central->handle == connectionHandle){
-    return central;
-  }
-  for (int i = 0; i < MAX_PERIPHERAL_CONNECTIONS; i++){
-    connection *peripheral = &activeConnections->peripheral[i];
-    if (peripheral->active && peripheral->handle == connectionHandle){
-      return peripheral;
+  for (int i = 0; i < MAX_TOTAL_CONNECTIONS; i++){
+    connection *connection = &(*activeConnections)[i];
+    if (connection->active && connection->handle == connectionHandle){
+      return connection;
     }
   }
   return 0;
@@ -140,7 +123,13 @@ bool is_connection_active(uint16_t connectionHandle) {
 }
 
 uint32_t get_central_connection_device_id() {
-  return activeConnections->central.deviceId;
+  for(int i = 0; i < MAX_TOTAL_CONNECTIONS; i++) {
+    connection *conn = &(*activeConnections)[i];
+    if(conn->type == CENTRAL) {
+      return conn->deviceId;
+    }
+  }
+  return 0;
 }
 
 void print_all_connections(char** commandArray) {

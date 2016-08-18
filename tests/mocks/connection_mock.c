@@ -4,12 +4,7 @@
 
 void connections_initialize(void) { }
 
-connection* set_central_connection(uint16_t connectionHandle) {
-  check_expected(connectionHandle);
-  return mock_ptr_type(connection *);
-}
-
-connection* set_peripheral_connection(uint16_t connectionHandle) {
+connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType) {
   check_expected(connectionHandle);
   return mock_ptr_type(connection *);
 }

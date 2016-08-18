@@ -1,7 +1,6 @@
 #include "gap.h"
 #include <app_scheduler.h>
 #include <ble_conn_state.h>
-#include <sdk_mapped_flags.h>
 #include "message_types/handshake_message.h"
 
 
@@ -209,11 +208,11 @@ void handle_connection_event(void * data, uint16_t dataLength) {
   connection *newConnection;
   if (connectionParams.role == BLE_GAP_ROLE_PERIPH){
     //we are the peripheral, we need to add a central connection
-    newConnection = set_central_connection(bleEvent->evt.gap_evt.conn_handle);
+    newConnection = set_connection(bleEvent->evt.gap_evt.conn_handle, CENTRAL);
 
   } else {
     //we are the central, we need to add a peripheral connection
-    newConnection = set_peripheral_connection(bleEvent->evt.gap_evt.conn_handle);
+    newConnection = set_connection(bleEvent->evt.gap_evt.conn_handle, PERIPHERAL);
 #ifdef IS_PROD_BOARD
     if (!central_connection_active()) {
       disconnect_from_peer(bleEvent->evt.gap_evt.conn_handle);

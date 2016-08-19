@@ -77,7 +77,7 @@ void gatt_initialize() {
 
   EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
 
-//  turn_on_heartbeats();
+  turn_on_heartbeats();
 
   initialize_write_events();
 }

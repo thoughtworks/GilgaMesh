@@ -13,26 +13,22 @@
 
 #define MS_RATE_TO_BROADCAST_HEARTBEAT 3000
 
-
-static app_timer_id_t heartbeatTimerId;
-
+APP_TIMER_DEF(heartbeatTimer);
 
 static void heartbeat_timer_handler(void *context) {
   app_sched_event_put(NULL, 0, send_heartbeat_message);
 }
 
 void turn_on_heartbeats() {
-  NRF_LOG_PRINTF("heartbeat timer id before turning on hb: %u", heartbeatTimerId);
-  EC(app_timer_start(heartbeatTimerId, APP_TIMER_TICKS(MS_RATE_TO_BROADCAST_HEARTBEAT, APP_TIMER_PRESCALER), NULL));
+  EC(app_timer_start(heartbeatTimer, APP_TIMER_TICKS(MS_RATE_TO_BROADCAST_HEARTBEAT, APP_TIMER_PRESCALER), NULL));
 }
 
 void turn_off_heartbeats() {
-  EC(app_timer_stop(heartbeatTimerId));
+  EC(app_timer_stop(heartbeatTimer));
 }
 
 void timer_initialize(void) {
-
   APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);
 
-//  EC(app_timer_create(&heartbeatTimerId, APP_TIMER_MODE_REPEATED, heartbeat_timer_handler));
+  EC(app_timer_create(&heartbeatTimer, APP_TIMER_MODE_REPEATED, heartbeat_timer_handler));
 }

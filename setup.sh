@@ -38,13 +38,13 @@ fi
 # ******************************* #
 if [[ $platform == 'osx' ]]; then
 	mkdir $DEPLOY_RESOURCES/jlink
-	wget --post-data="agree=1&confirm=yes" "https://www.segger.com/jlink-software.html?step=1&file=JLinkMacOSX_512a" -O $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V512a.pkg
+	wget --post-data="agree=1&confirm=yes" "https://www.segger.com/downloads/jlink/Setup_JLink_V600g.zip" -O $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V600g.pkg
 	# should check checksum
 	open $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V512a.pkg
 elif [[ $platform == 'linux' ]]; then	
-	echo '****************************************************************************'
-	echo 'For linux, manually install segger JLink tools version 9 from www.segger.com'
-	echo '****************************************************************************'
+	echo '**********************************************************************************************************'
+	echo 'For linux, manually install JLink tools from https://www.segger.com/downloads/jlink/jlink_6.0.7_x86_64.deb'
+	echo '**********************************************************************************************************'
 fi
 
 # ********************* #
@@ -54,22 +54,22 @@ mkdir $GCC_ARM_TOOLCHAIN
 #should check checksum
 #should get the latest gcc-arm-none-eabi
 if [[ $platform == 'osx' ]]; then
-	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-mac.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q1-update/+download/gcc-arm-none-eabi-5_3-2016q1-20160330-mac.tar.bz2
-	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-mac.tar.bz2
-	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1/* $GCC_ARM_TOOLCHAIN
-	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-mac.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1/
+	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-mac.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q2-update/+download/gcc-arm-none-eabi-5_4-2016q2-20160622-mac.tar.bz2
+	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-mac.tar.bz2
+	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
+	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-mac.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/
 elif [[ $platform == 'linux' ]]; then
-	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q1-update/+download/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
-	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2
-	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1/* $GCC_ARM_TOOLCHAIN
-	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1-20160330-linux.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_3-2016q1/	
+	wget -O $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-linux.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q2-update/+download/gcc-arm-none-eabi-5_4-2016q2-20160622-linux.tar.bz2
+	tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-linux.tar.bz2
+	mv $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
+	rm -r $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2-20160622-linux.tar.bz2 $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/	
 fi	
 
 # ********************* #
 # * Nordic Softdevice * #
 # ********************* #
 mkdir $SOFTDEVICE_LOCATION
-wget --post-data="confirm_terms_and_conditions=Accept" "https://www.nordicsemi.com/eng/nordic/download_resource/53724/9/22863884" -O $SOFTDEVICE_LOCATION/s130_nrf51_2.0.1.zip
+wget --post-data="confirm_terms_and_conditions=Accept" "https://www.nordicsemi.com/eng/nordic/download_resource/53724/10/9410912" -O $SOFTDEVICE_LOCATION/s130_nrf51_2.0.1.zip
 unzip $SOFTDEVICE_LOCATION/s130_nrf51_2.0.1.zip -d $SOFTDEVICE_LOCATION
 rm $SOFTDEVICE_LOCATION/s130_nrf51_2.0.1.zip
 

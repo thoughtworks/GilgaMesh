@@ -134,6 +134,7 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
+        mocks/timer_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/message_types/heartbeat_message.c
         unit/message_types/HeartbeatMessageTest.c)
@@ -160,6 +161,7 @@ target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 
 add_executable(MainTest ${TestFramework_SOURCES}
+        mocks/message_types/heartbeat_message_mock.c
         mocks/connection_mock.c
         mocks/command_mock.c
         mocks/error_mock.c

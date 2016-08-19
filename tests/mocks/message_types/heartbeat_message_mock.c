@@ -9,3 +9,5 @@ MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint
   check_expected_ptr(dataPacket);
   return DoNotPropagate;
 }
+
+void heartbeat_timer_initialize() { }

@@ -1,10 +1,21 @@
 #include "message_types/heartbeat_message.h"
 #include <stdlib.h>
+#include <app_timer.h>
+#include <app_scheduler.h>
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"
+#include "timer.h"
 #include "version.h"
 
+#define MS_RATE_TO_BROADCAST_HEARTBEAT 3000
+
+APP_TIMER_DEF(heartbeatTimer);
+
+void heartbeat_timer_initialize() {
+  create_repeated_timer(&heartbeatTimer);
+  start_timer(&heartbeatTimer, MS_RATE_TO_BROADCAST_HEARTBEAT, send_heartbeat_message);
+}
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request) {
   char deviceId[HEX_DEVICE_ID_LENGTH];
@@ -19,7 +30,6 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
   NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
       deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
 }
-
 
 void send_heartbeat_message(void *data, uint16_t dataLength) {
   UNUSED_PARAMETER(data);

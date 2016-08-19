@@ -1,15 +1,14 @@
 #include "main.h"
 
 #include <app_scheduler.h>
-#include <timer.h>
 #include "app/led.h"
+#include "message_types/heartbeat_message.h"
 #include "connection.h"
 #include "gap.h"
 #include "rtc.h"
 #include "softdevice.h"
 #include "terminal.h"
-
-static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
+#include "timer.h"
 
 // This variable ensures that the linker script will write the bootloader start
 // address to the UICR register. This value will be written in the HEX file and
@@ -30,12 +29,12 @@ void initialize() {
   NRF_LOG_INIT();
   NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
 
-
   NRF_LOG_PRINTF("Init scheduler... \r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
   NRF_LOG_PRINTF("Init timers... \r\n");
   timer_initialize();
+  heartbeat_timer_initialize();
 
   NRF_LOG_PRINTF("Init softdevice... \r\n");
   softdevice_initialize();

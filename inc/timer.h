@@ -1,17 +1,13 @@
 #pragma once
 
-#if defined(TESTING) && !defined(TIMER_TEST)
-
-#else
-
+#include <app_scheduler.h>
+#include <app_timer_appsh.h>
 #include <app_timer.h>
-#include <error.h>
-#include <logger.h>
-
-#endif
+#include <stdint.h>
+#include "error.h"
+#include "logger.h"
 
 void timer_initialize();
-void turn_on_heartbeats();
-void turn_off_heartbeats();
-
+void create_repeated_timer(const app_timer_id_t *timer_id);
+void start_timer(const app_timer_id_t *timer_id, uint32_t ms_to_execute, app_sched_event_handler_t callback);
 

@@ -27,7 +27,7 @@
 #define PERIPHERAL_RESOURCE_SHARING_ENABLED  0
 
 /* CLOCK */
-#define CLOCK_ENABLED 0
+#define CLOCK_ENABLED 0 // used by s130
 
 #if (CLOCK_ENABLED == 1)
 #define CLOCK_CONFIG_XTAL_FREQ          NRF_CLOCK_XTALFREQ_Default
@@ -45,7 +45,7 @@
 #endif
 
 /* TIMER */
-#define TIMER0_ENABLED 0
+#define TIMER0_ENABLED 0 // used by s130
 
 #if (TIMER0_ENABLED == 1)
 #define TIMER0_CONFIG_FREQUENCY    NRF_TIMER_FREQ_16MHz
@@ -56,7 +56,7 @@
 #define TIMER0_INSTANCE_INDEX      0
 #endif
 
-#define TIMER1_ENABLED 0
+#define TIMER1_ENABLED 1
 
 #if (TIMER1_ENABLED == 1)
 #define TIMER1_CONFIG_FREQUENCY    NRF_TIMER_FREQ_16MHz
@@ -67,7 +67,7 @@
 #define TIMER1_INSTANCE_INDEX      (TIMER0_ENABLED)
 #endif
  
-#define TIMER2_ENABLED 0
+#define TIMER2_ENABLED 1
 
 #if (TIMER2_ENABLED == 1)
 #define TIMER2_CONFIG_FREQUENCY    NRF_TIMER_FREQ_16MHz
@@ -78,7 +78,7 @@
 #define TIMER2_INSTANCE_INDEX      (TIMER1_ENABLED+TIMER0_ENABLED)
 #endif
 
-#define TIMER3_ENABLED 0
+#define TIMER3_ENABLED 0 // nrf52 only
 
 #if (TIMER3_ENABLED == 1)
 #define TIMER3_CONFIG_FREQUENCY    NRF_TIMER_FREQ_16MHz
@@ -89,7 +89,7 @@
 #define TIMER3_INSTANCE_INDEX      (TIMER2_ENABLED+TIMER1_ENABLED+TIMER0_ENABLED)
 #endif
 
-#define TIMER4_ENABLED 0
+#define TIMER4_ENABLED 0 // nrf52 only
 
 #if (TIMER4_ENABLED == 1)
 #define TIMER4_CONFIG_FREQUENCY    NRF_TIMER_FREQ_16MHz
@@ -104,7 +104,7 @@
 #define TIMER_COUNT (TIMER0_ENABLED + TIMER1_ENABLED + TIMER2_ENABLED + TIMER3_ENABLED + TIMER4_ENABLED)
 
 /* RTC */
-#define RTC0_ENABLED 0
+#define RTC0_ENABLED 0 // used by s130
 
 #if (RTC0_ENABLED == 1)
 #define RTC0_CONFIG_FREQUENCY    32678
@@ -114,7 +114,7 @@
 #define RTC0_INSTANCE_INDEX      0
 #endif
 
-#define RTC1_ENABLED 0
+#define RTC1_ENABLED 1
 
 #if (RTC1_ENABLED == 1)
 #define RTC1_CONFIG_FREQUENCY    32768
@@ -140,7 +140,7 @@
 #define NRF_MAXIMUM_LATENCY_US 2000
 
 /* RNG */
-#define RNG_ENABLED 0
+#define RNG_ENABLED 0 // used by s130
 
 #if (RNG_ENABLED == 1)
 #define RNG_CONFIG_ERROR_CORRECTION true
@@ -150,13 +150,13 @@
 
 /* PWM */
 
-#define PWM0_ENABLED 0
+#define PWM0_ENABLED 1
 
 #if (PWM0_ENABLED == 1)
-#define PWM0_CONFIG_OUT0_PIN        2
-#define PWM0_CONFIG_OUT1_PIN        3
-#define PWM0_CONFIG_OUT2_PIN        4
-#define PWM0_CONFIG_OUT3_PIN        5
+#define PWM0_CONFIG_OUT0_PIN        6
+#define PWM0_CONFIG_OUT1_PIN        17 // pin header
+#define PWM0_CONFIG_OUT2_PIN        18 // pin header
+#define PWM0_CONFIG_OUT3_PIN        19 // pin header
 #define PWM0_CONFIG_IRQ_PRIORITY    APP_IRQ_PRIORITY_LOW
 #define PWM0_CONFIG_BASE_CLOCK      NRF_PWM_CLK_1MHz
 #define PWM0_CONFIG_COUNT_MODE      NRF_PWM_MODE_UP
@@ -167,13 +167,13 @@
 #define PWM0_INSTANCE_INDEX 0
 #endif
 
-#define PWM1_ENABLED 0
+#define PWM1_ENABLED 1
 
 #if (PWM1_ENABLED == 1)
-#define PWM1_CONFIG_OUT0_PIN        2
-#define PWM1_CONFIG_OUT1_PIN        3
-#define PWM1_CONFIG_OUT2_PIN        4
-#define PWM1_CONFIG_OUT3_PIN        5
+#define PWM1_CONFIG_OUT0_PIN        20 // pin header
+#define PWM1_CONFIG_OUT1_PIN        21 // pin header
+#define PWM1_CONFIG_OUT2_PIN        22 // pin header
+#define PWM1_CONFIG_OUT3_PIN        23 // pin header
 #define PWM1_CONFIG_IRQ_PRIORITY    APP_IRQ_PRIORITY_LOW
 #define PWM1_CONFIG_BASE_CLOCK      NRF_PWM_CLK_1MHz
 #define PWM1_CONFIG_COUNT_MODE      NRF_PWM_MODE_UP
@@ -314,14 +314,14 @@
 #define TWI0_INSTANCE_INDEX      0
 #endif
 
-#define TWI1_ENABLED 0
+#define TWI1_ENABLED 1
 
 #if (TWI1_ENABLED == 1)
 #define TWI1_USE_EASY_DMA 0
 
 #define TWI1_CONFIG_FREQUENCY    NRF_TWI_FREQ_100K
-#define TWI1_CONFIG_SCL          0
-#define TWI1_CONFIG_SDA          1
+#define TWI1_CONFIG_SCL          30 // pin header
+#define TWI1_CONFIG_SDA          29 // pin header
 #define TWI1_CONFIG_IRQ_PRIORITY APP_IRQ_PRIORITY_LOW
 
 #define TWI1_INSTANCE_INDEX      (TWI0_ENABLED)
@@ -377,7 +377,7 @@
 #endif
 
 /* ADC */
-#define ADC_ENABLED 0
+#define ADC_ENABLED 1
 
 #if (ADC_ENABLED == 1)
 #define ADC_CONFIG_IRQ_PRIORITY APP_IRQ_PRIORITY_LOW
@@ -417,7 +417,7 @@
 #endif
 
 /* LPCOMP */
-#define LPCOMP_ENABLED 0
+#define LPCOMP_ENABLED 1
 
 #if (LPCOMP_ENABLED == 1)
 #define LPCOMP_CONFIG_REFERENCE    NRF_LPCOMP_REF_SUPPLY_4_8
@@ -427,7 +427,7 @@
 #endif
 
 /* WDT */
-#define WDT_ENABLED 0
+#define WDT_ENABLED 1
 
 #if (WDT_ENABLED == 1)
 #define WDT_CONFIG_BEHAVIOUR     NRF_WDT_BEHAVIOUR_RUN_SLEEP

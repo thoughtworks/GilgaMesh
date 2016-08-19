@@ -26,10 +26,6 @@
 #define ATTR_MESH_SCANNING_WINDOW          MSEC_TO_UNITS(40, UNIT_0_625_MS)
 #define ATTR_TABLE_MAX_SIZE                0x200
 
-#ifdef BOARD_SEEED_1_1
-#define CLOCK_TYPE      NRF_CLOCK_LFCLKSRC_SYNTH_250_PPM
-#endif
-
 typedef struct
 {
   uint8_t length;

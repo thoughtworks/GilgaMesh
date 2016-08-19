@@ -75,6 +75,7 @@ int main()
 {
   initialize();
 
+  led_white_off();
   led_green_dim();
 
   for(;;) {

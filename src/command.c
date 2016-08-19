@@ -1,11 +1,11 @@
-#include "command.h"
 #include <sdk_common.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <connection.h>
-#include <gap.h>
-#include "terminal.h"
 #include "message_types/broadcast_message.h"
+#include "command.h"
+#include "connection.h"
+#include "gap.h"
+#include "terminal.h"
 
 typedef struct {
   char* name;
@@ -38,7 +38,6 @@ void command_initialize() {
   mesh_add_terminal_command("cons", "Print all connections",    print_all_connections);
   mesh_add_terminal_command("adv",  "Check advertising status", check_advertising_status);
   mesh_add_terminal_command("scan", "Check scanning status",    check_scanning_status);
- // mesh_add_terminal_command("hb",   "Heartbeat on/off",         toggle_heartbeats);
 }
 
 void command_execute(char **parsedCommandArray, uint8_t numberOfItems) {

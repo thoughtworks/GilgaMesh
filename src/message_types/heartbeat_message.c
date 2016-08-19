@@ -43,4 +43,3 @@ MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint
   return PropagateToCentral;
 }
 
-

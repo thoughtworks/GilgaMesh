@@ -4,6 +4,7 @@
 #include <message_types/broadcast_message.h>
 #include <message_types/handshake_message.h>
 #include <ble_conn_state.h>
+#include <timer.h>
 
 typedef struct {
   BleMessageType messageType;

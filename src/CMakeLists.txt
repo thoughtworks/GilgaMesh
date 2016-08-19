@@ -168,6 +168,7 @@ list(APPEND MeshyMesh_SOURCES "message_types/heartbeat_message.c")
 list(APPEND MeshyMesh_SOURCES "message_types/handshake_message.c")
 list(APPEND MeshyMesh_SOURCES "softdevice.c")
 list(APPEND MeshyMesh_SOURCES "terminal.c")
+list(APPEND MeshyMesh_SOURCES "timer.c")
 list(APPEND MeshyMesh_SOURCES "queue.c")
 
 list(APPEND MeshyMesh_SOURCES "main.c")

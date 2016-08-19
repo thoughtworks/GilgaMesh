@@ -1,15 +1,13 @@
 #include "main.h"
 
 #include <app_scheduler.h>
+#include <timer.h>
 #include "app/led.h"
 #include "connection.h"
 #include "gap.h"
 #include "rtc.h"
 #include "softdevice.h"
 #include "terminal.h"
-
-#define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
-#define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
 
 static uint16_t sizeOfCurrentEvent = sizeof(currentEventBuffer);
 
@@ -37,7 +35,7 @@ void initialize() {
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
   NRF_LOG_PRINTF("Init timers... \r\n");
-  APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);
+  timer_initialize();
 
   NRF_LOG_PRINTF("Init softdevice... \r\n");
   softdevice_initialize();

@@ -5,41 +5,25 @@
 #include "terminal.h"
 #include "system/timer.h"
 
+#define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
+static bool is_sysclock_suspended = false;
+APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
+
 #ifdef SEEED_RTC
 #include <app_twi.h>
 #include <app_util_platform.h>
 
-#define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
 #define MAX_PENDING_TRANSACTIONS 8
 #define RTC_TWI_ADDR 81
-APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 #define RTC_I2C_BUFFER_SIZE 11
 
 static uint8_t rtc_i2c_buffer[RTC_I2C_BUFFER_SIZE];
 static app_twi_t rtcTwiInstance = APP_TWI_INSTANCE(0);
 static bool is_seeed_rtc_connected = false;
-static bool is_sysclock_suspended = false;
 
 static PCF85063TPState_t rtc_state;
 
-void rtc_sysclock_timer_initialize() {
-  create_repeated_timer(&SYSCLOCK_TIMER);
-  start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
-}
 
-void rtc_sysclock_timer_suspend() {
-  if(!is_sysclock_suspended) {
-    is_sysclock_suspended = true;
-    stop_timer(&SYSCLOCK_TIMER);
-  }
-}
-
-void rtc_sysclock_timer_resume() {
-  if(is_sysclock_suspended) {
-    is_sysclock_suspended = false;
-    start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
-  }
-}
 
 static void twi_event_handler(nrf_drv_twi_evt_t *twiEvent) {
   if(twiEvent->type == NRF_DRV_TWI_EVT_DONE) {
@@ -198,6 +182,26 @@ static void update_system_time_from_seeed_rtc(void * p_event_data, uint16_t even
 }
 
 #endif // SEEED_RTC
+
+void rtc_sysclock_timer_initialize() {
+  create_repeated_timer(&SYSCLOCK_TIMER);
+  start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
+}
+
+void rtc_sysclock_timer_suspend() {
+  if(!is_sysclock_suspended) {
+    is_sysclock_suspended = true;
+    stop_timer(&SYSCLOCK_TIMER);
+  }
+}
+
+void rtc_sysclock_timer_resume() {
+  if(is_sysclock_suspended) {
+    is_sysclock_suspended = false;
+    start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
+  }
+}
+
 
 void rtc_init() {
   system_time.clock_time.day = 1;

@@ -1,6 +1,6 @@
 
 #include <stdbool.h>
-#include <rtc.h>
+#include <app/rtc.h>
 #include "cmocka_includes.h"
 
 void rtc_init() {}

@@ -86,6 +86,7 @@ list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/timer_mock.c")
 
 ###############################################################################################
 # add unit tests and mocks they need
@@ -116,6 +117,7 @@ add_executable(CommandTest ${TestFramework_SOURCES}
         mocks/gap_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
+        mocks/system/rtc_mock.c
         ${SRC_PATH}/command.c
         unit/CommandTest.c)
 target_link_libraries(CommandTest cmocka)
@@ -134,7 +136,7 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
-        mocks/timer_mock.c
+        mocks/system/timer_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/message_types/heartbeat_message.c
         unit/message_types/HeartbeatMessageTest.c)
@@ -148,7 +150,7 @@ add_executable(GattTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/gap_mock.c
         mocks/queue_mock.c
-        mocks/timer_mock.c
+        mocks/system/timer_mock.c
         ${SRC_PATH}/gatt.c
         unit/GattTest.c)
 target_link_libraries(GattTest cmocka)
@@ -169,7 +171,7 @@ add_executable(MainTest ${TestFramework_SOURCES}
         mocks/gatt_mock.c
         mocks/softdevice_mock.c
         mocks/terminal_mock.c
-        mocks/timer_mock.c
+        mocks/system/timer_mock.c
         mocks/app/led_mock.c
         mocks/app/rtc_mock.c
         ${SRC_PATH}/conversion.c
@@ -178,13 +180,13 @@ add_executable(MainTest ${TestFramework_SOURCES}
 target_link_libraries(MainTest cmocka)
 GEN_OUTPUTS(MainTest)
 
-add_executable(RTCTest ${TestFramework_SOURCES}
-    mocks/terminal_mock.c
-    ${SRC_PATH}/conversion.c
-    ${SRC_PATH}/app/rtc.c
-    unit/app/RTCTest.c)
-target_link_libraries(RTCTest cmocka)
-GEN_OUTPUTS(RTCTest)
+#add_executable(RTCTest ${TestFramework_SOURCES}
+#    mocks/terminal_mock.c
+#    ${SRC_PATH}/conversion.c
+#    ${SRC_PATH}/app/rtc.c
+#    unit/app/RTCTest.c)
+#target_link_libraries(RTCTest cmocka)
+#GEN_OUTPUTS(RTCTest)
 
 add_executable(QueueTest ${TestFramework_SOURCES}
         ${SRC_PATH}/queue.c

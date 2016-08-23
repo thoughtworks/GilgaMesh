@@ -1,5 +1,5 @@
 #include "cmocka_includes.h"
-#include "rtc.h"
+#include "app/rtc.h"
 #include "time.h"
 #include "conversion.h"
 

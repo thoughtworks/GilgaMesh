@@ -11,5 +11,5 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageBroadcastReq;
 
 
-void send_broadcast_message(char **parsedCommandArray);
+void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands);
 MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint8_t *dataPacket);

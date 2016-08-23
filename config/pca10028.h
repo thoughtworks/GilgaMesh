@@ -24,6 +24,8 @@
 
 #define LEDS_LIST { LED_1, LED_2, LED_3, LED_4 }
 
+#define BUZZER_PIN_NUMBER  6
+
 #define BSP_LED_0      LED_1
 #define BSP_LED_1      LED_2
 #define BSP_LED_2      LED_3

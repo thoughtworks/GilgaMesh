@@ -42,6 +42,6 @@ uint32_t get_central_connection_device_id(void) {
   return mock_type(uint32_t);
 }
 
-void print_all_connections(char** parsedCommandArray) {
+void print_all_connections(char** parsedCommandArray, uint8_t numCommands) {
   check_expected_ptr(parsedCommandArray);
 }

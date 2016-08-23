@@ -112,7 +112,9 @@ void start_advertising(void) {
 }
 
 
-void check_advertising_status(char** parserCommandArray) {
+void check_advertising_status(char** parserCommandArray, uint8_t numCommands) {
+  UNUSED_PARAMETER(numCommands);
+
   if (central_connection_active()) {
     NRF_LOG_PRINTF("Advertising status: NOT APPLICABLE - central connection slot filled\r\n");
   } else {
@@ -126,7 +128,9 @@ void check_advertising_status(char** parserCommandArray) {
 }
 
 
-void check_scanning_status(char** parserCommandArray) {
+void check_scanning_status(char** parserCommandArray, uint8_t numCommands) {
+  UNUSED_PARAMETER(numCommands);
+
   if (all_peripheral_connections_active()) {
     NRF_LOG_PRINTF("Scanning status NOT APPLICABLE: peripheral connection slots filled\r\n");
   } else {
@@ -220,7 +224,7 @@ void handle_connection_event(void * data, uint16_t dataLength) {
   }
 
   send_handshake_message(newConnection);
-  print_all_connections(NULL);
+  print_all_connections(NULL, 0);
 
 #ifdef IS_PROD_BOARD
   if (!all_peripheral_connections_active()) start_scanning();
@@ -242,7 +246,7 @@ void handle_disconnection_event(void * bleEvent, uint16_t dataLength) {
     start_scanning();
   }
 
-  print_all_connections(NULL);
+  print_all_connections(NULL, 0);
 }
 
 

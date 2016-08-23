@@ -121,8 +121,9 @@ uint32_t get_central_connection_device_id() {
   return 0;
 }
 
-void print_all_connections(char** commandArray) {
+void print_all_connections(char** commandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(commandArray);
+  UNUSED_PARAMETER(numCommands);
 
   NRF_LOG_PRINTF("Connection details: %s\r\n", is_connected() ? "" : "DISCONNECTED");
   sdk_mapped_flags_key_list_t connKeyList = ble_conn_state_conn_handles();

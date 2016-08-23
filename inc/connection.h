@@ -30,7 +30,7 @@ typedef struct
 void connections_initialize(void);
 connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType);
 ConnectionType unset_connection(uint16_t connectionHandle);
-void print_all_connections(char **parsedCommandArray);
+void print_all_connections(char** commandArray, uint8_t numCommands);
 connection* find_active_connection_by_handle(uint16_t connectionHandle);
 bool central_connection_active(void);
 bool all_peripheral_connections_active(void);

@@ -2,7 +2,9 @@
 #include "gatt.h"
 
 
-void send_broadcast_message(char **parsedCommandArray) {
+void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
+  UNUSED_PARAMETER(numCommands);
+
   if (strlen(parsedCommandArray[1]) > BROADCAST_MESSAGE_MAX_SIZE) {
     NRF_LOG_PRINTF("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_MESSAGE_MAX_SIZE);
     return;

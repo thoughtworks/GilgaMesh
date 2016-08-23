@@ -2,7 +2,7 @@
 
 #include "cmocka_includes.h"
 
-void send_broadcast_message(char **parsedCommandArray) {
+void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
   check_expected_ptr(parsedCommandArray);
 }
 

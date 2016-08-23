@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-typedef void (*mesh_command_handler)(char **parsedCommandArray);
+typedef void (*mesh_command_handler)(char **parsedCommandArray, uint8_t numCommands);
 
 void command_initialize(void);
 void command_execute(char** parsedCommandArray, uint8_t numberOfItems);

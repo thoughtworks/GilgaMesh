@@ -24,14 +24,14 @@ static void test_send_broadcast_message_sends_data_to_all_connections() {
   expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
   expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
-  send_broadcast_message(mockCommandArray);
+  send_broadcast_message(mockCommandArray, 0);
 }
 
 static void test_send_broadcast_message_fails_if_message_too_long() {
   char* mockCommandArray[] = {"bro", "1234567890123"};
 
   // no expectations, message should not be sent
-  send_broadcast_message(mockCommandArray);
+  send_broadcast_message(mockCommandArray, 0);
 }
 
 int RunBroadcastMessageTest(void) {

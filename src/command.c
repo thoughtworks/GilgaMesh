@@ -17,8 +17,9 @@ static meshCommand** commands;
 static uint16_t commandCount;
 
 
-void print_help(char **parsedCommandArray) {
+static void print_help(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(parsedCommandArray);
+  UNUSED_PARAMETER(numCommands);
 
   for (int i = 0; i < commandCount; i++) {
     meshCommand *nextCommand = commands[i];
@@ -41,16 +42,15 @@ void command_initialize() {
 }
 
 void command_execute(char **parsedCommandArray, uint8_t numberOfItems) {
-  UNUSED_PARAMETER(numberOfItems);
 
   for (int i = 0; i < commandCount; i++) {
     meshCommand *nextCommand = commands[i];
     if (strcmp(parsedCommandArray[0], nextCommand->name) == 0) {
-      nextCommand->callback(parsedCommandArray);
+      nextCommand->callback(parsedCommandArray, numberOfItems);
       return;
     }
   }
-  print_help(parsedCommandArray);
+  print_help(parsedCommandArray, numberOfItems);
 }
 
 void mesh_add_terminal_command(char* commandName, char* commandDescription, mesh_command_handler commandCallback) {

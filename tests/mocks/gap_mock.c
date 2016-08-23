@@ -4,11 +4,11 @@
 
 #if defined(TESTING) && !defined(GAP_TEST)
 
-void check_advertising_status(char **parsedCommandArray) {
+void check_advertising_status(char **parsedCommandArray, uint8_t numCommands) {
   check_expected_ptr(parsedCommandArray);
 }
 
-void check_scanning_status(char **parsedCommandArray) {
+void check_scanning_status(char **parsedCommandArray, uint8_t numCommands) {
   check_expected_ptr(parsedCommandArray);
 }
 

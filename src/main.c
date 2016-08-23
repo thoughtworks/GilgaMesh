@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include <app_scheduler.h>
+#include "app/buzzer.h"
 #include "app/led.h"
 #include "message_types/heartbeat_message.h"
 #include "connection.h"
@@ -48,6 +49,11 @@ void initialize() {
   NRF_LOG_PRINTF("Init leds... \r\n");
   led_initialize();
 
+#ifdef IS_PROD_BOARD
+  NRF_LOG_PRINTF("Init buzzer... \r\n");
+  buzzer_initialize();
+#endif
+
   NRF_LOG_PRINTF("Init real time clock... \r\n");
   rtc_init();
 
@@ -77,6 +83,8 @@ int main()
 
   led_white_off();
   led_green_dim();
+
+  mesh_add_terminal_command("buzz", "buzzer on [dur] [per]", buzzer_on);
 
   for(;;) {
     run();

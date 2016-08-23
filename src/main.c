@@ -3,13 +3,12 @@
 #include <app_scheduler.h>
 #include "app/buzzer.h"
 #include "app/led.h"
+#include "app/rtc.h"
 #include "message_types/heartbeat_message.h"
 #include "connection.h"
 #include "gap.h"
-#include "rtc.h"
 #include "softdevice.h"
 #include "terminal.h"
-#include "timer.h"
 
 // This variable ensures that the linker script will write the bootloader start
 // address to the UICR register. This value will be written in the HEX file and
@@ -29,44 +28,28 @@ void panic()
 void initialize() {
   NRF_LOG_INIT();
   NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
-
-  NRF_LOG_PRINTF("Init scheduler... \r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
-  NRF_LOG_PRINTF("Init timers... \r\n");
-  timer_initialize();
-  heartbeat_timer_initialize();
-
-  NRF_LOG_PRINTF("Init softdevice... \r\n");
-  softdevice_initialize();
-
-  NRF_LOG_PRINTF("Init terminal... \r\n");
-  terminal_initialize();
-
-  NRF_LOG_PRINTF("Init command... \r\n");
-  command_initialize();
-
-  NRF_LOG_PRINTF("Init leds... \r\n");
-  led_initialize();
-
+  init_module("Timers", timer_initialize);
+  init_module("Softdevice", softdevice_initialize);
+  init_module("Terminal", terminal_initialize);
+  init_module("Commands", command_initialize);
+  init_module("Leds", led_initialize);
+  init_module("RTC", rtc_init);
 #ifdef IS_PROD_BOARD
-  NRF_LOG_PRINTF("Init buzzer... \r\n");
-  buzzer_initialize();
+  init_module("Buzzer", buzzer_initialize);
 #endif
-
-  NRF_LOG_PRINTF("Init real time clock... \r\n");
-  rtc_init();
-
-  NRF_LOG_PRINTF("Init connections... \r\n");
-  connections_initialize();
-
-  NRF_LOG_PRINTF("Init GATT... \r\n");
-  gatt_initialize();
-
-  NRF_LOG_PRINTF("Init GAP... \r\n");
-  gap_initialize();
+  init_module("Connections", connections_initialize);
+  init_module("GATT", gatt_initialize);
+  init_module("GAP", gap_initialize);
+  init_module("Heartbeat timer", heartbeat_timer_initialize);
 
   NRF_LOG_PRINTF("System ready.\r\n");
+}
+
+init_module(char* module_name, void (*f)()) {
+  NRF_LOG_PRINTF("Init %s... \r\n", module_name);
+  (*f)();
 }
 
 void run() {

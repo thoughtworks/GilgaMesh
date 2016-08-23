@@ -1,4 +1,4 @@
-#include "timer.h"
+#include "system/timer.h"
 
 #define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
 
@@ -21,4 +21,10 @@ void create_single_shot_timer(const app_timer_id_t *timer_id) {
 void start_timer(const app_timer_id_t *timer_id, uint32_t ms_to_execute, app_sched_event_handler_t callback) {
   EC(app_timer_start(*timer_id, APP_TIMER_TICKS(ms_to_execute, APP_TIMER_PRESCALER), callback));
 }
+
+void stop_timer(const app_timer_id_t *timer_id) {
+  EC(app_timer_stop(*timer_id));
+}
+
+
 

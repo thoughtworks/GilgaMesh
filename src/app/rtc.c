@@ -1,41 +1,88 @@
-#include <rtc.h>
+#include <app/rtc.h>
 #include <stdlib.h>
 #include "conversion.h"
 #include "logger.h"
 #include "terminal.h"
+#include "system/timer.h"
 
 #ifdef SEEED_RTC
-#include <nrf_drv_twi.h>
-#include <rtc.h>
-#include <sdk_common.h>
-#include <app_scheduler.h>
+#include <app_twi.h>
+#include <app_util_platform.h>
 
-static const nrf_drv_twi_t rtcInterface = NRF_DRV_TWI_INSTANCE(0);
-static const nrf_drv_twi_config_t rtcConfig = NRF_DRV_TWI_DEFAULT_CONFIG(0);
-static const uint8_t seeed_rtc_address = 81;
+#define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
+#define MAX_PENDING_TRANSACTIONS 8
+#define RTC_TWI_ADDR 81
+APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
+#define RTC_I2C_BUFFER_SIZE 11
+
+static uint8_t rtc_i2c_buffer[RTC_I2C_BUFFER_SIZE];
+static app_twi_t rtcTwiInstance = APP_TWI_INSTANCE(0);
 static bool is_seeed_rtc_connected = false;
+static bool is_sysclock_suspended = false;
+
 static PCF85063TPState_t rtc_state;
 
+void rtc_sysclock_timer_initialize() {
+  create_repeated_timer(&SYSCLOCK_TIMER);
+  start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
+}
+
+void rtc_sysclock_timer_suspend() {
+  if(!is_sysclock_suspended) {
+    is_sysclock_suspended = true;
+    stop_timer(&SYSCLOCK_TIMER);
+  }
+}
+
+void rtc_sysclock_timer_resume() {
+  if(is_sysclock_suspended) {
+    is_sysclock_suspended = false;
+    start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
+  }
+}
+
 static void twi_event_handler(nrf_drv_twi_evt_t *twiEvent) {
-  if(twiEvent->type == NRF_DRV_TWI_TX_DONE) {
-    NRF_LOG_PRINTF("I2C: Sent LEN: %d DATA: %d\r\n", twiEvent->length, *(twiEvent->p_data));
+  if(twiEvent->type == NRF_DRV_TWI_EVT_DONE) {
+    NRF_LOG_PRINTF("I2C: Transfer completed address: %d length: %d\r\n",
+      twiEvent->xfer_desc.address, twiEvent->xfer_desc.primary_length);
   }
-  else if(twiEvent->type == NRF_DRV_TWI_RX_DONE) {
-    NRF_LOG_PRINTF("I2C: Received LEN: %d DATA: %d\r\n", twiEvent->length, *(twiEvent->p_data));
+  else if(twiEvent->type == NRF_DRV_TWI_EVT_ADDRESS_NACK) {
+    NRF_LOG_PRINTF("I2C: Address error\r\n");
   }
-  else if(twiEvent->type == NRF_DRV_TWI_ERROR) {
-    if(twiEvent->error_src == NRF_TWI_ERROR_ADDRESS_NACK) {
-      NRF_LOG_PRINTF("I2C: Address error\r\n");
-    }
-    else if(twiEvent->error_src == NRF_TWI_ERROR_OVERRUN_NACK) {
-      NRF_LOG_PRINTF("I2C: Data overrun error\r\n");
-    }
-    else if(twiEvent->error_src == NRF_TWI_ERROR_DATA_NACK) {
-      NRF_LOG_PRINTF("I2C: Data NACK error\r\n");
-    }
-    else {
-      NRF_LOG_PRINTF("I2C: Unknown error\r\n");
-    }
+  else if(twiEvent->type == NRF_DRV_TWI_EVT_DATA_NACK) {
+    NRF_LOG_PRINTF("I2C: Data error\r\n");
+  }
+  else {
+    NRF_LOG_PRINTF("I2C: Unknown error\r\n");
+  }
+}
+
+void rtc_i2c_read_callback(uint32_t result, void* user_data)
+{
+  UNUSED_PARAMETER(user_data);
+
+  if (result != NRF_SUCCESS)
+  {
+    is_seeed_rtc_connected = false;
+
+    NRF_LOG_PRINTF("I2C: Seeed RTC error: %d\r\n", (int)result);
+    return;
+  }
+  else
+  {
+    is_seeed_rtc_connected = true;
+
+    rtc_state.register_0.Control_1 = rtc_i2c_buffer[0x0];
+    rtc_state.register_1.Control_2 = rtc_i2c_buffer[0x1];
+    rtc_state.register_2.Offset = rtc_i2c_buffer[0x2];
+    rtc_state.register_3.RAM_byte = rtc_i2c_buffer[0x3];
+    rtc_state.register_4.Seconds = rtc_i2c_buffer[0x4];
+    rtc_state.register_5.Minutes = rtc_i2c_buffer[0x5];
+    rtc_state.register_6.Hours = rtc_i2c_buffer[0x6];
+    rtc_state.register_7.Days = rtc_i2c_buffer[0x7];
+    rtc_state.register_8.Weekdays = rtc_i2c_buffer[0x8];
+    rtc_state.register_9.Months = rtc_i2c_buffer[0x9];
+    rtc_state.register_A.Years = rtc_i2c_buffer[0xA];
   }
 }
 
@@ -43,57 +90,43 @@ static void read_seeed_rtc_state() {
   uint32_t err_code;
   uint8_t rtc_register = 0x0;
 
-  err_code = nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-  if(!err_code) {
-    is_seeed_rtc_connected = true;
-    memset(&rtc_state, 0, sizeof(rtc_state));
+  memset(&rtc_state, 0, sizeof(rtc_state));
 
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_0.Control_1, 1, false);
+  static app_twi_transfer_t const readRtcTransfers[] =
+    {
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x0, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x0], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x1, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x1], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x2, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x2], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x3, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x3], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x4, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x4], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x5, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x5], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x6, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x6], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x7, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x7], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x8, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x8], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0x9, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x9], 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, 0xA, 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0xA], 1, 0)
+    };
 
-    rtc_register = 0x1;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_1.Control_2, 1, false);
+    static app_twi_transaction_t const readRtcTransaction =
+      {
+        .callback = rtc_i2c_read_callback,
+        .p_user_data = NULL,
+        .p_transfers = readRtcTransfers,
+        .number_of_transfers = sizeof(readRtcTransfers) / sizeof(readRtcTransfers[0])
+      };
 
-    rtc_register = 0x2;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_2.Offset, 1, false);
-
-    rtc_register = 0x3;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_3.RAM_byte, 1, false);
-
-    rtc_register = 0x4;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_4.Seconds, 1, false);
-
-    rtc_register = 0x5;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_5.Minutes, 1, false);
-
-    rtc_register = 0x6;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_6.Hours, 1, false);
-
-    rtc_register = 0x7;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_7.Days, 1, false);
-
-    rtc_register = 0x8;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_8.Weekdays, 1, false);
-
-    rtc_register = 0x9;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_9.Months, 1, false);
-
-    rtc_register = 0xA;
-    nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &rtc_register, 1, false);
-    nrf_drv_twi_rx(&rtcInterface, seeed_rtc_address, &rtc_state.register_A.Years, 1, false);
-  }
-  else {
-    is_seeed_rtc_connected = false;
-  }
-
+    APP_ERROR_CHECK(app_twi_schedule(&rtcTwiInstance, &readRtcTransaction));
 }
 
 static void print_seeed_rtc_state() {
@@ -131,11 +164,18 @@ static void print_seeed_rtc_state() {
 
 static void seeed_rtc_init() {
   uint32_t err_code;
-  NRF_LOG_PRINTF("Initializing Seeed RTC\r\n");
+  NRF_LOG_PRINTF("Init Seeed RTC...\r\n");
 
-  err_code = nrf_drv_twi_init(&rtcInterface, &rtcConfig, NULL);
+  nrf_drv_twi_config_t const twi_config = {
+    .scl                = TWI0_CONFIG_SCL,
+    .sda                = TWI0_CONFIG_SDA,
+    .frequency          = NRF_TWI_FREQ_100K,
+    .interrupt_priority = APP_IRQ_PRIORITY_LOW
+  };
+
+  APP_TWI_INIT(&rtcTwiInstance, &twi_config, MAX_PENDING_TRANSACTIONS, err_code);
   APP_ERROR_CHECK(err_code);
-  nrf_drv_twi_enable(&rtcInterface);
+
 
   read_seeed_rtc_state();
 }
@@ -167,6 +207,8 @@ void rtc_init() {
 #ifdef SEEED_RTC
   seeed_rtc_init();
 #endif // SEEED_RTC
+
+  rtc_sysclock_timer_initialize();
 }
 
 clock_time_t rtc_get_current_time() {
@@ -294,7 +336,7 @@ void rtc_set_field(char* field, char* value) {
     return;
   }
 
-  err_code = nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &register_to_update, 1, true);
+//  err_code = nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &register_to_update, 1, true);
   if (err_code) {
     is_seeed_rtc_connected = false;
   }
@@ -304,7 +346,7 @@ void rtc_set_field(char* field, char* value) {
     uint8_t intvalue = (uint8_t) atoi(value);
     if (intvalue >= min && intvalue <= max) {
       intvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
-      nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &intvalue, 1, false);
+ //     nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &intvalue, 1, false);
     } else {
       NRF_LOG_PRINTF("Value out of range.\r\n");
     }
@@ -362,4 +404,28 @@ void rtc_print_status() {
   terminal_putstring("No RTC detected.\r\n");
 #endif // SEEED_RTC
   rtc_print_date_and_time();
+}
+
+void execute_rtc_command(char **parsedCommandArray)
+{
+  if (strcmp(parsedCommandArray[1], "info") == 0) {
+    rtc_print_status();
+    return;
+  }
+  else if (strcmp(parsedCommandArray[1], "set") == 0) {
+    rtc_set_field(parsedCommandArray[2], parsedCommandArray[3]);
+  }
+  else {
+    print_help_rtc();
+    return;
+  }
+}
+
+void print_help_rtc() {
+  terminal_putstring("rtc info                              Show RTC HW information\r\n");
+  terminal_putstring("rtc set <field> <value>               Set RTC\r\n");
+  terminal_putstring("\r\n");
+  terminal_putstring("    <field> = [ year(0-99), month(1-12), weekday(0-6), day(1-31)\r\n");
+  terminal_putstring("                hour(0-23), minute(0-59) or second(0-59) ]\r\n");
+  terminal_putstring("\r\n");
 }

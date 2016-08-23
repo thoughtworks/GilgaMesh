@@ -135,6 +135,12 @@ void rtc_timestamp_to_timestring(timestamp_t stamp, timestring_t string);
 void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp);
 bool rtc_is_equal_timestamp(timestamp_t a, timestamp_t b);
 
+void rtc_sysclock_timer_initialize();
+void rtc_sysclock_timer_suspend();
+void rtc_sysclock_timer_resume();
 void rtc_periodic_update_handler();
 
+void execute_rtc_command(char **parsedCommandArray);
+void print_help_rtc();
 
+void rtc_i2c_read_callback(uint32_t result, void* data);

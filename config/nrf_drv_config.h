@@ -282,7 +282,7 @@
 #define SPIS_COUNT   (SPIS0_ENABLED + SPIS1_ENABLED + SPIS2_ENABLED)
 
 /* UART */
-#define UART0_ENABLED 1
+#define UART0_ENABLED 0
 
 #if (UART0_ENABLED == 1)
 #define UART0_CONFIG_HWFC         NRF_UART_HWFC_DISABLED
@@ -307,7 +307,7 @@
 #define TWI0_USE_EASY_DMA 0
 
 #define TWI0_CONFIG_FREQUENCY    NRF_TWI_FREQ_100K
-#define TWI0_CONFIG_SCL          14
+#define TWI0_CONFIG_SCL          14 // seeed rtc
 #define TWI0_CONFIG_SDA          15
 #define TWI0_CONFIG_IRQ_PRIORITY APP_IRQ_PRIORITY_LOW
 
@@ -320,8 +320,8 @@
 #define TWI1_USE_EASY_DMA 0
 
 #define TWI1_CONFIG_FREQUENCY    NRF_TWI_FREQ_100K
-#define TWI1_CONFIG_SCL          30 // pin header
-#define TWI1_CONFIG_SDA          29 // pin header
+#define TWI1_CONFIG_SCL          16 // seeed nfc
+#define TWI1_CONFIG_SDA          17
 #define TWI1_CONFIG_IRQ_PRIORITY APP_IRQ_PRIORITY_LOW
 
 #define TWI1_INSTANCE_INDEX      (TWI0_ENABLED)

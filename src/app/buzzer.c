@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #include "boards.h"
-#include "timer.h"
+#include "system/timer.h"
 
 #define MAX_NUM_BUZZER_TONES    3
 

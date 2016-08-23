@@ -1,6 +1,5 @@
 #include "terminal.h"
-
-#include <nrf_log.h>
+#include "app/rtc.h"
 #include <stdlib.h>
 
 #ifdef NRF_LOG_USES_RTT
@@ -119,6 +118,8 @@ static void terminal_read_command(char* readBuffer, uint8_t readBufferLength, ui
 {
   if (!is_terminal_initialized) return;
 
+  rtc_sysclock_timer_suspend(); // system paused for command read
+
    uint8_t byteBuffer;
    uint8_t counter = offset;
 
@@ -160,6 +161,8 @@ static void terminal_read_command(char* readBuffer, uint8_t readBufferLength, ui
 			counter++;
 		}
 	}
+
+  rtc_sysclock_timer_resume(); // resume system
 }
 
 static bool read_terminal(char* readBuffer) {

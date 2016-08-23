@@ -5,7 +5,7 @@
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"
-#include "timer.h"
+#include "system/timer.h"
 #include "version.h"
 
 #define MS_RATE_TO_BROADCAST_HEARTBEAT 3000

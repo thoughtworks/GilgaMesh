@@ -10,4 +10,4 @@ MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint
   return DoNotPropagate;
 }
 
-void heartbeat_timer_initialize() { }
+void heartbeat_initialize() { }

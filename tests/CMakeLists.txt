@@ -171,6 +171,7 @@ add_executable(MainTest ${TestFramework_SOURCES}
         mocks/gatt_mock.c
         mocks/softdevice_mock.c
         mocks/terminal_mock.c
+        mocks/app/feedback_mock.c
         mocks/system/timer_mock.c
         mocks/app/led_mock.c
         mocks/app/rtc_mock.c

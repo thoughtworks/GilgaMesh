@@ -12,7 +12,7 @@ typedef struct {
 } __attribute__ ((packed)) buzzerTone;
 
 void buzzer_initialize(void);
-void buzzer_on(char **parsedCommandArray, uint8_t numCommands);
+void play_buzzer(char **parsedCommandArray, uint8_t numCommands);
 void make_noise(void);
 void buzzer_off(void);
 bool is_buzzer_on(void);

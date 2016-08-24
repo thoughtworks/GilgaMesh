@@ -12,7 +12,7 @@
 
 APP_TIMER_DEF(heartbeatTimer);
 
-void heartbeat_timer_initialize() {
+void heartbeat_initialize() {
   create_repeated_timer(&heartbeatTimer);
   start_timer(&heartbeatTimer, MS_RATE_TO_BROADCAST_HEARTBEAT, send_heartbeat_message);
 }

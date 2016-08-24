@@ -2,6 +2,7 @@
 
 #include <app_scheduler.h>
 #include "app/buzzer.h"
+#include "app/feedback.h"
 #include "app/led.h"
 #include "app/rtc.h"
 #include "message_types/heartbeat_message.h"
@@ -15,13 +16,12 @@
 // thus written to UICR when MeshyMesh is flashed into the chip. */
 
 #ifndef TESTING
-volatile uint32_t m_uicr_bootloader_start_address  __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
+volatile uint32_t m_uicr_bootloader_start_address __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
 #endif
 
-void panic()
+void HardFault_Handler(void)
 {
-  NRF_LOG_PRINTF("PANIC!!!\r\n");
-  for(;;) { }
+  display_catastrophic_failure_feedback();
 }
 
 
@@ -30,26 +30,29 @@ void initialize() {
   NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
-  init_module("Timers", timer_initialize);
-  init_module("Softdevice", softdevice_initialize);
-  init_module("Terminal", terminal_initialize);
-  init_module("Commands", command_initialize);
-  init_module("Leds", led_initialize);
-  init_module("RTC", rtc_init);
+  init_module("softdevice", softdevice_initialize);
+  init_module("timers", timer_initialize);
+  init_module("leds", led_initialize);
 #ifdef IS_PROD_BOARD
-  init_module("Buzzer", buzzer_initialize);
+  init_module("buzzer", buzzer_initialize);
 #endif
-  init_module("Connections", connections_initialize);
+  init_module("terminal", terminal_initialize);
+  init_module("commands", command_initialize);
+#ifdef IS_PROD_BOARD
+  init_module("feedback", feedback_initialize);
+#endif
+  init_module("RTC", rtc_init);
+  init_module("connections", connections_initialize);
   init_module("GATT", gatt_initialize);
   init_module("GAP", gap_initialize);
-  init_module("Heartbeat timer", heartbeat_timer_initialize);
+  init_module("heartbeat timer", heartbeat_initialize);
 
   NRF_LOG_PRINTF("System ready.\r\n");
 }
 
-init_module(char* module_name, void (*f)()) {
+init_module(char* module_name, void (*function)()) {
   NRF_LOG_PRINTF("Init %s... \r\n", module_name);
-  (*f)();
+  (*function)();
 }
 
 void run() {
@@ -63,11 +66,12 @@ void run() {
 int main()
 {
   initialize();
+  display_successful_start_up_feedback();
+  //determine if there was a failure and then try to give "failure" feedback
+  //display_catastrophic_failure_feedback();
 
-  led_white_off();
-  led_green_dim();
-
-  mesh_add_terminal_command("buzz", "buzzer on [dur] [per]", buzzer_on);
+  // Uncomment the following line to play buzzer sounds via terminal:
+//  mesh_add_terminal_command("buzz", "buzzer on [dur] [per]", play_buzzer);
 
   for(;;) {
     run();

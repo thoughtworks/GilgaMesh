@@ -133,6 +133,7 @@ list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/pstorage/pstorage_raw.c
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/twi_master/nrf_drv_twi.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/button/app_button.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/gpiote/app_gpiote.c")
+list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/hardfault/nrf51/handler/hardfault_handler_gcc.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/low_power_pwm/low_power_pwm.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/pwm/app_pwm.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/timer/app_timer.c")
@@ -180,6 +181,7 @@ list(APPEND MeshyMesh_SOURCES "main.c")
 
 # add application sources
 list(APPEND MeshyMesh_SOURCES "app/buzzer.c")
+list(APPEND MeshyMesh_SOURCES "app/feedback.c")
 list(APPEND MeshyMesh_SOURCES "app/led.c")
 list(APPEND MeshyMesh_SOURCES "app/rtc.c")
 

@@ -80,3 +80,7 @@ void led_white_off() {
   led_green_off();
   led_blue_off();
 }
+
+void led_all_off() {
+  led_white_off();
+}

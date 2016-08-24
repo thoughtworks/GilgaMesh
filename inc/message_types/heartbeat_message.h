@@ -14,4 +14,4 @@ typedef struct {
 
 void send_heartbeat_message(void *data, uint16_t dataLength);
 MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint8_t *dataPacket);
-void heartbeat_timer_initialize();
+void heartbeat_initialize();

@@ -1,12 +1,4 @@
-void display_user_feedback_handler(void *context);
-
-void turn_off_buzzer_feedback_handler(void *context);
-
 void nfc_event_handler(void *context);
-
-void turn_on_buzzer_feedback_timeout();
-
-void turn_on_user_feedback();
 
 void clear_vote_buffer_timer_handler(void *context);
 

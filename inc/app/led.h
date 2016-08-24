@@ -30,3 +30,5 @@ void led_blue_off(void);
 void led_white_bright(void);
 void led_white_dim(void);
 void led_white_off(void);
+
+void led_all_off(void);

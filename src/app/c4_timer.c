@@ -5,32 +5,21 @@
 #include <app_scheduler.h>
 
 #include "ble.h"
-#include "app/feedback.h"
 #include "gatt.h"
 
 #define MS_RATE_TO_MANAGE_NFC 100
-#define MS_RATE_TO_DISPLAY_USER_FEEDBACK 100
 #define MS_RATE_TO_CLEAR_VOTE_BUFFER 3000
 #define MS_RATE_TO_SEND_VOTE 5000
 #define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
 
-static app_timer_id_t displayFeedbackTimerId;
 static app_timer_id_t nfcTimerId;
 static app_timer_id_t clearVoteBufferTimerId;
 static app_timer_id_t sendVoteTimerId;
 static app_timer_id_t clockTimerId;
 
 
-void display_user_feedback_handler(void *context) {
-  app_sched_event_put(NULL, 0, display_general_user_feedback);
-}
-
 void nfc_event_handler(void *context) {
   app_sched_event_put(NULL, 0, manage_badge_reading);
-}
-
-void turn_on_user_feedback() {
-  EC(app_timer_start(displayFeedbackTimerId, APP_TIMER_TICKS(MS_RATE_TO_DISPLAY_USER_FEEDBACK, ATTR_TIMER_PRESCALER), NULL));
 }
 
 void clear_vote_buffer_timer_handler(void *context) {
@@ -74,8 +63,6 @@ void c4_timer_initialize(void) {
 
   EC(app_timer_create(&sendVoteTimerId, APP_TIMER_MODE_REPEATED, send_vote_timer_handler));
 #endif
-
-  EC(app_timer_create(&displayFeedbackTimerId, APP_TIMER_MODE_REPEATED, display_user_feedback_handler));
 
   EC(app_timer_create(&clockTimerId, APP_TIMER_MODE_REPEATED, clock_timer_handler));
 

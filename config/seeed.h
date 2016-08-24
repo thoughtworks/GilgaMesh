@@ -16,9 +16,9 @@
 #define LEDS_NUMBER    3
 
 #define LED_START      3
-#define LED_RGB_RED    3
+#define LED_RGB_BLUE   3
 #define LED_RGB_GREEN  4
-#define LED_RGB_BLUE   5
+#define LED_RGB_RED    5
 #define LED_STOP       5
 
 #define LED_RGB_RED_MASK    (1<<LED_RGB_RED)

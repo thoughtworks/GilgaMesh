@@ -40,7 +40,6 @@ void command_initialize() {
   mesh_add_terminal_command("cons", "Print all connections",    print_all_connections);
   mesh_add_terminal_command("adv",  "Check advertising status", check_advertising_status);
   mesh_add_terminal_command("scan", "Check scanning status",    check_scanning_status);
-  mesh_add_terminal_command("rtc",  "Real time clock commands", execute_rtc_command);
 }
 
 void command_execute(char **parsedCommandArray, uint8_t numberOfItems) {

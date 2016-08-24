@@ -42,6 +42,7 @@ include_directories(${COMPONENTS}/libraries/timer)
 include_directories(${COMPONENTS}/libraries/uart)
 include_directories(${COMPONENTS}/libraries/util)
 include_directories(${COMPONENTS}/softdevice/common/softdevice_handler)
+include_directories(${COMPONENTS}/softdevice/s130/headers)
 include_directories(${COMPONENTS}/toolchain)
 include_directories(${COMPONENTS}/toolchain/CMSIS/Include)
 include_directories(${COMPONENTS}/toolchain/arm)
@@ -98,6 +99,15 @@ add_executable(BroadcastMessageTest ${TestFramework_SOURCES}
         unit/message_types/BroadcastMessageTest.c)
 target_link_libraries(BroadcastMessageTest cmocka)
 GEN_OUTPUTS(BroadcastMessageTest)
+
+add_executable(BuzzerTest ${TestFramework_SOURCES}
+        mocks/system/timer_mock.c
+        mocks/system/gpio_mock.c
+        mocks/sdk11/components/libraries/pwm/app_pwm_mock.c
+        ${SRC_PATH}/app/buzzer.c
+        unit/app/BuzzerTest.c)
+target_link_libraries(BuzzerTest cmocka)
+GEN_OUTPUTS(BuzzerTest)
 
 add_executable(ConnectionTest ${TestFramework_SOURCES}
         mocks/app/led_mock.c

@@ -71,7 +71,7 @@ int main()
   //display_catastrophic_failure_feedback();
 
   // Uncomment the following line to play buzzer sounds via terminal:
-//  mesh_add_terminal_command("buzz", "buzzer on [dur] [per]", play_buzzer);
+  //mesh_add_terminal_command("buzz", "buzzer on [dur] [per]", play_buzzer);
 
   for(;;) {
     run();

@@ -12,7 +12,9 @@
 #ifndef BOARDS_H
 #define BOARDS_H
 
+#ifndef TESTING
 #include "nrf_gpio.h"
+#endif
 
 #if defined(BOARD_NRF6310)
   #include "nrf6310.h"

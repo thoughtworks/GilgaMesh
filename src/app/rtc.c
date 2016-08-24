@@ -1,5 +1,4 @@
 #include <app/rtc.h>
-#include <stdlib.h>
 #include "conversion.h"
 #include "logger.h"
 #include "terminal.h"
@@ -213,6 +212,8 @@ void rtc_init() {
 #endif // SEEED_RTC
 
   rtc_sysclock_timer_initialize();
+
+  mesh_add_terminal_command("rtc",  "Real time clock commands", execute_rtc_command);
 }
 
 clock_time_t rtc_get_current_time() {

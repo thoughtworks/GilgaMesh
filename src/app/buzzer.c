@@ -25,6 +25,8 @@ static app_pwm_config_t pwm_config = APP_PWM_DEFAULT_CONFIG_1CH(DEFAULT_BUZZER_P
 APP_PWM_INSTANCE(PWM1, 1);
 APP_TIMER_DEF(buzzerTimer);
 
+static void make_noise(void * p_event_data, uint16_t event_size);
+
 void buzzer_initialize() {
   buzzerEnabled = true;
 
@@ -52,9 +54,15 @@ static void add_pause() {
   numStoredTones++;
 }
 
-static void turn_buzzer_off() {
-  if(!buzzerEnabled) return;
+static void turn_buzzer_on() {
+  EC(app_pwm_init(&PWM1, &pwm_config, NULL));
+  app_pwm_enable(&PWM1);
+  EC(app_pwm_channel_duty_set(&PWM1, 0, BUZZER_VOLUME));
+  start_timer(&buzzerTimer, tonesToPlay[currentTone++].duration, make_noise);
+  buzzerPlaying = true;
+}
 
+static void turn_buzzer_off() {
   app_pwm_channel_duty_set(&PWM1, 0, 0);
   app_pwm_disable(&PWM1);
   app_pwm_uninit(&PWM1);
@@ -64,23 +72,20 @@ static void make_noise(void * p_event_data, uint16_t event_size) {
   UNUSED_PARAMETER(p_event_data);
   UNUSED_PARAMETER(event_size);
 
-  if(!buzzerEnabled) return;
-  turn_buzzer_off();
+  if (buzzerPlaying) turn_buzzer_off();
 
   if(currentTone < MAX_SIZE_BUZZER_TONES_ARRAY && (tonesToPlay[currentTone].duration > 0 || tonesToPlay[currentTone].period > 0)) {
     pwm_config.period_us = tonesToPlay[currentTone].period;
-    EC(app_pwm_init(&PWM1, &pwm_config, NULL));
-    app_pwm_enable(&PWM1);
-    app_pwm_channel_duty_set(&PWM1, 0, BUZZER_VOLUME);
-
-    start_timer(&buzzerTimer, tonesToPlay[currentTone++].duration, make_noise);
+    turn_buzzer_on();
   }
   else {
     buzzerPlaying = false;
   }
 }
 
-void play_buzzer(uint16_t* toneInstructions, uint8_t numTones) {
+void play_tones(uint16_t *toneInstructions, uint8_t numTones) {
+  if(!buzzerEnabled) return;
+
   if(buzzerPlaying) {
     add_pause();
     appendNewBuzzerTones(toneInstructions, numTones);
@@ -88,7 +93,7 @@ void play_buzzer(uint16_t* toneInstructions, uint8_t numTones) {
   else {
     resetTones();
     appendNewBuzzerTones(toneInstructions, numTones);
-    buzzerPlaying = true;
+
     make_noise(NULL, NULL);
   }
 }

@@ -44,7 +44,7 @@ void display_vote_recorded_feedback() {
 
 #ifdef IS_PROD_BOARD
   uint16_t upward_progression_2[4] = {300, 2000, 300, 200};
-  play_buzzer(upward_progression_2, 2);
+  play_tones(upward_progression_2, 2);
 #endif
 }
 
@@ -53,7 +53,7 @@ void display_successful_start_up_feedback() {
   led_green_dim();
 #ifdef IS_PROD_BOARD
   uint16_t robot_sound[6] = {300, 400, 300, 800, 300, 200};
-  play_buzzer(robot_sound, 3);
+  play_tones(robot_sound, 3);
 #endif
 }
 
@@ -63,7 +63,7 @@ void display_group_value_change_feedback() {
   led_blue_bright();
 #ifdef IS_PROD_BOARD
   uint16_t neutral_tone[1] = {120, 200};
-  play_buzzer(neutral_tone, 1);
+  play_tones(neutral_tone, 1);
 #endif
 }
 
@@ -73,6 +73,6 @@ void display_catastrophic_failure_feedback() {
   led_red_bright();
 #ifdef IS_PROD_BOARD
   uint16_t womp_womp[4] = {500, 500, 800, 3000};
-  play_buzzer(womp_womp, 2);
+  play_tones(womp_womp, 2);
 #endif
 }

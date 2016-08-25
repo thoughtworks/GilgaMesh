@@ -14,9 +14,7 @@ APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 
 #define MAX_PENDING_TRANSACTIONS 8
 #define RTC_TWI_ADDR 81
-#define RTC_I2C_BUFFER_SIZE 11
 
-static uint8_t rtc_i2c_buffer[RTC_I2C_BUFFER_SIZE];
 static app_twi_t rtcTwiInstance = APP_TWI_INSTANCE(0);
 static bool is_seeed_rtc_connected = false;
 
@@ -54,51 +52,37 @@ void rtc_i2c_read_callback(uint32_t result, void* user_data)
   else
   {
     is_seeed_rtc_connected = true;
-
-    rtc_state.register_0.Control_1 = rtc_i2c_buffer[0x0];
-    rtc_state.register_1.Control_2 = rtc_i2c_buffer[0x1];
-    rtc_state.register_2.Offset = rtc_i2c_buffer[0x2];
-    rtc_state.register_3.RAM_byte = rtc_i2c_buffer[0x3];
-    rtc_state.register_4.Seconds = rtc_i2c_buffer[0x4];
-    rtc_state.register_5.Minutes = rtc_i2c_buffer[0x5];
-    rtc_state.register_6.Hours = rtc_i2c_buffer[0x6];
-    rtc_state.register_7.Days = rtc_i2c_buffer[0x7];
-    rtc_state.register_8.Weekdays = rtc_i2c_buffer[0x8];
-    rtc_state.register_9.Months = rtc_i2c_buffer[0x9];
-    rtc_state.register_A.Years = rtc_i2c_buffer[0xA];
   }
 }
 
 static void read_seeed_rtc_state() {
-  uint32_t err_code;
-  uint8_t rtc_register = 0x0;
 
-  memset(&rtc_state, 0, sizeof(rtc_state));
+  uint32_t err_code;
 
   static app_twi_transfer_t const readRtcTransfers[] =
     {
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x0, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x0], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x1, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x1], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x2, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x2], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x3, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x3], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x4, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x4], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x5, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x5], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x6, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x6], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x7, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x7], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x8, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x8], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0x9, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0x9], 1, 0),
-      APP_TWI_WRITE(RTC_TWI_ADDR, 0xA, 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_i2c_buffer[0xA], 1, 0)
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x0], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_0.Control_1, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x1], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_1.Control_2, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x2], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_2.Offset, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x3], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_3.RAM_byte, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x4], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_4.Seconds, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x5], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_5.Minutes, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x6], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_6.Hours, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x7], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_7.Days, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x8], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_8.Weekdays, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x9], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_9.Months, 1, 0),
+      APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0xA], 1, APP_TWI_NO_STOP),
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_A.Years, 1, 0)
     };
 
     static app_twi_transaction_t const readRtcTransaction =
@@ -159,7 +143,7 @@ static void seeed_rtc_init() {
   APP_TWI_INIT(&rtcTwiInstance, &twi_config, MAX_PENDING_TRANSACTIONS, err_code);
   APP_ERROR_CHECK(err_code);
 
-
+  memset(&rtc_state, 0, sizeof(rtc_state));
   read_seeed_rtc_state();
 }
 
@@ -206,6 +190,10 @@ void rtc_init() {
   system_time.clock_time.day = 1;
   system_time.clock_time.month = 1;
   system_time.clock_time.year = 2000;
+
+  for(int i = 0 ; i < NUMBER_OF_RTC_REGISTERS ; i++) {
+    rtc_register_indices[i] = i;
+  }
 
 #ifdef SEEED_RTC
   seeed_rtc_init();

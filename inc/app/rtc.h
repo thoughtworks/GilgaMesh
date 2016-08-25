@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <nrf_log.h>
+#define NUMBER_OF_RTC_REGISTERS 10
 
 typedef struct {
   uint16_t millis;
@@ -23,6 +24,7 @@ typedef struct {
 } __attribute__ ((packed)) system_time_t;
 
 static system_time_t system_time;
+static uint8_t rtc_register_indices[NUMBER_OF_RTC_REGISTERS];
 
 typedef struct
 {

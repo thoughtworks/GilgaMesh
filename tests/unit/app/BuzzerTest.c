@@ -50,6 +50,7 @@ static void Buzzer_play_tones_can_process_single_tone() {
   expect_any(app_pwm_enable, p_instance);
   expect_value(app_pwm_channel_duty_set, duty, BUZZER_VOLUME);
   expect_value(start_timer, ms_to_execute, duration);
+  expect_any(start_timer, timer_id);
   play_tones(tones, 1);
 }
 

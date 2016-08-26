@@ -133,6 +133,15 @@ add_executable(CommandTest ${TestFramework_SOURCES}
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
+add_executable(FeedbackTest ${TestFramework_SOURCES}
+        mocks/system/timer_mock.c
+        mocks/app/buzzer_mock.c
+        mocks/app/led_mock.c
+        ${SRC_PATH}/app/feedback.c
+        unit/app/FeedbackTest.c)
+target_link_libraries(FeedbackTest cmocka)
+GEN_OUTPUTS(FeedbackTest)
+
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c

@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "app/rtc.h"
+#include "app/feedback.h"
 #include <stdlib.h>
 
 #ifdef NRF_LOG_USES_RTT
@@ -114,14 +115,24 @@ bool terminal_initialized()
    return is_terminal_initialized;
 }
 
+static void suspend_app_timers() {
+  rtc_sysclock_timer_suspend();
+  suspend_feedback_timer();
+}
+
+static void resume_app_timers() {
+  resume_feedback_timer();
+  rtc_sysclock_timer_resume();
+}
+
 static void terminal_read_command(char* readBuffer, uint8_t readBufferLength, uint8_t offset)
 {
   if (!is_terminal_initialized) return;
 
-  rtc_sysclock_timer_suspend(); // system paused for command read
+  suspend_app_timers();
 
-   uint8_t byteBuffer;
-   uint8_t counter = offset;
+  uint8_t byteBuffer;
+  uint8_t counter = offset;
 
 	//Read in an infinite loop until \r is recognized
 	while (true)
@@ -162,7 +173,7 @@ static void terminal_read_command(char* readBuffer, uint8_t readBufferLength, ui
 		}
 	}
 
-  rtc_sysclock_timer_resume(); // resume system
+  resume_app_timers();
 }
 
 static bool read_terminal(char* readBuffer) {

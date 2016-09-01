@@ -117,11 +117,15 @@ bool terminal_initialized()
 
 static void suspend_app_timers() {
   rtc_sysclock_timer_suspend();
+#ifdef IS_PROD_BOARD
   suspend_feedback_timer();
+#endif
 }
 
 static void resume_app_timers() {
+#ifdef IS_PROD_BOARD
   resume_feedback_timer();
+#endif
   rtc_sysclock_timer_resume();
 }
 

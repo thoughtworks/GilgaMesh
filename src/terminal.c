@@ -2,6 +2,7 @@
 #include "app/rtc.h"
 #include "app/feedback.h"
 #include <stdlib.h>
+#include <SEGGER_RTT.h>
 
 #ifdef NRF_LOG_USES_RTT
 #define COMMAND_TERMINATOR 0xA
@@ -14,7 +15,7 @@ static bool is_terminal_initialized = false;
 void terminal_put(const uint8_t character) {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
-    NRF_LOG_PRINTF("%c", character);
+    NRF_LOG_INFO("%c", character);
 #else
     simple_uart_put(character);
 #endif
@@ -24,7 +25,7 @@ void terminal_put(const uint8_t character) {
 void terminal_putstring(char* string) {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
-    NRF_LOG_PRINTF(string);
+    NRF_LOG_INFO("%s", string);
 #else
     simple_uart_putstring(string);
 #endif
@@ -34,10 +35,11 @@ void terminal_putstring(char* string) {
 uint8_t terminal_get() {
   uint8_t retval = 0;
 
+
+
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
-    while (!NRF_LOG_HAS_INPUT()) { } // Emulate blocking UART behavior
-    NRF_LOG_READ_INPUT((char *) &retval);
+      retval = NRF_LOG_GETCHAR();
 #else
     retval = simple_uart_get();
 #endif
@@ -48,8 +50,8 @@ uint8_t terminal_get() {
 void terminal_get_with_timeout(uint8_t* character) {
   if(is_terminal_initialized) {
 #ifdef NRF_LOG_USES_RTT
-    if (NRF_LOG_HAS_INPUT()) {
-      NRF_LOG_READ_INPUT((char *) character);
+    if (SEGGER_RTT_HasKey()) {
+        *character = SEGGER_RTT_GetKey();
     }
 #else
     simple_uart_get_with_timeout(TERMINAL_READ_TIMEOUT_US, character);

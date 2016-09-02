@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include <app_scheduler.h>
+#include <nrf_log_ctrl.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
@@ -26,8 +27,8 @@ void HardFault_Handler(void)
 
 
 void initialize() {
-  NRF_LOG_INIT();
-  NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
+  NRF_LOG_INIT(NULL);
+  NRF_LOG_INFO("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
   init_module("softdevice", softdevice_initialize);
@@ -47,11 +48,11 @@ void initialize() {
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
 
-  NRF_LOG_PRINTF("System ready.\r\n");
+  NRF_LOG_INFO("System ready.\r\n");
 }
 
 init_module(char* module_name, void (*function)()) {
-  NRF_LOG_PRINTF("Init %s... \r\n", module_name);
+  NRF_LOG_INFO("Init %s... \r\n", module_name);
   (*function)();
 }
 

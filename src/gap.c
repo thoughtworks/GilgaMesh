@@ -1,6 +1,7 @@
 #include "gap.h"
 #include <app_scheduler.h>
 #include <ble_conn_state.h>
+#include <nrf_log.h>
 #include "message_types/handshake_message.h"
 
 
@@ -63,10 +64,10 @@ void gap_initialize(void){
   EC(sd_ble_gap_ppcp_set(&meshConnectionParams));
 
 #ifdef IS_PROD_BOARD
-  NRF_LOG_PRINTF("Start BLE advertising... \r\n");
+  NRF_LOG_INFO("Start BLE advertising... \r\n");
   start_advertising();
 #else
-  NRF_LOG_PRINTF("Start BLE scanning... \r\n");
+  NRF_LOG_INFO("Start BLE scanning... \r\n");
   start_scanning();
 #endif
 
@@ -116,13 +117,13 @@ void check_advertising_status(char** parserCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
 
   if (central_connection_active()) {
-    NRF_LOG_PRINTF("Advertising status: NOT APPLICABLE - central connection slot filled\r\n");
+    NRF_LOG_INFO("Advertising status: NOT APPLICABLE - central connection slot filled\r\n");
   } else {
     uint32_t errorCode = sd_ble_gap_adv_start(&meshAdvertisingParams);
     if (errorCode == NRF_SUCCESS) {
-      NRF_LOG_PRINTF("Advertising status: RESTARTED\r\n");
+      NRF_LOG_INFO("Advertising status: RESTARTED\r\n");
     } else {
-      NRF_LOG_PRINTF("Advertising status: RUNNING OR UNABLE TO START\r\n");
+      NRF_LOG_INFO("Advertising status: RUNNING OR UNABLE TO START\r\n");
     }
   }
 }
@@ -132,13 +133,13 @@ void check_scanning_status(char** parserCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
 
   if (all_peripheral_connections_active()) {
-    NRF_LOG_PRINTF("Scanning status NOT APPLICABLE: peripheral connection slots filled\r\n");
+    NRF_LOG_INFO("Scanning status NOT APPLICABLE: peripheral connection slots filled\r\n");
   } else {
     uint32_t errorCode = sd_ble_gap_scan_start(&meshScanningParams);
     if (errorCode == NRF_SUCCESS) {
-      NRF_LOG_PRINTF("Scanning status: RESTARTED\r\n");
+      NRF_LOG_INFO("Scanning status: RESTARTED\r\n");
     } else {
-      NRF_LOG_PRINTF("Scanning status: RUNNING OR UNABLE TO START\r\n");
+      NRF_LOG_INFO("Scanning status: RUNNING OR UNABLE TO START\r\n");
     }
   }
 }
@@ -151,7 +152,7 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report) {
   if (adv_data->manufacturerData.typeDefinition != BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA) return false;
   if (adv_data->manufacturerData.manufacturerId != MANUFACTURER_ID) return false;
 
-  NRF_LOG_PRINTF("UNCONNECTED DEVICE: {\"id\": \"%s\", \"version\": %u.%u}\r\n",
+  NRF_LOG_INFO("UNCONNECTED DEVICE: {\"id\": \"%s\", \"version\": %u.%u}\r\n",
       adv_data->deviceData.deviceName, adv_data->manufacturerData.majorVersion,
       adv_data->manufacturerData.minorVersion);
 
@@ -292,6 +293,6 @@ void handle_gap_event(ble_evt_t * bleEvent)
     EC(app_sched_event_put(bleEvent, bleEvent->header.evt_len, handle_buffers_freed_event));
 
   } else {
-    NRF_LOG_PRINTF("GAP: Unhandled event: %s\r\n", getBleEventNameString(bleEvent->header.evt_id));
+    NRF_LOG_INFO("GAP: Unhandled event: %s\r\n", getBleEventNameString(bleEvent->header.evt_id));
   }
 }

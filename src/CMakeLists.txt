@@ -135,6 +135,8 @@ list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/drivers_nrf/twi_master/nrf_drv_twi.
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/button/app_button.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/gpiote/app_gpiote.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/hardfault/nrf51/handler/hardfault_handler_gcc.c")
+list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/log/src/nrf_log_frontend.c")
+list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/log/src/nrf_log_backend_serial.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/low_power_pwm/low_power_pwm.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/pwm/app_pwm.c")
 list(APPEND MeshyMesh_SOURCES "${COMPONENTS}/libraries/timer/app_timer.c")

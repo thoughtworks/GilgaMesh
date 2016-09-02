@@ -679,13 +679,13 @@
  
 
 #ifndef PPI_ENABLED
-#define PPI_ENABLED 0
+#define PPI_ENABLED 1
 #endif
 
 // <e> PWM_ENABLED - nrf_drv_pwm - PWM peripheral driver
 //==========================================================
 #ifndef PWM_ENABLED
-#define PWM_ENABLED 0
+#define PWM_ENABLED 1
 #endif
 #if  PWM_ENABLED
 // <o> PWM_DEFAULT_CONFIG_OUT0_PIN - Out0 pin  <0-31> 
@@ -1663,7 +1663,7 @@
  
 
 #ifndef APP_PWM_ENABLED
-#define APP_PWM_ENABLED 0
+#define APP_PWM_ENABLED 1
 #endif
 
 // <e> APP_SCHEDULER_ENABLED - app_scheduler - Events scheduler

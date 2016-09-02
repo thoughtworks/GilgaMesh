@@ -3,6 +3,7 @@
 #include <ble_gatts.h>
 #include <ble_gattc.h>
 #include <ble.h>
+#include <nrf_log.h>
 #include "error.h"
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
@@ -12,7 +13,7 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 
   error_info_t *error_info = (error_info_t *) info;
   if(error_info->err_code != NRF_SUCCESS){
-    NRF_LOG_PRINTF("ERROR: ERROR CODE %d, in file %s@%d\r\n",
+    NRF_LOG_ERROR("ERROR: ERROR CODE %d, in file %s@%d\r\n",
                    error_info->err_code, error_info->p_file_name, error_info->line_num);
   }
 }

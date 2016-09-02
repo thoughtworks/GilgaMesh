@@ -134,8 +134,8 @@ static void seeed_rtc_init() {
   NRF_LOG_PRINTF("Init Seeed RTC...\r\n");
 
   nrf_drv_twi_config_t const twi_config = {
-    .scl                = TWI0_CONFIG_SCL,
-    .sda                = TWI0_CONFIG_SDA,
+    .scl                = 14,
+    .sda                = 15,
     .frequency          = NRF_TWI_FREQ_100K,
     .interrupt_priority = APP_IRQ_PRIORITY_LOW
   };

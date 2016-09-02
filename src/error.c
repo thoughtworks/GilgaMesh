@@ -1,4 +1,3 @@
-#include <pstorage.h>
 #include <ble_gatt.h>
 #include <ble_hci.h>
 #include <ble_gatts.h>
@@ -279,19 +278,3 @@ const char* getGattStatusErrorString(uint16_t gattStatusCode)
   }
 }
 
-
-const char* getPstorageStatusErrorString(uint16_t operationCode)
-{
-  switch(operationCode){
-    case PSTORAGE_CLEAR_OP_CODE:
-      return "Error when Clear Operation was requested";
-    case PSTORAGE_LOAD_OP_CODE:
-      return "Error when Load Operation was requested";
-    case PSTORAGE_STORE_OP_CODE:
-      return "Error when Store Operation was requested";
-    case PSTORAGE_UPDATE_OP_CODE:
-      return "Update an already touched storage block";
-    default:
-      return "Unknown operation code";
-  }
-}

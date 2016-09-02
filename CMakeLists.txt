@@ -11,7 +11,7 @@ get_filename_component(CONFIG_PATH config ABSOLUTE)
 get_filename_component(BOOTLOADER_PATH ${BOOTLOADER_DIR_NAME} ABSOLUTE)
 
 #set common variables
-SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_11_0)
+SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_12_0)
 SET(COMPONENTS              ${SDK_BASE}/components)
 SET(EXTERNAL                ${SDK_BASE}/external)
 SET(EXTERNAL                ${SDK_BASE}/external)

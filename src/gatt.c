@@ -128,7 +128,7 @@ void send_to_multiple_connections(sdk_mapped_flags_key_list_t handles, uint16_t 
 }
 
 void send_to_central_connection(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
-  send_to_multiple_connections(ble_conn_state_central_handles(), originHandle, data, dataLength);
+  send_to_multiple_connections(ble_conn_state_periph_handles(), originHandle, data, dataLength);
 }
 
 void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {

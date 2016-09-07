@@ -73,11 +73,9 @@ void print_single_connection_info(uint16_t connectionHandle) {
   char handle[6];
   sprintf(handle, "%u", connectionHandle);
 
-  strcpy(result, "   [");
+  strcpy(result, "\t");
   strcat(result, get_connection_type_name(connectionHandle));
-  strcat(result, "] [");
-  strcat(result, handle);
-  strcat(result, "] ");
+  strcat(result, " for: ");
   connection *conn = find_active_connection_by_handle(connectionHandle);
   if (conn->deviceId != 0) {
     char version[9];

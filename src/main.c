@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include <app/custom_message_types/group_value_message.h>
+#include <system/log.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
@@ -27,7 +28,7 @@ void HardFault_Handler(void)
 
 void initialize() {
   NRF_LOG_INIT();
-  NRF_LOG_PRINTF("\r\n[[ MeshyMesh is booting ]]\r\n");
+  MESH_LOG("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
   init_module("softdevice", softdevice_initialize);
@@ -51,11 +52,11 @@ void initialize() {
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
   add_write_event(Custom, receive_group_value_update);
 
-  NRF_LOG_PRINTF("System ready.\r\n");
+  MESH_LOG("System ready.\r\n");
 }
 
 init_module(char* module_name, void (*function)()) {
-  NRF_LOG_PRINTF("Init %s... \r\n", module_name);
+  MESH_LOG("Init %s... \r\n", module_name);
   (*function)();
 }
 

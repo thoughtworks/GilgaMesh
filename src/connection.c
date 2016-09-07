@@ -1,4 +1,5 @@
 #include <ble_conn_state.h>
+#include <system/log.h>
 #include "connection.h"
 #include "device.h"
 #include "gap.h"
@@ -12,7 +13,7 @@ void connections_initialize() {
 
   char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
   get_short_hex_device_id(get_raw_device_id(), short_hex_device_id);
-  NRF_LOG_PRINTF("DeviceId: pretty: %s, raw: %u\r\n", short_hex_device_id, get_raw_device_id());
+  MESH_LOG("DeviceId: pretty: %s, raw: %u\r\n", short_hex_device_id, get_raw_device_id());
 }
 
 
@@ -90,7 +91,7 @@ void print_single_connection_info(uint16_t connectionHandle) {
   }
   strcat(result, "\0");
 
-  NRF_LOG_PRINTF("%s\r\n", result);
+  MESH_LOG("%s\r\n", result);
 }
 
 bool is_connected() {
@@ -123,7 +124,7 @@ void print_all_connections(char** commandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(commandArray);
   UNUSED_PARAMETER(numCommands);
 
-  NRF_LOG_PRINTF("Connection details: %s\r\n", is_connected() ? "" : "DISCONNECTED");
+  MESH_LOG("Connection details: %s\r\n", is_connected() ? "" : "DISCONNECTED");
   sdk_mapped_flags_key_list_t connKeyList = ble_conn_state_conn_handles();
   for (int i = 0; i < connKeyList.len; i++) {
     print_single_connection_info(connKeyList.flag_keys[i]);

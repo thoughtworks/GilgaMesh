@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <app_timer.h>
 #include <app_scheduler.h>
+#include <system/log.h>
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"
@@ -27,7 +28,7 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
     memcpy(parentDeviceId, "ROOT", 5);
   }
 
-  NRF_LOG_PRINTF("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
+  MESH_LOG("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
       deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
 }
 

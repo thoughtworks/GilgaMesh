@@ -1,3 +1,4 @@
+#include <system/log.h>
 #include "message_types/broadcast_message.h"
 #include "gatt.h"
 
@@ -6,7 +7,7 @@ void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
 
   if (strlen(parsedCommandArray[1]) > BROADCAST_MESSAGE_MAX_SIZE) {
-    NRF_LOG_PRINTF("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_MESSAGE_MAX_SIZE);
+    MESH_LOG("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_MESSAGE_MAX_SIZE);
     return;
   }
 
@@ -22,7 +23,7 @@ MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint
   UNUSED_PARAMETER(connectionHandle);
   BleMessageBroadcastReq *broadcastMessage = (BleMessageBroadcastReq *) dataPacket;
 
-  NRF_LOG_PRINTF("***** RECEIVED Broadcast message: %s\r\n", broadcastMessage->message);
+  MESH_LOG("***** RECEIVED Broadcast message: %s\r\n", broadcastMessage->message);
 
   return PropagateToAll;
 }

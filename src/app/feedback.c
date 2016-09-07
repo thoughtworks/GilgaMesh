@@ -34,14 +34,6 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
 
 void feedback_initialize() {
   create_repeated_timer(&feedbackTimer);
-  resume_feedback_timer();
-}
-
-void suspend_feedback_timer() {
-  stop_timer(&feedbackTimer);
-}
-
-void resume_feedback_timer() {
   start_timer(&feedbackTimer, MS_RATE_TO_DISPLAY_USER_FEEDBACK, display_general_user_feedback);
 }
 

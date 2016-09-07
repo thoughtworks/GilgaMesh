@@ -4,6 +4,7 @@
 #include <message_types/broadcast_message.h>
 #include <message_types/handshake_message.h>
 #include <ble_conn_state.h>
+#include <system/log.h>
 
 typedef struct {
   BleMessageType messageType;
@@ -176,8 +177,8 @@ void handle_write_event(void * data, uint16_t dataLength)
       return;
     }
   }
-  
-  NRF_LOG_PRINTF("unknown message type: %d\r\n", messageType);
+
+  MESH_LOG("unknown message type: %d\r\n", messageType);
 }
 
 void add_write_event(uint8_t type, write_event_handler handler) {

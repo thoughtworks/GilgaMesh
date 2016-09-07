@@ -142,6 +142,19 @@ add_executable(FeedbackTest ${TestFramework_SOURCES}
 target_link_libraries(FeedbackTest cmocka)
 GEN_OUTPUTS(FeedbackTest)
 
+add_executable(GattTest ${TestFramework_SOURCES}
+        mocks/message_types/broadcast_message_mock.c
+        mocks/message_types/heartbeat_message_mock.c
+        mocks/message_types/handshake_message_mock.c
+        mocks/connection_mock.c
+        mocks/gap_mock.c
+        mocks/queue_mock.c
+        mocks/system/timer_mock.c
+        ${SRC_PATH}/gatt.c
+        unit/GattTest.c)
+target_link_libraries(GattTest cmocka)
+GEN_OUTPUTS(GattTest)
+
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
@@ -162,18 +175,6 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
 target_link_libraries(HeartbeatMessageTest cmocka)
 GEN_OUTPUTS(HeartbeatMessageTest)
 
-add_executable(GattTest ${TestFramework_SOURCES}
-        mocks/message_types/broadcast_message_mock.c
-        mocks/message_types/heartbeat_message_mock.c
-        mocks/message_types/handshake_message_mock.c
-        mocks/connection_mock.c
-        mocks/gap_mock.c
-        mocks/queue_mock.c
-        mocks/system/timer_mock.c
-        ${SRC_PATH}/gatt.c
-        unit/GattTest.c)
-target_link_libraries(GattTest cmocka)
-GEN_OUTPUTS(GattTest)
 
 add_executable(LedTest ${TestFramework_SOURCES}
         ${SRC_PATH}/app/led.c

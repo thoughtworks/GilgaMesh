@@ -5,7 +5,6 @@
 #include <app_timer.h>
 #include <stdint.h>
 #include "error.h"
-#include "logger.h"
 
 #define APP_TIMER_PRESCALER         0                                  /**< Value of the RTC1 PRESCALER register. */
 

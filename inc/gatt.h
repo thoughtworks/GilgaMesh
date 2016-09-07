@@ -5,7 +5,6 @@
 
 #include <connection.h>
 #include <error.h>
-#include <logger.h>
 #include <message_types/message.h>
 
 // FOO_SERVICE_UUID: 12ec7140-cec6-11e5-b3ae-0002a5d5c51b

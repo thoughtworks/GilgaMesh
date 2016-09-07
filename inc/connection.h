@@ -6,7 +6,6 @@
 #include <nrf_soc.h>
 
 #include "conversion.h"
-#include "logger.h"
 #include "message_types/message.h"
 #include "queue.h"
 

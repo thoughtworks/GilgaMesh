@@ -1,7 +1,6 @@
 #include <app/rtc.h>
 #include <system/log.h>
 #include "conversion.h"
-#include "logger.h"
 #include "terminal.h"
 #include "system/timer.h"
 

@@ -1,4 +1,3 @@
-
 #include "cmocka_includes.h"
 #include "connection.h"
 

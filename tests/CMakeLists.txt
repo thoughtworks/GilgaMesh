@@ -224,3 +224,10 @@ add_executable(QueueTest ${TestFramework_SOURCES}
         unit/QueueTest.c)
 target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
+
+add_executable(VoteConfigTest ${TestFramework_SOURCES}
+        mocks/app/feedback_mock.c
+        ${SRC_PATH}/app/vote_config.c
+        unit/app/VoteConfigTest.c)
+target_link_libraries(VoteConfigTest cmocka)
+GEN_OUTPUTS(VoteConfigTest)

@@ -63,7 +63,7 @@ void display_group_value_change_feedback() {
   led_all_off();
   led_red_bright();
   led_blue_bright();
-  uint16_t neutral_tone[1] = {120, 200};
+  uint16_t neutral_tone[2] = {120, 200};
   play_tones(neutral_tone, 1);
 }
 

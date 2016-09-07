@@ -25,3 +25,4 @@ void send_to_central_connection(uint16_t originHandle, uint8_t *data, uint16_t d
 void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength);
 void scheduled_broadcast_request(void *data, uint16_t dataLength);
 void handle_write_event(void * data, uint16_t dataLength);
+void add_write_event(uint8_t type, write_event_handler handler);

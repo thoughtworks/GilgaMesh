@@ -194,6 +194,7 @@ add_executable(MainTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/app/led_mock.c
         mocks/app/rtc_mock.c
+        mocks/app/custom_message_types/group_value_message_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/main.c
         unit/MainTest.c)

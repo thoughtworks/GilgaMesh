@@ -1,6 +1,6 @@
 #include "main.h"
 
-#include <app_scheduler.h>
+#include <app/custom_message_types/group_value_message.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
@@ -46,6 +46,10 @@ void initialize() {
   init_module("GATT", gatt_initialize);
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
+
+  mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
+  mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
+  add_write_event(Custom, receive_group_value_update);
 
   NRF_LOG_PRINTF("System ready.\r\n");
 }

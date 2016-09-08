@@ -6,6 +6,7 @@
 #endif
 #include <app_pwm.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "boards.h"
 #include "system/timer.h"

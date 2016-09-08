@@ -22,7 +22,7 @@ volatile uint32_t m_uicr_bootloader_start_address __attribute__ ((section(".uicr
 
 void HardFault_Handler(void)
 {
-  display_catastrophic_failure_feedback();
+  display_failure_feedback();
 }
 
 
@@ -39,9 +39,7 @@ void initialize() {
 #endif
   init_module("terminal", terminal_initialize);
   init_module("commands", command_initialize);
-#ifdef IS_PROD_BOARD
   init_module("feedback", feedback_initialize);
-#endif
   init_module("RTC", rtc_init);
   init_module("connections", connections_initialize);
   init_module("GATT", gatt_initialize);
@@ -50,6 +48,7 @@ void initialize() {
 
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
+  mesh_add_terminal_command("fun", "Play a song!", display_fun_feedback);
   add_write_event(Custom, receive_group_value_update);
 
   MESH_LOG("System ready.\r\n");

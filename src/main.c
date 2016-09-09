@@ -6,6 +6,7 @@
 #include "app/feedback.h"
 #include "app/led.h"
 #include "app/rtc.h"
+#include "app/storage.h"
 #include "message_types/heartbeat_message.h"
 #include "connection.h"
 #include "gap.h"
@@ -25,7 +26,6 @@ void HardFault_Handler(void)
   display_failure_feedback();
 }
 
-
 void initialize() {
   NRF_LOG_INIT();
   MESH_LOG("\r\n[[ MeshyMesh is booting ]]\r\n");
@@ -39,6 +39,7 @@ void initialize() {
 #endif
   init_module("terminal", terminal_initialize);
   init_module("commands", command_initialize);
+  init_module("storage", storage_initialize);
   init_module("feedback", feedback_initialize);
   init_module("RTC", rtc_init);
   init_module("connections", connections_initialize);
@@ -46,9 +47,9 @@ void initialize() {
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
 
+  mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
-  mesh_add_terminal_command("fun", "Play a song!", display_fun_feedback);
   add_write_event(Custom, receive_group_value_update);
 
   MESH_LOG("System ready.\r\n");

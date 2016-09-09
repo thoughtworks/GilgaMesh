@@ -3,6 +3,7 @@
 #include <sdk_common.h>
 #include <system/timer.h>
 #include <app/buzzer.h>
+#include <command.h>
 #include "app/led.h"
 
 #define FEEDBACK_REFRESH_RATE_IN_MS 100
@@ -12,6 +13,7 @@ APP_TIMER_DEF(feedbackTimer);
 
 static int rainbow_led_counter = 0;
 static bool displaying_fun_feedback = false;
+static bool initialization_completed = false;
 
 static void display_general_user_feedback(void *data, uint16_t dataLength) {
   UNUSED_PARAMETER(data);
@@ -48,9 +50,13 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
 void feedback_initialize() {
   create_repeated_timer(&feedbackTimer);
   start_timer(&feedbackTimer, FEEDBACK_REFRESH_RATE_IN_MS, display_general_user_feedback);
+
+  mesh_add_terminal_command("fun", "Play a song!", display_fun_feedback);
 }
 
 void display_vote_recorded_feedback() {
+  if(!initialization_completed) return;
+
   led_green_bright();
   uint16_t success_tones[4] = {100, 956, 200, 716};
   play_tones(success_tones, 2);
@@ -60,9 +66,12 @@ void display_successful_start_up_feedback() {
   led_white_bright();
   uint16_t hello_tones[8] = {200, 851, 200, 956, 200, 758, 300, 716};
   play_tones(hello_tones, 4);
+  initialization_completed = true;
 }
 
 void display_group_value_change_feedback() {
+  if(!initialization_completed) return;
+
   led_green_bright();
   uint16_t neutral_tones[2] = {500, 956};
   play_tones(neutral_tones, 1);
@@ -75,6 +84,8 @@ void display_failure_feedback() {
 }
 
 void display_fun_feedback() {
+  if(!initialization_completed) return;
+
   displaying_fun_feedback = true;
   rainbow_led_counter = 0;
   uint16_t countdown_tones[20] = {150, 902, 150, 1012, 500, 902, 1000, 1351, 300, 0, 150, 851, 150, 902, 300, 851, 300, 902, 600, 1012};

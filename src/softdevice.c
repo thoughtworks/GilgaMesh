@@ -1,15 +1,15 @@
 #include "softdevice.h"
 #include <ble_conn_state.h>
+#include <fstorage.h>
 #include <nrf51/nrf_mbr.h>
 #include <nrf_sdm.h>
 #include <nrf_log.h>
 #include <softdevice_handler_appsh.h>
-#include <system/log.h>
+#include "system/log.h"
 #include "boards.h"
 #include "connection.h"
 #include "error.h"
 #include "gap.h"
-#include "system/storage.h"
 
 void softdevice_fault_callback(uint32_t id, uint32_t pc, uint32_t info) {
   app_error_fault_handler(id, pc, info); // delegate to error module
@@ -21,7 +21,7 @@ static void ble_evt_dispatch(ble_evt_t * p_ble_evt) {
 }
 
 static void sys_evt_dispatch(uint32_t sys_evt) {
-  sys_handle_storage_event(sys_evt); // delegate to pstorage
+  fs_sys_event_handler(sys_evt);
 }
 
 void softdevice_initialize() {

@@ -24,6 +24,7 @@ void broadcast_group_value_update(char **parsedCommandArray, uint8_t numCommands
     request.newValue = (uint8_t) atoi(parsedCommandArray[2]);
   }
 
+  receive_group_value_update(BLE_CONN_HANDLE_INVALID, &request);
   app_sched_event_put(&request, sizeof(BleMessageGroupValueReq), scheduled_broadcast_request);
 }
 

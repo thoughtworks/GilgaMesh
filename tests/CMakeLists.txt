@@ -33,6 +33,9 @@ include_directories(${COMPONENTS}/ble/common)
 include_directories(${COMPONENTS}/ble/device_manager)
 include_directories(${COMPONENTS}/device)
 include_directories(${COMPONENTS}/libraries/button)
+include_directories(${COMPONENTS}/libraries/experimental_section_vars)
+include_directories(${COMPONENTS}/libraries/fds)
+include_directories(${COMPONENTS}/libraries/fstorage)
 include_directories(${COMPONENTS}/libraries/gpiote)
 include_directories(${COMPONENTS}/libraries/low_power_pwm)
 include_directories(${COMPONENTS}/libraries/ppi)
@@ -86,7 +89,6 @@ list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/soft
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/timer_mock.c")
 
 ###############################################################################################
@@ -137,6 +139,7 @@ add_executable(FeedbackTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/app/buzzer_mock.c
         mocks/app/led_mock.c
+        mocks/command_mock.c
         ${SRC_PATH}/app/feedback.c
         unit/app/FeedbackTest.c)
 target_link_libraries(FeedbackTest cmocka)
@@ -192,7 +195,14 @@ target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 
 add_executable(MainTest ${TestFramework_SOURCES}
+        mocks/app/custom_message_types/group_value_message_mock.c
+        mocks/app/feedback_mock.c
+        mocks/app/led_mock.c
+        mocks/app/rtc_mock.c
+        mocks/app/storage_mock.c
+        mocks/app/vote_config_mock.c
         mocks/message_types/heartbeat_message_mock.c
+        mocks/system/timer_mock.c
         mocks/connection_mock.c
         mocks/command_mock.c
         mocks/error_mock.c
@@ -200,11 +210,6 @@ add_executable(MainTest ${TestFramework_SOURCES}
         mocks/gatt_mock.c
         mocks/softdevice_mock.c
         mocks/terminal_mock.c
-        mocks/app/feedback_mock.c
-        mocks/system/timer_mock.c
-        mocks/app/led_mock.c
-        mocks/app/rtc_mock.c
-        mocks/app/custom_message_types/group_value_message_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/main.c
         unit/MainTest.c)
@@ -227,6 +232,7 @@ GEN_OUTPUTS(QueueTest)
 
 add_executable(VoteConfigTest ${TestFramework_SOURCES}
         mocks/app/feedback_mock.c
+        mocks/app/storage_mock.c
         ${SRC_PATH}/app/vote_config.c
         unit/app/VoteConfigTest.c)
 target_link_libraries(VoteConfigTest cmocka)

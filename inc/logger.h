@@ -24,12 +24,7 @@ void uart_error_f(UartErrorType type);
 //The Logger implements the Terminal Listener
 //bool TerminalCommandHandler(string commandName, vector<string> commandArgs);
 
-//Functions for resolving error codes
-const char* getNrfErrorString(uint32_t nrfErrorCode);
-const char* getHciErrorString(uint8_t hciErrorCode);
 const char* getBleEventNameString(uint16_t bleEventId);
-const char* getGattStatusErrorString(uint16_t gattStatusCode);
-const char* getPstorageStatusErrorString(uint16_t operationCode);
 
 /*
  * Define macros that rewrite the log function calls to the Logger

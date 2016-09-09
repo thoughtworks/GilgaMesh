@@ -1,11 +1,9 @@
 #include "app/vote_config.h"
 #include "cmocka_includes.h"
 
-voteConfiguration *get_vote_configuration() {
-  return mock_ptr_type(voteConfiguration *);
-}
+void get_vote_configuration(voteConfiguration *result) { }
 
-void set_vote_configuration(uint8_t *data) { }
+void print_current_vote_config(void) { }
 
 void update_voting_group(uint8_t newGroup) {
   check_expected(newGroup);

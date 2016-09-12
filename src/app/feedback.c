@@ -1,17 +1,17 @@
 #include "app/feedback.h"
 
-#include <sdk_common.h>
+#include <system/util.h>
 #include <system/timer.h>
 #include <app/buzzer.h>
 #include "app/led.h"
 
 #define MS_RATE_TO_DISPLAY_USER_FEEDBACK 100
 
-APP_TIMER_DEF(feedbackTimer);
+SYS_TIMER_DEF(feedbackTimer);
 
 static void display_general_user_feedback(void *data, uint16_t dataLength) {
-  UNUSED_PARAMETER(data);
-  UNUSED_PARAMETER(dataLength);
+  SYS_UNUSED_PARAMETER(data);
+  SYS_UNUSED_PARAMETER(dataLength);
 
   if (buzzer_is_on()) return; // do nothing, wait for buzzer to stop
 //

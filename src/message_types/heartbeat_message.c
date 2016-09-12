@@ -1,17 +1,16 @@
 #include "message_types/heartbeat_message.h"
 #include <stdlib.h>
-#include <app_timer.h>
+#include <system/timer.h>
 #include <app_scheduler.h>
 #include <nrf_log.h>
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"
-#include "system/timer.h"
 #include "version.h"
 
 #define MS_RATE_TO_BROADCAST_HEARTBEAT 3000
 
-APP_TIMER_DEF(heartbeatTimer);
+SYS_TIMER_DEF(heartbeatTimer);
 
 void heartbeat_initialize() {
   create_repeated_timer(&heartbeatTimer);

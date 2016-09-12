@@ -1,4 +1,6 @@
-#include <nrf_log.h>
+#include <sdk_common.h>
+
+#include "system/log.h"
 #include "message_types/broadcast_message.h"
 #include "gatt.h"
 
@@ -7,7 +9,7 @@ void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
 
   if (strlen(parsedCommandArray[1]) > BROADCAST_MESSAGE_MAX_SIZE) {
-    NRF_LOG_INFO("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_MESSAGE_MAX_SIZE);
+    SYSTEM_LOG_INFO("ERROR: Broadcast message longer than %u characters\r\n", BROADCAST_MESSAGE_MAX_SIZE);
     return;
   }
 
@@ -23,7 +25,7 @@ MessagePropagationType receive_broadcast_message(uint16_t connectionHandle, uint
   UNUSED_PARAMETER(connectionHandle);
   BleMessageBroadcastReq *broadcastMessage = (BleMessageBroadcastReq *) dataPacket;
 
-  NRF_LOG_INFO("***** RECEIVED Broadcast message: %s\r\n", broadcastMessage->message);
+  SYSTEM_LOG_INFO("***** RECEIVED Broadcast message: %s\r\n", broadcastMessage->message);
 
   return PropagateToAll;
 }

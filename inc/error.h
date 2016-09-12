@@ -1,7 +1,10 @@
 #pragma once
 
-#include <app_error.h>
 #include <nrf_soc.h>
+
+#ifndef TESTING
+#include <app_error.h>
+#endif
 
 #include "logger.h"
 

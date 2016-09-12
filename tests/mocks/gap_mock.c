@@ -1,4 +1,4 @@
-#include <gap.h>
+#include <system/ble_gap.h>
 
 #include "cmocka_includes.h"
 

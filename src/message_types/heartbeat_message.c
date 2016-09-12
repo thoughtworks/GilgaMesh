@@ -1,7 +1,7 @@
 #include "message_types/heartbeat_message.h"
 #include <stdlib.h>
 #include <system/timer.h>
-#include <app_scheduler.h>
+//#include <app_scheduler.h>
 #include <nrf_log.h>
 #include "conversion.h"
 #include "device.h"

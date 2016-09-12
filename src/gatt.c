@@ -1,5 +1,5 @@
 #include <gatt.h>
-#include <gap.h>
+#include <system/ble_gap.h>
 #include <message_types/heartbeat_message.h>
 #include <message_types/broadcast_message.h>
 #include <message_types/handshake_message.h>

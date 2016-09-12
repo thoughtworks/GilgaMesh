@@ -57,7 +57,9 @@
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
 {
+#ifndef TESTING
   __ASM volatile ("cpsie i" : : : "memory");
+#endif
 }
 
 
@@ -68,7 +70,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __disable_irq(void)
 {
+#ifndef TESTING
   __ASM volatile ("cpsid i" : : : "memory");
+#endif
 }
 
 
@@ -81,7 +85,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_CONTROL(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, control" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -93,7 +99,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_CONTROL(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_CONTROL(uint32_t control)
 {
+#ifndef TESTING
   __ASM volatile ("MSR control, %0" : : "r" (control) : "memory");
+#endif
 }
 
 
@@ -106,7 +114,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_IPSR(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, ipsr" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -120,7 +130,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_APSR(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, apsr" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -135,7 +147,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_xPSR(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, xpsr" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -149,7 +163,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PSP(void)
 {
   register uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, psp\n"  : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -161,7 +177,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PSP(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
 {
+#ifndef TESTING
   __ASM volatile ("MSR psp, %0\n" : : "r" (topOfProcStack) : "sp");
+#endif
 }
 
 
@@ -174,7 +192,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_MSP(void)
 {
   register uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, msp\n" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -187,7 +207,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_MSP(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
 {
+#ifndef TESTING
   __ASM volatile ("MSR msp, %0\n" : : "r" (topOfMainStack) : "sp");
+#endif
 }
 
 
@@ -200,7 +222,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PRIMASK(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, primask" : "=r" (result) );
+#endif
   return(result);
 }
 
@@ -212,7 +236,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PRIMASK(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PRIMASK(uint32_t priMask)
 {
+#ifndef TESTING
   __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
+#endif
 }
 
 
@@ -225,7 +251,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PRIMASK(uint32_t p
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_fault_irq(void)
 {
+#ifndef TESTING
   __ASM volatile ("cpsie f" : : : "memory");
+#endif
 }
 
 
@@ -236,7 +264,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_fault_irq(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __disable_fault_irq(void)
 {
+#ifndef TESTING
   __ASM volatile ("cpsid f" : : : "memory");
+#endif
 }
 
 
@@ -249,7 +279,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_BASEPRI(void)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, basepri" : "=r" (result) );
+  #endif
   return(result);
 }
 
@@ -261,7 +293,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_BASEPRI(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI(uint32_t value)
 {
+#ifndef TESTING
   __ASM volatile ("MSR basepri, %0" : : "r" (value) : "memory");
+  #endif
 }
 
 
@@ -273,7 +307,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI(uint32_t v
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI_MAX(uint32_t value)
 {
+#ifndef TESTING
   __ASM volatile ("MSR basepri_max, %0" : : "r" (value) : "memory");
+  #endif
 }
 
 
@@ -286,7 +322,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FAULTMASK(void
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("MRS %0, faultmask" : "=r" (result) );
+  #endif
   return(result);
 }
 
@@ -298,7 +336,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FAULTMASK(void
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_FAULTMASK(uint32_t faultMask)
 {
+#ifndef TESTING
   __ASM volatile ("MSR faultmask, %0" : : "r" (faultMask) : "memory");
+  #endif
 }
 
 #endif /* (__CORTEX_M >= 0x03U) */
@@ -317,9 +357,11 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FPSCR(void)
   uint32_t result;
 
   /* Empty asm statement works as a scheduling barrier */
+  #ifndef TESTING
   __ASM volatile ("");
   __ASM volatile ("VMRS %0, fpscr" : "=r" (result) );
   __ASM volatile ("");
+  #endif
   return(result);
 #else
    return(0);
@@ -336,9 +378,11 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_FPSCR(uint32_t fps
 {
 #if (__FPU_PRESENT == 1U) && (__FPU_USED == 1U)
   /* Empty asm statement works as a scheduling barrier */
+  #ifndef TESTING
   __ASM volatile ("");
   __ASM volatile ("VMSR fpscr, %0" : : "r" (fpscr) : "vfpcc");
   __ASM volatile ("");
+  #endif
 #endif
 }
 
@@ -372,7 +416,9 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_FPSCR(uint32_t fps
  */
 __attribute__((always_inline)) __STATIC_INLINE void __NOP(void)
 {
+#ifndef TESTING
   __ASM volatile ("nop");
+#endif
 }
 
 
@@ -382,7 +428,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __NOP(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __WFI(void)
 {
+#ifndef TESTING
   __ASM volatile ("wfi");
+#endif
 }
 
 
@@ -393,7 +441,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __WFI(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __WFE(void)
 {
+#ifndef TESTING
   __ASM volatile ("wfe");
+#endif
 }
 
 
@@ -403,7 +453,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __WFE(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __SEV(void)
 {
+#ifndef TESTING
   __ASM volatile ("sev");
+#endif
 }
 
 
@@ -415,7 +467,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __SEV(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __ISB(void)
 {
+#ifndef TESTING
   __ASM volatile ("isb 0xF":::"memory");
+#endif
 }
 
 
@@ -426,7 +480,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __ISB(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __DSB(void)
 {
+#ifndef TESTING
   __ASM volatile ("dsb 0xF":::"memory");
+#endif
 }
 
 
@@ -437,7 +493,9 @@ __attribute__((always_inline)) __STATIC_INLINE void __DSB(void)
  */
 __attribute__((always_inline)) __STATIC_INLINE void __DMB(void)
 {
+#ifndef TESTING
   __ASM volatile ("dmb 0xF":::"memory");
+#endif
 }
 
 
@@ -454,7 +512,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV(uint32_t value)
 #else
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("rev %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+  #endif
   return(result);
 #endif
 }
@@ -470,7 +530,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV16(uint32_t value)
 {
   uint32_t result;
 
+#ifndef TESTING
   __ASM volatile ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+#endif
   return(result);
 }
 
@@ -488,7 +550,9 @@ __attribute__((always_inline)) __STATIC_INLINE int32_t __REVSH(int32_t value)
 #else
   int32_t result;
 
+#ifndef TESTING
   __ASM volatile ("revsh %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
+  #endif
   return(result);
 #endif
 }
@@ -528,7 +592,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
   uint32_t result;
 
 #if       (__CORTEX_M >= 0x03U) || (__CORTEX_SC >= 300U)
+  #ifndef TESTING
    __ASM volatile ("rbit %0, %1" : "=r" (result) : "r" (value) );
+   #endif
 #else
   int32_t s = 4 /*sizeof(v)*/ * 8 - 1; /* extra shift needed at end */
 
@@ -567,12 +633,16 @@ __attribute__((always_inline)) __STATIC_INLINE uint8_t __LDREXB(volatile uint8_t
     uint32_t result;
 
 #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+    #ifndef TESTING
    __ASM volatile ("ldrexb %0, %1" : "=r" (result) : "Q" (*addr) );
+   #endif
 #else
     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
        accepted by assembler. So has to use following less efficient pattern.
     */
+    #ifndef TESTING
    __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
+   #endif
 #endif
    return ((uint8_t) result);    /* Add explicit type cast here */
 }
@@ -589,12 +659,16 @@ __attribute__((always_inline)) __STATIC_INLINE uint16_t __LDREXH(volatile uint16
     uint32_t result;
 
 #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+    #ifndef TESTING
    __ASM volatile ("ldrexh %0, %1" : "=r" (result) : "Q" (*addr) );
+   #endif
 #else
     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
        accepted by assembler. So has to use following less efficient pattern.
     */
+    #ifndef TESTING
    __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
+   #endif
 #endif
    return ((uint16_t) result);    /* Add explicit type cast here */
 }
@@ -610,7 +684,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __LDREXW(volatile uint32
 {
     uint32_t result;
 
+#ifndef TESTING
    __ASM volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
+   #endif
    return(result);
 }
 
@@ -627,7 +703,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXB(uint8_t value, 
 {
    uint32_t result;
 
+#ifndef TESTING
    __ASM volatile ("strexb %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
+   #endif
    return(result);
 }
 
@@ -644,7 +722,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXH(uint16_t value,
 {
    uint32_t result;
 
+#ifndef TESTING
    __ASM volatile ("strexh %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" ((uint32_t)value) );
+   #endif
    return(result);
 }
 
@@ -661,7 +741,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXW(uint32_t value,
 {
    uint32_t result;
 
+#ifndef TESTING
    __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
+   #endif
    return(result);
 }
 
@@ -672,7 +754,9 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __STREXW(uint32_t value,
  */
 __attribute__((always_inline)) __STATIC_INLINE void __CLREX(void)
 {
+#ifndef TESTING
   __ASM volatile ("clrex" ::: "memory");
+  #endif
 }
 
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 
 #define DEFAULT_PWM_PERIOD         150
 #define PWM_IO_PIN_NUMBER          6

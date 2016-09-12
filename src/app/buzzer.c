@@ -1,10 +1,13 @@
 #include "app/buzzer.h"
 
+#include <system/gpio.h>
 #include <system/pwm.h>
-#include <stdlib.h>
+#include <system/timer.h>
+#include <system/util.h>
 
+#include <stdlib.h>
 #include "boards.h"
-#include "system/timer.h"
+#include "error.h"
 
 #define MAX_SIZE_BUZZER_TONES_ARRAY   10
 #define BUZZER_VOLUME                 50
@@ -24,7 +27,7 @@ void buzzer_initialize() {
   buzzerEnabled = true;
 
   create_single_shot_timer(&buzzerTimer);
-  nrf_gpio_pin_clear(BUZZER_PIN_NUMBER);
+  sys_gpio_pin_clear(BUZZER_PIN_NUMBER);
 }
 
 static void resetTones() {
@@ -62,8 +65,8 @@ static void turn_buzzer_off() {
 }
 
 static void make_noise(void * p_event_data, uint16_t event_size) {
-  UNUSED_PARAMETER(p_event_data);
-  UNUSED_PARAMETER(event_size);
+  SYS_UNUSED_PARAMETER(p_event_data);
+  SYS_UNUSED_PARAMETER(event_size);
 
   if (buzzerPlaying) turn_buzzer_off();
 

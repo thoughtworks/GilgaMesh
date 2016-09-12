@@ -158,6 +158,7 @@ set_property(SOURCE gcc_startup_nrf51.s PROPERTY LANGUAGE C)
 
 # add system shim sources
 list(APPEND MeshyMesh_SOURCES "system/delay.c")
+list(APPEND MeshyMesh_SOURCES "system/error.c")
 list(APPEND MeshyMesh_SOURCES "system/gpio.c")
 list(APPEND MeshyMesh_SOURCES "system/i2c.c")
 list(APPEND MeshyMesh_SOURCES "system/platform.c")

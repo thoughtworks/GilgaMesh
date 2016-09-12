@@ -89,6 +89,7 @@ list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 
 #add system shim mock implementations
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/storage_mock.c")
@@ -108,22 +109,22 @@ GEN_OUTPUTS(BroadcastMessageTest)
 add_executable(BuzzerTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/system/gpio_mock.c
-        mocks/sdk11/components/libraries/pwm/app_pwm_mock.c
+        mocks/system/pwm_mock.c
         ${SRC_PATH}/app/buzzer.c
         unit/app/BuzzerTest.c)
 target_link_libraries(BuzzerTest cmocka)
 GEN_OUTPUTS(BuzzerTest)
 
-add_executable(ConnectionTest ${TestFramework_SOURCES}
-        mocks/app/led_mock.c
-        mocks/device_mock.c
-        mocks/gap_mock.c
-        mocks/gatt_mock.c
-        ${SRC_PATH}/conversion.c
-        ${SRC_PATH}/connection.c
-        unit/ConnectionTest.c)
-target_link_libraries(ConnectionTest cmocka)
-GEN_OUTPUTS(ConnectionTest)
+#add_executable(ConnectionTest ${TestFramework_SOURCES}
+#        mocks/app/led_mock.c
+#        mocks/device_mock.c
+#        mocks/gap_mock.c
+#        mocks/gatt_mock.c
+#        ${SRC_PATH}/conversion.c
+#        ${SRC_PATH}/connection.c
+#        unit/ConnectionTest.c)
+#target_link_libraries(ConnectionTest cmocka)
+#GEN_OUTPUTS(ConnectionTest)
 
 add_executable(CommandTest ${TestFramework_SOURCES}
         mocks/message_types/broadcast_message_mock.c
@@ -138,14 +139,14 @@ add_executable(CommandTest ${TestFramework_SOURCES}
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
-add_executable(FeedbackTest ${TestFramework_SOURCES}
-        mocks/system/timer_mock.c
-        mocks/app/buzzer_mock.c
-        mocks/app/led_mock.c
-        ${SRC_PATH}/app/feedback.c
-        unit/app/FeedbackTest.c)
-target_link_libraries(FeedbackTest cmocka)
-GEN_OUTPUTS(FeedbackTest)
+#add_executable(FeedbackTest ${TestFramework_SOURCES}
+#        mocks/system/timer_mock.c
+#        mocks/app/buzzer_mock.c
+#        mocks/app/led_mock.c
+#        ${SRC_PATH}/app/feedback.c
+#        unit/app/FeedbackTest.c)
+#target_link_libraries(FeedbackTest cmocka)
+#GEN_OUTPUTS(FeedbackTest)
 
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
@@ -156,54 +157,54 @@ add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
 target_link_libraries(HandshakeMessageTest cmocka)
 GEN_OUTPUTS(HandshakeMessageTest)
 
-add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
-        mocks/connection_mock.c
-        mocks/device_mock.c
-        mocks/gatt_mock.c
-        mocks/system/timer_mock.c
-        ${SRC_PATH}/conversion.c
-        ${SRC_PATH}/message_types/heartbeat_message.c
-        unit/message_types/HeartbeatMessageTest.c)
-target_link_libraries(HeartbeatMessageTest cmocka)
-GEN_OUTPUTS(HeartbeatMessageTest)
+#add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
+#        mocks/connection_mock.c
+#        mocks/device_mock.c
+#        mocks/gatt_mock.c
+#        mocks/system/timer_mock.c
+#        ${SRC_PATH}/conversion.c
+#        ${SRC_PATH}/message_types/heartbeat_message.c
+#        unit/message_types/HeartbeatMessageTest.c)
+#target_link_libraries(HeartbeatMessageTest cmocka)
+#GEN_OUTPUTS(HeartbeatMessageTest)
 
-add_executable(GattTest ${TestFramework_SOURCES}
-        mocks/message_types/broadcast_message_mock.c
-        mocks/message_types/heartbeat_message_mock.c
-        mocks/message_types/handshake_message_mock.c
-        mocks/connection_mock.c
-        mocks/gap_mock.c
-        mocks/queue_mock.c
-        mocks/system/timer_mock.c
-        ${SRC_PATH}/gatt.c
-        unit/GattTest.c)
-target_link_libraries(GattTest cmocka)
-GEN_OUTPUTS(GattTest)
+#add_executable(GattTest ${TestFramework_SOURCES}
+#        mocks/message_types/broadcast_message_mock.c
+#        mocks/message_types/heartbeat_message_mock.c
+#        mocks/message_types/handshake_message_mock.c
+#        mocks/connection_mock.c
+#        mocks/gap_mock.c
+#        mocks/queue_mock.c
+#        mocks/system/timer_mock.c
+#        ${SRC_PATH}/gatt.c
+#        unit/GattTest.c)
+#target_link_libraries(GattTest cmocka)
+#GEN_OUTPUTS(GattTest)
 
-add_executable(LedTest ${TestFramework_SOURCES}
-        ${SRC_PATH}/app/led.c
-        unit/app/LedTest.c)
-target_link_libraries(LedTest cmocka)
-GEN_OUTPUTS(LedTest)
+#add_executable(LedTest ${TestFramework_SOURCES}
+#        ${SRC_PATH}/app/led.c
+#        unit/app/LedTest.c)
+#target_link_libraries(LedTest cmocka)
+#GEN_OUTPUTS(LedTest)
 
-add_executable(MainTest ${TestFramework_SOURCES}
-        mocks/message_types/heartbeat_message_mock.c
-        mocks/connection_mock.c
-        mocks/command_mock.c
-        mocks/error_mock.c
-        mocks/gap_mock.c
-        mocks/gatt_mock.c
-        mocks/softdevice_mock.c
-        mocks/terminal_mock.c
-        mocks/app/feedback_mock.c
-        mocks/system/timer_mock.c
-        mocks/app/led_mock.c
-        mocks/app/rtc_mock.c
-        ${SRC_PATH}/conversion.c
-        ${SRC_PATH}/main.c
-        unit/MainTest.c)
-target_link_libraries(MainTest cmocka)
-GEN_OUTPUTS(MainTest)
+#add_executable(MainTest ${TestFramework_SOURCES}
+#        mocks/message_types/heartbeat_message_mock.c
+#        mocks/connection_mock.c
+#        mocks/command_mock.c
+#        mocks/error_mock.c
+#        mocks/gap_mock.c
+#        mocks/gatt_mock.c
+#        mocks/softdevice_mock.c
+#        mocks/terminal_mock.c
+#        mocks/app/feedback_mock.c
+#        mocks/system/timer_mock.c
+#        mocks/app/led_mock.c
+#        mocks/app/rtc_mock.c
+#        ${SRC_PATH}/conversion.c
+#        ${SRC_PATH}/main.c
+#        unit/MainTest.c)
+#target_link_libraries(MainTest cmocka)
+#GEN_OUTPUTS(MainTest)
 
 #add_executable(RTCTest ${TestFramework_SOURCES}
 #    mocks/terminal_mock.c

@@ -4,6 +4,7 @@
 #include <ble_gattc.h>
 #include <ble.h>
 #include <nrf_log.h>
+#include <app_error.h>
 #include "error.h"
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)

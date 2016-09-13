@@ -102,8 +102,12 @@
 
     static inline unsigned int gcc_current_sp(void)
     {
+#ifndef TESTING
         register unsigned sp __ASM("sp");
         return sp;
+#else
+        return 0;
+#endif
     }
 
 #elif defined   ( __TASKING__ )

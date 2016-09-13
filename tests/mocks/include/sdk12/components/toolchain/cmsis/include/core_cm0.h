@@ -627,127 +627,23 @@ typedef struct
 #define _IP_IDX(IRQn)            (   (((uint32_t)(int32_t)(IRQn))                >>    2UL)      )
 
 
-/**
-  \brief   Enable External Interrupt
-  \details Enables a device-specific interrupt in the NVIC interrupt controller.
-  \param [in]      IRQn  External interrupt number. Value cannot be negative.
- */
-__STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
-{
-  NVIC->ISER[0U] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
-}
+void NVIC_EnableIRQ(IRQn_Type IRQn);
+
+void NVIC_DisableIRQ(IRQn_Type IRQn);
+
+uint32_t NVIC_GetPendingIRQ(IRQn_Type IRQn);
+
+void NVIC_SetPendingIRQ(IRQn_Type IRQn);
+
+void NVIC_ClearPendingIRQ(IRQn_Type IRQn);
+
+void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority);
+
+uint32_t NVIC_GetPriority(IRQn_Type IRQn);
+
+void NVIC_SystemReset(void);
 
 
-/**
-  \brief   Disable External Interrupt
-  \details Disables a device-specific interrupt in the NVIC interrupt controller.
-  \param [in]      IRQn  External interrupt number. Value cannot be negative.
- */
-__STATIC_INLINE void NVIC_DisableIRQ(IRQn_Type IRQn)
-{
-  NVIC->ICER[0U] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
-}
-
-
-/**
-  \brief   Get Pending Interrupt
-  \details Reads the pending register in the NVIC and returns the pending bit for the specified interrupt.
-  \param [in]      IRQn  Interrupt number.
-  \return             0  Interrupt status is not pending.
-  \return             1  Interrupt status is pending.
- */
-__STATIC_INLINE uint32_t NVIC_GetPendingIRQ(IRQn_Type IRQn)
-{
-  return((uint32_t)(((NVIC->ISPR[0U] & (1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL))) != 0UL) ? 1UL : 0UL));
-}
-
-
-/**
-  \brief   Set Pending Interrupt
-  \details Sets the pending bit of an external interrupt.
-  \param [in]      IRQn  Interrupt number. Value cannot be negative.
- */
-__STATIC_INLINE void NVIC_SetPendingIRQ(IRQn_Type IRQn)
-{
-  NVIC->ISPR[0U] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
-}
-
-
-/**
-  \brief   Clear Pending Interrupt
-  \details Clears the pending bit of an external interrupt.
-  \param [in]      IRQn  External interrupt number. Value cannot be negative.
- */
-__STATIC_INLINE void NVIC_ClearPendingIRQ(IRQn_Type IRQn)
-{
-  NVIC->ICPR[0U] = (uint32_t)(1UL << (((uint32_t)(int32_t)IRQn) & 0x1FUL));
-}
-
-
-/**
-  \brief   Set Interrupt Priority
-  \details Sets the priority of an interrupt.
-  \note    The priority cannot be set for every core interrupt.
-  \param [in]      IRQn  Interrupt number.
-  \param [in]  priority  Priority to set.
- */
-__STATIC_INLINE void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
-{
-  if ((int32_t)(IRQn) < 0)
-  {
-    SCB->SHP[_SHP_IDX(IRQn)] = ((uint32_t)(SCB->SHP[_SHP_IDX(IRQn)] & ~(0xFFUL << _BIT_SHIFT(IRQn))) |
-       (((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL) << _BIT_SHIFT(IRQn)));
-  }
-  else
-  {
-    NVIC->IP[_IP_IDX(IRQn)]  = ((uint32_t)(NVIC->IP[_IP_IDX(IRQn)]  & ~(0xFFUL << _BIT_SHIFT(IRQn))) |
-       (((priority << (8U - __NVIC_PRIO_BITS)) & (uint32_t)0xFFUL) << _BIT_SHIFT(IRQn)));
-  }
-}
-
-
-/**
-  \brief   Get Interrupt Priority
-  \details Reads the priority of an interrupt.
-           The interrupt number can be positive to specify an external (device specific) interrupt,
-           or negative to specify an internal (core) interrupt.
-  \param [in]   IRQn  Interrupt number.
-  \return             Interrupt Priority.
-                      Value is aligned automatically to the implemented priority bits of the microcontroller.
- */
-__STATIC_INLINE uint32_t NVIC_GetPriority(IRQn_Type IRQn)
-{
-
-  if ((int32_t)(IRQn) < 0)
-  {
-    return((uint32_t)(((SCB->SHP[_SHP_IDX(IRQn)] >> _BIT_SHIFT(IRQn) ) & (uint32_t)0xFFUL) >> (8U - __NVIC_PRIO_BITS)));
-  }
-  else
-  {
-    return((uint32_t)(((NVIC->IP[ _IP_IDX(IRQn)] >> _BIT_SHIFT(IRQn) ) & (uint32_t)0xFFUL) >> (8U - __NVIC_PRIO_BITS)));
-  }
-}
-
-
-/**
-  \brief   System Reset
-  \details Initiates a system reset request to reset the MCU.
- */
-__STATIC_INLINE void NVIC_SystemReset(void)
-{
-  __DSB();                                                          /* Ensure all outstanding memory accesses included
-                                                                       buffered write are completed before reset */
-  SCB->AIRCR  = ((0x5FAUL << SCB_AIRCR_VECTKEY_Pos) |
-                 SCB_AIRCR_SYSRESETREQ_Msk);
-  __DSB();                                                          /* Ensure completion of memory access */
-
-  for (;;)                                                           /* wait until reset */
-  {
-    __NOP();
-  }
-}
-
-/*@} end of CMSIS_Core_NVICFunctions */
 
 
 
@@ -772,21 +668,8 @@ __STATIC_INLINE void NVIC_SystemReset(void)
            function <b>SysTick_Config</b> is not included. In this case, the file <b><i>device</i>.h</b>
            must contain a vendor-specific implementation of this function.
  */
-__STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
-{
-  if ((ticks - 1UL) > SysTick_LOAD_RELOAD_Msk)
-  {
-    return (1UL);                                                   /* Reload value impossible */
-  }
+uint32_t SysTick_Config(uint32_t ticks);
 
-  SysTick->LOAD  = (uint32_t)(ticks - 1UL);                         /* set reload register */
-  NVIC_SetPriority (SysTick_IRQn, (1UL << __NVIC_PRIO_BITS) - 1UL); /* set Priority for Systick Interrupt */
-  SysTick->VAL   = 0UL;                                             /* Load the SysTick Counter Value */
-  SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
-                   SysTick_CTRL_TICKINT_Msk   |
-                   SysTick_CTRL_ENABLE_Msk;                         /* Enable SysTick IRQ and SysTick Timer */
-  return (0UL);                                                     /* Function successful */
-}
 
 #endif
 

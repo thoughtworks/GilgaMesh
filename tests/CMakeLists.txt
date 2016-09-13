@@ -83,7 +83,9 @@ list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_sdm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf_soc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/ble/common/ble_conn_state_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/fds/fds_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_error_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/timer/app_timer_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_util_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/log/nrf_log_mock.c")
@@ -91,8 +93,6 @@ list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/scheduler/ap
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/softdevice/common/softdevice_handler/softdevice_handler_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/toolchain/cmsis/cmsis_gcc_mock.c")
-
-#list(APPEND TestFramework_SOURCES "mocks/sdk11/compon
 
 #add system shim mock implementations
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
@@ -236,6 +236,12 @@ add_executable(QueueTest ${TestFramework_SOURCES}
         unit/QueueTest.c)
 target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
+
+add_executable(StorageTest ${TestFramework_SOURCES}
+        ${SRC_PATH}/app/storage.c
+        unit/app/StorageTest.c)
+target_link_libraries(StorageTest cmocka)
+GEN_OUTPUTS(StorageTest)
 
 add_executable(VoteConfigTest ${TestFramework_SOURCES}
         mocks/app/feedback_mock.c

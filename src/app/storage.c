@@ -1,6 +1,7 @@
 #include "app/storage.h"
 
 #include <fds.h>
+#include <stddef.h>
 #include <sched.h>
 #include "system/log.h"
 
@@ -79,7 +80,7 @@ void update_data_in_storage(void *data, uint16_t dataLength, uint16_t recordKey)
   fds_record_desc_t record_desc;
   fds_find_token_t ftok = { 0 };
 
-  if (fds_record_find(STORAGE_FILE_ID, STORAGE_VOTE_CONFIG_RECORD_KEY, &record_desc, &ftok) == FDS_SUCCESS) {
+  if (fds_record_find(STORAGE_FILE_ID, recordKey, &record_desc, &ftok) == FDS_SUCCESS) {
     delete_data_from_storage(&record_desc);
   }
   set_data_in_storage(data, dataLength, recordKey);

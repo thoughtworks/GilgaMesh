@@ -30,6 +30,10 @@ ret_code_t fds_record_find(uint16_t file_id, uint16_t record_key, fds_record_des
   return mock_type(ret_code_t);
 }
 
+ret_code_t fds_record_find_in_file(uint16_t file_id, fds_record_desc_t *const p_desc, fds_find_token_t *const p_token) {
+  return mock_type(ret_code_t);
+}
+
 ret_code_t fds_record_open(fds_record_desc_t* const p_desc,fds_flash_record_t* const p_flash_record) {
   p_flash_record->p_data = "foo";
   fds_open_called = true;

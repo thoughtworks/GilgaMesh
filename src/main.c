@@ -1,14 +1,15 @@
 #include "main.h"
 
-#include <app/custom_message_types/group_value_message.h>
-#include <system/log.h>
 #include <nrf_log_ctrl.h>
+#include "app/custom_message_types/group_value_message.h"
+#include "app/custom_message_types/vote_ack_message.h"
+#include "app/custom_message_types/vote_message.h"
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
-#include "app/rtc.h"
 #include "app/storage.h"
 #include "message_types/heartbeat_message.h"
+#include "system/log.h"
 #include "connection.h"
 #include "gap.h"
 #include "softdevice.h"
@@ -47,11 +48,16 @@ void initialize() {
   init_module("GATT", gatt_initialize);
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
+  init_module("vote message timer", vote_message_initialize);
 
   mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
+  mesh_add_terminal_command("vote", "Register a vote", save_vote_from_command_line);
+  mesh_add_terminal_command("vack", "Broadcast vote ack", broadcast_vote_ack_from_cmd_line);
   add_write_event(Custom, receive_group_value_update);
+  add_write_event(5, receive_vote);
+  add_write_event(6, receive_vote_acknowledgement);
 
   MESH_LOG("System ready.\r\n");
 }

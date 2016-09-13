@@ -9,7 +9,6 @@
 
 #define MS_RATE_TO_MANAGE_NFC 100
 #define MS_RATE_TO_CLEAR_VOTE_BUFFER 3000
-#define MS_RATE_TO_SEND_VOTE 5000
 #define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
 
 static app_timer_id_t nfcTimerId;

@@ -3,10 +3,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
-#include <rtc.h>
+
+#include "app/rtc.h"
 #include "vote_config.h"
 
-#define MAX_VOTE_COUNT                    500 // if you change this, you must also change PSTORAGE_NUM_OF_PAGES
+#define VOTES_STORAGE_FILE_ID     0x0002
+#define MAX_VOTE_COUNT            500 // if you change this, you must also change PSTORAGE_NUM_OF_PAGES
 
 typedef struct {
   uint16_t voterId;
@@ -28,13 +30,9 @@ typedef struct {
 
 void user_votes_initialize(void);
 void save_vote(uint16_t voterId);
+void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands);
 void clear_vote_buffer(void *data, uint16_t dataLength);
-void get_first_vote(void *data, uint16_t dataLength);
 void process_vote_from_storage(userVote *vote);
 uint16_t get_vote_count(void);
 bool vote_storage_is_full(void);
 void set_vote_metadata(voteMetadata *metadata);
-void broadcast_vote(void *data, uint16_t dataLength);
-void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestring_t timestampStr);
-MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket);
-MessagePropagationType receive_vote_acknowledgement(uint16_t connectionHandle, uint8_t *dataPacket);

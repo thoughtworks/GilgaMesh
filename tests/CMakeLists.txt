@@ -74,7 +74,7 @@ include_directories(mocks/include/sdk12/components/libraries/util)
 include_directories(mocks/include)
 
 
-# add sdk11 mock implementations
+# add sdk12 mock implementations
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_gattc_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/ble_gatts_mock.c")
@@ -85,7 +85,6 @@ list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/ble/common/ble_conn_state_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/fds/fds_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_error_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/timer/app_timer_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_util_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/log/nrf_log_mock.c")
@@ -100,6 +99,10 @@ list(APPEND TestFramework_SOURCES "mocks/system/error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/timer_mock.c")
+
+#add other useful files
+list(APPEND TestFramework_SOURCES "${SRC_PATH}/system/log.c")
+
 
 ###############################################################################################
 # add unit tests and mocks they need

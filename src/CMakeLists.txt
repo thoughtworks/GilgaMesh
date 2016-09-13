@@ -190,11 +190,14 @@ list(APPEND MeshyMesh_SOURCES "main.c")
 
 # add application sources
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/group_value_message.c")
+list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_message.c")
+list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_ack_message.c")
 list(APPEND MeshyMesh_SOURCES "app/buzzer.c")
 list(APPEND MeshyMesh_SOURCES "app/feedback.c")
 list(APPEND MeshyMesh_SOURCES "app/led.c")
 list(APPEND MeshyMesh_SOURCES "app/rtc.c")
 list(APPEND MeshyMesh_SOURCES "app/storage.c")
+list(APPEND MeshyMesh_SOURCES "app/votes.c")
 list(APPEND MeshyMesh_SOURCES "app/vote_config.c")
 
 add_executable(${OUTPUT_FILE_NAME}.elf ${MeshyMesh_SOURCES} system/log.c ../inc/system/log.h)

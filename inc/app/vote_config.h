@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include "message_types/message.h"
 
+#define VOTE_CONFIG_STORAGE_FILE_ID     0x0001
+#define VOTE_CONFIG_STORAGE_RECORD_KEY  0x0001
+
 typedef struct {
   uint8_t group;
   uint8_t value;

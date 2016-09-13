@@ -17,7 +17,6 @@ typedef struct {
 static meshCommand** commands;
 static uint16_t commandCount;
 
-
 static void print_help(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(parsedCommandArray);
   UNUSED_PARAMETER(numCommands);

@@ -16,7 +16,8 @@ static void VoteConfig_updates_voting_group_and_displays_feedback() {
   voteConfiguration expectedConfig = { 17, 0 };
   expect_memory(update_data_in_storage, data, &expectedConfig, sizeof(voteConfiguration));
   expect_value(update_data_in_storage, dataLength, sizeof(voteConfiguration));
-  expect_value(update_data_in_storage, recordKey, STORAGE_VOTE_CONFIG_RECORD_KEY);
+  expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
+  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_STORAGE_RECORD_KEY);
 
   update_voting_group(group);
   assert_true(displayed_group_value_feedback);
@@ -29,7 +30,8 @@ static void VoteConfig_updates_voting_value_and_displays_feedback() {
   voteConfiguration expectedConfig = { 0, 23 };
   expect_memory(update_data_in_storage, data, &expectedConfig, sizeof(voteConfiguration));
   expect_value(update_data_in_storage, dataLength, sizeof(voteConfiguration));
-  expect_value(update_data_in_storage, recordKey, STORAGE_VOTE_CONFIG_RECORD_KEY);
+  expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
+  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_STORAGE_RECORD_KEY);
 
   update_voting_value(value);
   assert_true(displayed_group_value_feedback);

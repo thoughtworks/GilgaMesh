@@ -10,19 +10,21 @@ voteConfiguration tempVoteConfig __attribute__((aligned(4)));
 void update_voting_group(uint8_t newGroup) {
   get_vote_configuration(&tempVoteConfig);
   tempVoteConfig.group = newGroup;
+  MESH_LOG("Updated group to: %u", newGroup);
   display_group_value_change_feedback();
-  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), STORAGE_VOTE_CONFIG_RECORD_KEY);
+  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
 }
 
 void update_voting_value(uint8_t newValue) {
   get_vote_configuration(&tempVoteConfig);
   tempVoteConfig.value = newValue;
+  MESH_LOG("Updated value to: %u", newValue);
   display_group_value_change_feedback();
-  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), STORAGE_VOTE_CONFIG_RECORD_KEY);
+  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
 }
 
 void get_vote_configuration(voteConfiguration *result) {
-  void* savedVoteConfig = get_data_from_storage(STORAGE_VOTE_CONFIG_RECORD_KEY);
+  void* savedVoteConfig = get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
   if (savedVoteConfig == NULL) {
     result->group = 0;
     result->value = 0;

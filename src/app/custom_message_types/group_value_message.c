@@ -5,8 +5,6 @@
 #include "device.h"
 #include "gatt.h"
 
-void (*mesh_command_handler)(char **parsedCommandArray, uint8_t numCommands);
-
 void broadcast_group_value_update(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
 

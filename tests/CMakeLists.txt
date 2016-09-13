@@ -29,7 +29,7 @@ include_directories(${CONFIG_PATH})
 # includes for real nordic sdk11 headers
 #include_directories(${COMPONENTS}/ble/ble_db_discovery)
 #include_directories(${COMPONENTS}/ble/ble_radio_notification)
-#include_directories(${COMPONENTS}/ble/common)
+include_directories(${COMPONENTS}/ble/common)
 #include_directories(${COMPONENTS}/ble/device_manager)
 #include_directories(${COMPONENTS}/libraries/button)
 #include_directories(${COMPONENTS}/libraries/fifo)
@@ -82,8 +82,8 @@ list(APPEND TestFramework_SOURCES "mocks/fakeS130_v201/nrf51/nrf_mbr_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_util_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/low_power_pwm/low_power_pwm_mock.c")
-#list(APPEND TestFramework_SOURCES "mocks/sdk11/components/ble/common/ble_conn_state_mock.c")
-#list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/log/nrf_log_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk12/components/ble/common/ble_conn_state_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/log/nrf_log_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/scheduler/app_scheduler_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/app_error_mock.c")
@@ -118,16 +118,16 @@ add_executable(BuzzerTest ${TestFramework_SOURCES}
 target_link_libraries(BuzzerTest cmocka)
 GEN_OUTPUTS(BuzzerTest)
 
-#add_executable(ConnectionTest ${TestFramework_SOURCES}
-#        mocks/app/led_mock.c
-#        mocks/device_mock.c
-#        mocks/gap_mock.c
-#        mocks/gatt_mock.c
-#        ${SRC_PATH}/conversion.c
-#        ${SRC_PATH}/connection.c
-#        unit/ConnectionTest.c)
-#target_link_libraries(ConnectionTest cmocka)
-#GEN_OUTPUTS(ConnectionTest)
+add_executable(ConnectionTest ${TestFramework_SOURCES}
+        mocks/app/led_mock.c
+        mocks/device_mock.c
+        mocks/gap_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/conversion.c
+        ${SRC_PATH}/connection.c
+        unit/ConnectionTest.c)
+target_link_libraries(ConnectionTest cmocka)
+GEN_OUTPUTS(ConnectionTest)
 
 add_executable(CommandTest ${TestFramework_SOURCES}
         mocks/message_types/broadcast_message_mock.c
@@ -142,14 +142,14 @@ add_executable(CommandTest ${TestFramework_SOURCES}
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
-#add_executable(FeedbackTest ${TestFramework_SOURCES}
-#        mocks/system/timer_mock.c
-#        mocks/app/buzzer_mock.c
-#        mocks/app/led_mock.c
-#        ${SRC_PATH}/app/feedback.c
-#        unit/app/FeedbackTest.c)
-#target_link_libraries(FeedbackTest cmocka)
-#GEN_OUTPUTS(FeedbackTest)
+add_executable(FeedbackTest ${TestFramework_SOURCES}
+        mocks/system/timer_mock.c
+        mocks/app/buzzer_mock.c
+        mocks/app/led_mock.c
+        ${SRC_PATH}/app/feedback.c
+        unit/app/FeedbackTest.c)
+target_link_libraries(FeedbackTest cmocka)
+GEN_OUTPUTS(FeedbackTest)
 
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c

@@ -27,3 +27,7 @@ void start_timer(const system_timer_id_t *timer_id, uint32_t ms_to_execute, syst
 void execute_timer_callback(bool value) {
   shouldExecuteCallback = value;
 }
+
+void stop_timer(const system_timer_id_t *timer_id) {
+  check_expected(timer_id);
+}

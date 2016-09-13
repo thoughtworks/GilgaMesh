@@ -72,7 +72,7 @@ void save_vote(uint16_t voterId) {
 
     buffer.voterId = voterId;
     buffer.hitCount = 1;
-    buffer.config = *get_vote_configuration();
+    get_vote_configuration(&buffer.config);
 
     display_vote_recorded_feedback();
   }

@@ -4,7 +4,7 @@
 void storage_initialize() { }
 
 void* get_data_from_storage(uint16_t recordKey) {
-  return NULL;
+  return mock_type(void*);
 }
 
 void update_data_in_storage(void *data, uint16_t dataLength, uint16_t recordKey) {

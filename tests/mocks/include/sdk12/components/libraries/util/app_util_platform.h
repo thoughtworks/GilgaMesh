@@ -174,53 +174,10 @@ void app_util_critical_region_exit (uint8_t nested);
 #define CONTROL_nPRIV_Msk                  (1UL /*<< CONTROL_nPRIV_Pos*/)                 /*!< CONTROL: nPRIV Mask */
 #endif
 
-/**@brief Function for finding the current interrupt level.
- *
- * @return   Current interrupt level.
- * @retval   APP_IRQ_PRIORITY_HIGH    We are running in Application High interrupt level.
- * @retval   APP_IRQ_PRIORITY_LOW     We are running in Application Low interrupt level.
- * @retval   APP_IRQ_PRIORITY_THREAD  We are running in Thread Mode.
- */
-static __INLINE uint8_t current_int_priority_get(void)
-{
-    uint32_t isr_vector_num = __get_IPSR() & IPSR_ISR_Msk ;
-    if (isr_vector_num > 0)
-    {
-        int32_t irq_type = ((int32_t)isr_vector_num - EXTERNAL_INT_VECTOR_OFFSET);
-        return (NVIC_GetPriority((IRQn_Type)irq_type) & 0xFF);
-    }
-    else
-    {
-        return APP_IRQ_PRIORITY_THREAD;
-    }
-}
 
-/**@brief Function for finding out the current privilege level.
- *
- * @return   Current privilege level.
- * @retval   APP_LEVEL_UNPRIVILEGED    We are running in unprivileged level.
- * @retval   APP_LEVEL_PRIVILEGED    We are running in privileged level.
- */
-static __INLINE uint8_t privilege_level_get(void)
-{
-#if __CORTEX_M == (0x00U) || defined(_WIN32) || defined(__unix) || defined(__APPLE__)
-    /* the Cortex-M0 has no concept of privilege */
-    return APP_LEVEL_PRIVILEGED;
-#elif __CORTEX_M == (0x04U)
-    uint32_t isr_vector_num = __get_IPSR() & IPSR_ISR_Msk ;
-    if (0 == isr_vector_num)
-    {
-        /* Thread Mode, check nPRIV */
-        int32_t control = __get_CONTROL();
-        return control & CONTROL_nPRIV_Msk ? APP_LEVEL_UNPRIVILEGED : APP_LEVEL_PRIVILEGED;
-    }
-    else
-    {
-        /* Handler Mode, always privileged */
-        return APP_LEVEL_PRIVILEGED;
-    }
-#endif
-}
+uint8_t current_int_priority_get(void);
+uint8_t privilege_level_get(void);
+
 
 
 #ifdef __cplusplus

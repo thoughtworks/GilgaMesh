@@ -84,11 +84,15 @@ list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_uti
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/ble/common/ble_conn_state_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/log/nrf_log_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/sdk12/components/toolchain/cmsis/cmsis_gcc_mock.c")
+#list(APPEND TestFramework_SOURCES "mocks/sdk12/components/toolchain/cmsis/core_cm0_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/scheduler/app_scheduler_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/timer/app_timer_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/libraries/util/app_error_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
 #list(APPEND TestFramework_SOURCES "mocks/sdk11/components/softdevice/common/softdevice_handler/softdevice_handler_mock.c")
+
+#list(APPEND TestFramework_SOURCES "mocks/sdk11/compon
 
 #add system shim mock implementations
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
@@ -160,29 +164,29 @@ add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
 target_link_libraries(HandshakeMessageTest cmocka)
 GEN_OUTPUTS(HandshakeMessageTest)
 
-#add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
-#        mocks/connection_mock.c
-#        mocks/device_mock.c
-#        mocks/gatt_mock.c
-#        mocks/system/timer_mock.c
-#        ${SRC_PATH}/conversion.c
-#        ${SRC_PATH}/message_types/heartbeat_message.c
-#        unit/message_types/HeartbeatMessageTest.c)
-#target_link_libraries(HeartbeatMessageTest cmocka)
-#GEN_OUTPUTS(HeartbeatMessageTest)
+add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
+        mocks/connection_mock.c
+        mocks/device_mock.c
+        mocks/gatt_mock.c
+        mocks/system/timer_mock.c
+        ${SRC_PATH}/conversion.c
+        ${SRC_PATH}/message_types/heartbeat_message.c
+        unit/message_types/HeartbeatMessageTest.c)
+target_link_libraries(HeartbeatMessageTest cmocka)
+GEN_OUTPUTS(HeartbeatMessageTest)
 
-#add_executable(GattTest ${TestFramework_SOURCES}
-#        mocks/message_types/broadcast_message_mock.c
-#        mocks/message_types/heartbeat_message_mock.c
-#        mocks/message_types/handshake_message_mock.c
-#        mocks/connection_mock.c
-#        mocks/gap_mock.c
-#        mocks/queue_mock.c
-#        mocks/system/timer_mock.c
-#        ${SRC_PATH}/gatt.c
-#        unit/GattTest.c)
-#target_link_libraries(GattTest cmocka)
-#GEN_OUTPUTS(GattTest)
+add_executable(GattTest ${TestFramework_SOURCES}
+        mocks/message_types/broadcast_message_mock.c
+        mocks/message_types/heartbeat_message_mock.c
+        mocks/message_types/handshake_message_mock.c
+        mocks/connection_mock.c
+        mocks/gap_mock.c
+        mocks/queue_mock.c
+        mocks/system/timer_mock.c
+        ${SRC_PATH}/gatt.c
+        unit/GattTest.c)
+target_link_libraries(GattTest cmocka)
+GEN_OUTPUTS(GattTest)
 
 add_executable(LedTest ${TestFramework_SOURCES}
         ${SRC_PATH}/app/led.c

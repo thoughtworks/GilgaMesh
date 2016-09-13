@@ -1,3 +1,6 @@
+#pragma once
+#include <stdint.h>
+
 /**************************************************************************//**
  * @file     core_cm0.h
  * @brief    CMSIS Cortex-M0 Core Peripheral Access Layer Header File

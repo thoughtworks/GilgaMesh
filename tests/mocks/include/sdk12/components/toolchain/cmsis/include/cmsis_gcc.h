@@ -1,4 +1,6 @@
 #pragma once
+#include <stdint.h>
+
 /**************************************************************************//**
  * @file     cmsis_gcc.h
  * @brief    CMSIS Cortex-M Core Function/Instruction Header File

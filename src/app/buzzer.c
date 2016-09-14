@@ -1,19 +1,16 @@
 #include "app/buzzer.h"
 
-#ifdef TESTING
-#include <nrf51.h>
-#include <nrf51_bitfields.h>
-#endif
-#include <app_pwm.h>
-#include <stdlib.h>
-#include <string.h>
+#include <system/gpio.h>
+#include <system/pwm.h>
+#include <system/timer.h>
+#include <system/util.h>
 
+#include <stdlib.h>
 #include "boards.h"
-#include "system/timer.h"
+#include "error.h"
 
 #define MAX_SIZE_BUZZER_TONES_ARRAY   10
 #define BUZZER_VOLUME                 50
-#define DEFAULT_BUZZER_PERIOD         150
 
 static buzzerTone tonesToPlay[MAX_SIZE_BUZZER_TONES_ARRAY];
 static int numStoredTones = 0;
@@ -22,9 +19,7 @@ static int currentTone = 0;
 static bool buzzerEnabled = false;
 static bool buzzerPlaying = false;
 
-static app_pwm_config_t pwm_config = APP_PWM_DEFAULT_CONFIG_1CH(DEFAULT_BUZZER_PERIOD, BUZZER_PIN_NUMBER);
-APP_PWM_INSTANCE(PWM1, 1);
-APP_TIMER_DEF(buzzerTimer);
+SYS_TIMER_DEF(buzzerTimer);
 
 static void make_noise(void * p_event_data, uint16_t event_size);
 
@@ -32,7 +27,7 @@ void buzzer_initialize() {
   buzzerEnabled = true;
 
   create_single_shot_timer(&buzzerTimer);
-  nrf_gpio_pin_clear(BUZZER_PIN_NUMBER);
+  sys_gpio_pin_clear(BUZZER_PIN_NUMBER);
 }
 
 static void resetTones() {
@@ -56,27 +51,27 @@ static void add_pause() {
 }
 
 static void turn_buzzer_on() {
-  EC(app_pwm_init(&PWM1, &pwm_config, NULL));
-  app_pwm_enable(&PWM1);
-  EC(app_pwm_channel_duty_set(&PWM1, 0, BUZZER_VOLUME));
+  EC(sys_pwm_init());
+  sys_pwm_enable();
+  EC(sys_pwm_channel_duty_set(0, BUZZER_VOLUME));
   start_timer(&buzzerTimer, tonesToPlay[currentTone++].duration, make_noise);
   buzzerPlaying = true;
 }
 
 static void turn_buzzer_off() {
-  app_pwm_channel_duty_set(&PWM1, 0, 0);
-  app_pwm_disable(&PWM1);
-  app_pwm_uninit(&PWM1);
+  sys_pwm_channel_duty_set(0, 0);
+  sys_pwm_disable();
+  sys_pwm_uninit();
 }
 
 static void make_noise(void * p_event_data, uint16_t event_size) {
-  UNUSED_PARAMETER(p_event_data);
-  UNUSED_PARAMETER(event_size);
+  SYS_UNUSED_PARAMETER(p_event_data);
+  SYS_UNUSED_PARAMETER(event_size);
 
   if (buzzerPlaying) turn_buzzer_off();
 
   if(currentTone < MAX_SIZE_BUZZER_TONES_ARRAY && (tonesToPlay[currentTone].duration > 0 || tonesToPlay[currentTone].period > 0)) {
-    pwm_config.period_us = tonesToPlay[currentTone].period;
+    sys_pwm_set_default_period(tonesToPlay[currentTone].period);
     turn_buzzer_on();
   }
   else {

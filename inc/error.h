@@ -1,7 +1,8 @@
 #pragma once
 
-#include <app_error.h>
 #include <nrf_soc.h>
+#include <system/error.h>
+
 
 #define EC(ERROR_CODE)    app_error_handler((ERROR_CODE), __LINE__, (uint8_t*) __FILE__);
 

@@ -134,8 +134,8 @@ static void seeed_rtc_init() {
   MESH_LOG("Init Seeed RTC...\r\n");
 
   nrf_drv_twi_config_t const twi_config = {
-    .scl                = TWI0_CONFIG_SCL,
-    .sda                = TWI0_CONFIG_SDA,
+    .scl                = 14,
+    .sda                = 15,
     .frequency          = NRF_TWI_FREQ_100K,
     .interrupt_priority = APP_IRQ_PRIORITY_LOW
   };
@@ -260,9 +260,8 @@ void rtc_print_date_and_time() {
                                                                               , system_time.clock_time.year
                                                                               , system_time.clock_time.hours
                                                                               , system_time.clock_time.minutes
-                                                                              , system_time.clock_time.seconds
-                                                                              , system_time.clock_time.millis
-                                                                              , system_time.clock_time.UTC_offset_in_minutes);
+                                                                              , system_time.clock_time.seconds);
+
 
   timestamp_t timestamp;
   timestring_t timestring;

@@ -2,6 +2,7 @@
 
 #include <app/custom_message_types/group_value_message.h>
 #include <system/log.h>
+#include <nrf_log_ctrl.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
@@ -27,7 +28,7 @@ void HardFault_Handler(void)
 }
 
 void initialize() {
-  NRF_LOG_INIT();
+  NRF_LOG_INIT(NULL);
   MESH_LOG("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 

@@ -77,10 +77,10 @@ rm $SOFTDEVICE_LOCATION/s130_nrf51_2.0.1.zip
 # * Nordic SDK * #
 # ************** #
 mkdir $SDK
-wget -O $SDK/nRF5_SDK_11.0.0_89a8197.zip https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v11.x.x/nRF5_SDK_11.0.0_89a8197.zip
+wget -O $SDK/nRF5_SDK_12.0.0_12f24da.zip https://developer.nordicsemi.com/nRF5_SDK/nRF5_SDK_v12.x.x/nRF5_SDK_12.0.0_12f24da.zip
 ## should check checksum
-unzip $SDK/nRF5_SDK_11.0.0_89a8197.zip -d $SDK/nrf_sdk_11_0
-rm $SDK/nRF5_SDK_11.0.0_89a8197.zip
+unzip $SDK/nRF5_SDK_12.0.0_12f24da.zip -d $SDK/nrf_sdk_12_0
+rm $SDK/nRF5_SDK_12.0.0_12f24da.zip
 git clone https://github.com/I-SYST/EHAL $DEPLOY_RESOURCES/EHAL
 
 # ************************* #

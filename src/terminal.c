@@ -1,6 +1,7 @@
 #include "terminal.h"
 
 #include <stdlib.h>
+#include <SEGGER_RTT.h>
 #include "system/log.h"
 
 #define ENTER_KEY 0xA
@@ -12,15 +13,15 @@ static int readBufferIndex = 0;
 
 void terminal_putstring(char* string) {
   if(is_terminal_initialized) {
-    MESH_LOG(string);
+    NRF_LOG_RAW_INFO("%s", string);
   }
 }
 
 uint8_t terminal_get() {
   uint8_t charValue = 0;
   if(is_terminal_initialized) {
-    if (NRF_LOG_HAS_INPUT()) {
-      NRF_LOG_READ_INPUT((char *) &charValue);
+    if (SEGGER_RTT_HasKey()) {
+      charValue = (uint8_t)SEGGER_RTT_GetKey();
     }
   }
   return charValue;

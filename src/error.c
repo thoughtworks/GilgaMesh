@@ -2,8 +2,9 @@
 #include <ble_gatts.h>
 #include <ble_gattc.h>
 #include <ble.h>
-
-#include "system/log.h"
+#include <nrf_log.h>
+#include <app_error.h>
+#include <system/log.h>
 #include "error.h"
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
@@ -18,10 +19,8 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
   }
 }
 
-const char* getBleEventNameString(uint16_t bleEventId)
-{
-  switch (bleEventId)
-  {
+const char* getBleEventNameString(uint16_t bleEventId) {
+  switch (bleEventId) {
     case BLE_EVT_TX_COMPLETE:
       return "BLE_EVT_TX_COMPLETE";
     case BLE_EVT_USER_MEM_REQUEST:

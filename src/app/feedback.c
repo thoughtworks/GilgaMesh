@@ -1,6 +1,6 @@
 #include "app/feedback.h"
 
-#include <sdk_common.h>
+#include <system/util.h>
 #include <system/timer.h>
 #include <app/buzzer.h>
 #include <command.h>
@@ -9,15 +9,15 @@
 #define FEEDBACK_REFRESH_RATE_IN_MS 100
 #define MAX_LED_COLORS              6
 
-APP_TIMER_DEF(feedbackTimer);
+SYS_TIMER_DEF(feedbackTimer);
 
 static int rainbow_led_counter = 0;
 static bool displaying_fun_feedback = false;
 static bool initialization_completed = false;
 
 static void display_general_user_feedback(void *data, uint16_t dataLength) {
-  UNUSED_PARAMETER(data);
-  UNUSED_PARAMETER(dataLength);
+  SYS_UNUSED_PARAMETER(data);
+  SYS_UNUSED_PARAMETER(dataLength);
 
   if (buzzer_is_on()) {
     if (displaying_fun_feedback) {

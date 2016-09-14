@@ -1,62 +1,38 @@
-#include <votes.h>
-#include <sdk_common.h>
-#include <gatt.h>
-#include <storage.h>
-#include <app_scheduler.h>
-#include <feedback.h>
+#include "app/vote_config.h"
 
+#include <string.h>
+#include "app/feedback.h"
+#include "app/storage.h"
+#include "system/log.h"
 
-static voteConfiguration voteConfig = { 1, 1 };
-
+voteConfiguration tempVoteConfig __attribute__((aligned(4)));
 
 void update_voting_group(uint8_t newGroup) {
-  if (newGroup != voteConfig.group) {
-    voteConfig.group = newGroup;
-    display_group_value_change_feedback();
-    save_vote_configuration();
-  }
+  get_vote_configuration(&tempVoteConfig);
+  tempVoteConfig.group = newGroup;
+  display_group_value_change_feedback();
+  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), STORAGE_VOTE_CONFIG_RECORD_KEY);
 }
 
 void update_voting_value(uint8_t newValue) {
-  if (newValue != voteConfig.value) {
-    voteConfig.value = newValue;
-    display_group_value_change_feedback();
-    save_vote_configuration();
-  }
+  get_vote_configuration(&tempVoteConfig);
+  tempVoteConfig.value = newValue;
+  display_group_value_change_feedback();
+  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), STORAGE_VOTE_CONFIG_RECORD_KEY);
 }
 
-voteConfiguration *get_vote_configuration() {
-  return &voteConfig;
-}
-
-void set_vote_configuration(uint8_t *data) {
-  update_voting_group(data[0]);
-  update_voting_value(data[1]);
-}
-
-void broadcast_group_value_update(char* nodeIdStr, char* newFieldStr, bool isGroup) {
-  BleMessageGroupValueReq request;
-  memset(&request, 0, sizeof(request));
-  request.head.messageType = SetVoteConfiguration;
-  request.deviceId = (uint32_t) atoll(nodeIdStr);
-  if (isGroup) {
-    request.setGroup = true;
-    request.newGroup = (uint8_t) atoi(newFieldStr);
+void get_vote_configuration(voteConfiguration *result) {
+  void* savedVoteConfig = get_data_from_storage(STORAGE_VOTE_CONFIG_RECORD_KEY);
+  if (savedVoteConfig == NULL) {
+    result->group = 0;
+    result->value = 0;
   } else {
-    request.setValue = true;
-    request.newValue = (uint8_t) atoi(newFieldStr);
+    memcpy(result, savedVoteConfig, sizeof(voteConfiguration));
   }
-
-  app_sched_event_put(&request, sizeof(BleMessageGroupValueReq), scheduled_broadcast_request);
 }
 
-MessagePropagationType receive_group_value_update(uint16_t connectionHandle, uint8_t *dataPacket) {
-  UNUSED_PARAMETER(connectionHandle);
-  BleMessageGroupValueReq *req = (BleMessageGroupValueReq *) dataPacket;
-  if (req->deviceId == deviceId) {
-    if (req->setGroup) update_voting_group(req->newGroup);
-    if (req->setValue) update_voting_value(req->newValue);
-    return DoNotPropagate;
-  }
-  return PropagateToAll;
+void print_current_vote_config() {
+  voteConfiguration voteConfig;
+  get_vote_configuration(&voteConfig);
+  MESH_LOG("   Group: %u, Value: %u\r\n", voteConfig.group, voteConfig.value);
 }

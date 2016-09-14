@@ -16,19 +16,12 @@
 void led_initialize(void);
 
 void led_red_bright(void);
-void led_red_dim(void);
-void led_red_off(void);
-
 void led_green_bright(void);
-void led_green_dim(void);
-void led_green_off(void);
-
 void led_blue_bright(void);
-void led_blue_dim(void);
-void led_blue_off(void);
-
+void led_purple_bright();
+void led_teal_bright();
+void led_yellow_bright();
 void led_white_bright(void);
 void led_white_dim(void);
-void led_white_off(void);
 
-void led_all_off(void);
+void flash_color(int rainbow_led_counter);

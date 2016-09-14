@@ -1,8 +1,7 @@
 #include "message_types/heartbeat_message.h"
 #include <stdlib.h>
 #include <system/timer.h>
-//#include <app_scheduler.h>
-#include <nrf_log.h>
+#include <system/log.h>
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"
@@ -27,7 +26,7 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
     memcpy(parentDeviceId, "ROOT", 5);
   }
 
-  NRF_LOG_INFO("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
+  MESH_LOG("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
       deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
 }
 

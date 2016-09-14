@@ -4,7 +4,7 @@
 #include <message_types/broadcast_message.h>
 #include <message_types/handshake_message.h>
 #include <ble_conn_state.h>
-#include <nrf_log.h>
+#include <system/log.h>
 
 typedef struct {
   BleMessageType messageType;
@@ -129,7 +129,7 @@ void send_to_multiple_connections(sdk_mapped_flags_key_list_t handles, uint16_t 
 }
 
 void send_to_central_connection(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
-  send_to_multiple_connections(ble_conn_state_central_handles(), originHandle, data, dataLength);
+  send_to_multiple_connections(ble_conn_state_periph_handles(), originHandle, data, dataLength);
 }
 
 void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t dataLength) {
@@ -177,8 +177,8 @@ void handle_write_event(void * data, uint16_t dataLength)
       return;
     }
   }
-  
-  NRF_LOG_INFO("unknown message type: %d\r\n", messageType);
+
+  MESH_LOG("unknown message type: %d\r\n", messageType);
 }
 
 void add_write_event(uint8_t type, write_event_handler handler) {

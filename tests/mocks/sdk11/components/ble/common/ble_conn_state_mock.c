@@ -20,7 +20,7 @@ sdk_mapped_flags_key_list_t ble_conn_state_conn_handles(void) {
   return result;
 }
 
-sdk_mapped_flags_key_list_t ble_conn_state_central_handles(void) {
+sdk_mapped_flags_key_list_t ble_conn_state_periph_handles(void) {
   sdk_mapped_flags_key_list_t result;
   result.len = mock_type(uint32_t);
   result.flag_keys[0] = mock_type(uint16_t);

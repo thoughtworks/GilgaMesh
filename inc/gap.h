@@ -11,7 +11,6 @@
 #include <ble_hci.h>
 
 #include <gatt.h>
-#include <logger.h>
 #include <connection.h>
 #include <message_types/message.h>
 #include <error.h>

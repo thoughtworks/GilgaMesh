@@ -116,7 +116,7 @@ uint16_t get_vote_count() {
 }
 
 bool vote_storage_is_full() {
-#ifndef NFC_DEBUG
+#ifndef PROD_BOARD
   return false;
 #endif
   return get_vote_count() == MAX_VOTE_COUNT + 1;

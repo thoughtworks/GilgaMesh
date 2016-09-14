@@ -1,10 +1,10 @@
 #include <ble_gatt.h>
-#include <ble_hci.h>
 #include <ble_gatts.h>
 #include <ble_gattc.h>
 #include <ble.h>
 #include <nrf_log.h>
 #include <app_error.h>
+#include <system/log.h>
 #include "error.h"
 
 void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
@@ -14,68 +14,13 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 
   error_info_t *error_info = (error_info_t *) info;
   if(error_info->err_code != NRF_SUCCESS){
-    NRF_LOG_ERROR("ERROR: ERROR CODE %d, in file %s@%d\r\n",
+    MESH_LOG("ERROR: ERROR CODE %d, in file %s@%d\r\n",
                    error_info->err_code, error_info->p_file_name, error_info->line_num);
   }
 }
 
-const char* getNrfErrorString(uint32_t nrfErrorCode)
-{
-  switch (nrfErrorCode)
-  {
-    case NRF_SUCCESS:
-      return "NRF_SUCCESS";
-    case NRF_ERROR_SVC_HANDLER_MISSING:
-      return "NRF_ERROR_SVC_HANDLER_MISSING";
-    case NRF_ERROR_SOFTDEVICE_NOT_ENABLED:
-      return "NRF_ERROR_SOFTDEVICE_NOT_ENABLED";
-    case NRF_ERROR_INTERNAL:
-      return "NRF_ERROR_INTERNAL";
-    case NRF_ERROR_NO_MEM:
-      return "NRF_ERROR_NO_MEM";
-    case NRF_ERROR_NOT_FOUND:
-      return "NRF_ERROR_NOT_FOUND";
-    case NRF_ERROR_NOT_SUPPORTED:
-      return "NRF_ERROR_NOT_SUPPORTED";
-    case NRF_ERROR_INVALID_PARAM:
-      return "NRF_ERROR_INVALID_PARAM";
-    case NRF_ERROR_INVALID_STATE:
-      return "NRF_ERROR_INVALID_STATE";
-    case NRF_ERROR_INVALID_LENGTH:
-      return "NRF_ERROR_INVALID_LENGTH";
-    case NRF_ERROR_INVALID_FLAGS:
-      return "NRF_ERROR_INVALID_FLAGS";
-    case NRF_ERROR_INVALID_DATA:
-      return "NRF_ERROR_INVALID_DATA";
-    case NRF_ERROR_DATA_SIZE:
-      return "NRF_ERROR_DATA_SIZE";
-    case NRF_ERROR_TIMEOUT:
-      return "NRF_ERROR_TIMEOUT";
-    case NRF_ERROR_NULL:
-      return "NRF_ERROR_NULL";
-    case NRF_ERROR_FORBIDDEN:
-      return "NRF_ERROR_FORBIDDEN";
-    case NRF_ERROR_INVALID_ADDR:
-      return "NRF_ERROR_INVALID_ADDR";
-    case NRF_ERROR_BUSY:
-      return "NRF_ERROR_BUSY";
-    case BLE_ERROR_INVALID_CONN_HANDLE:
-      return "BLE_ERROR_INVALID_CONN_HANDLE";
-    case BLE_ERROR_INVALID_ATTR_HANDLE:
-      return "BLE_ERROR_INVALID_ATTR_HANDLE";
-    case BLE_ERROR_NO_TX_PACKETS:
-      return "BLE_ERROR_NO_TX_PACKETS";
-    case 0xDEADBEEF:
-      return "DEADBEEF";
-    default:
-      return "UNKNOWN_ERROR";
-  }
-}
-
-const char* getBleEventNameString(uint16_t bleEventId)
-{
-  switch (bleEventId)
-  {
+const char* getBleEventNameString(uint16_t bleEventId) {
+  switch (bleEventId) {
     case BLE_EVT_TX_COMPLETE:
       return "BLE_EVT_TX_COMPLETE";
     case BLE_EVT_USER_MEM_REQUEST:
@@ -146,137 +91,3 @@ const char* getBleEventNameString(uint16_t bleEventId)
       return "Unknown Error";
   }
 }
-
-const char* getHciErrorString(uint8_t hciErrorCode)
-{
-  switch (hciErrorCode)
-  {
-
-    case BLE_HCI_STATUS_CODE_SUCCESS:
-      return "Success";
-    case BLE_HCI_STATUS_CODE_UNKNOWN_BTLE_COMMAND:
-      return "Unknown BLE Command";
-    case BLE_HCI_STATUS_CODE_UNKNOWN_CONNECTION_IDENTIFIER:
-      return "Unknown Connection Identifier";
-    case BLE_HCI_AUTHENTICATION_FAILURE:
-      return "Authentication Failure";
-    case BLE_HCI_CONN_FAILED_TO_BE_ESTABLISHED:
-      return "Connection Failed to be Established";
-    case BLE_HCI_CONN_INTERVAL_UNACCEPTABLE:
-      return "Connection Interval Unacceptable";
-    case BLE_HCI_CONN_TERMINATED_DUE_TO_MIC_FAILURE:
-      return "Connection Terminated due to MIC Failure";
-    case BLE_HCI_CONNECTION_TIMEOUT:
-      return "Connection Timeout";
-    case BLE_HCI_CONTROLLER_BUSY:
-      return "Controller Busy";
-    case BLE_HCI_DIFFERENT_TRANSACTION_COLLISION:
-      return "Different Transaction Collision";
-    case BLE_HCI_DIRECTED_ADVERTISER_TIMEOUT:
-      return "Directed Adverisement Timeout";
-    case BLE_HCI_INSTANT_PASSED:
-      return "Instant Passed";
-    case BLE_HCI_LOCAL_HOST_TERMINATED_CONNECTION:
-      return "Local Host Terminated Connection";
-    case BLE_HCI_MEMORY_CAPACITY_EXCEEDED:
-      return "Memory Capacity Exceeded";
-    case BLE_HCI_PAIRING_WITH_UNIT_KEY_UNSUPPORTED:
-      return "Pairing with Unit Key Unsupported";
-    case BLE_HCI_REMOTE_DEV_TERMINATION_DUE_TO_LOW_RESOURCES:
-      return "Remote Device Terminated Connection due to low resources";
-    case BLE_HCI_REMOTE_DEV_TERMINATION_DUE_TO_POWER_OFF:
-      return "Remote Device Terminated Connection due to power off";
-    case BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION:
-      return "Remote User Terminated Connection";
-    case BLE_HCI_STATUS_CODE_COMMAND_DISALLOWED:
-      return "Command Disallowed";
-    case BLE_HCI_STATUS_CODE_INVALID_BTLE_COMMAND_PARAMETERS:
-      return "Invalid BLE Command Parameters";
-    case BLE_HCI_STATUS_CODE_INVALID_LMP_PARAMETERS:
-      return "Invalid LMP Parameters";
-    case BLE_HCI_STATUS_CODE_LMP_PDU_NOT_ALLOWED:
-      return "LMP PDU Not Allowed";
-    case BLE_HCI_STATUS_CODE_LMP_RESPONSE_TIMEOUT:
-      return "LMP Response Timeout";
-    case BLE_HCI_STATUS_CODE_PIN_OR_KEY_MISSING:
-      return "Pin or Key missing";
-    case BLE_HCI_STATUS_CODE_UNSPECIFIED_ERROR:
-      return "Unspecified Error";
-    case BLE_HCI_UNSUPPORTED_REMOTE_FEATURE:
-      return "Unsupported Remote Feature";
-    default:
-      return "Unknown HCI error";
-  }
-}
-
-const char* getGattStatusErrorString(uint16_t gattStatusCode)
-{
-  switch (gattStatusCode)
-  {
-    case BLE_GATT_STATUS_SUCCESS:
-      return "Success";
-    case BLE_GATT_STATUS_UNKNOWN:
-      return "Unknown or not applicable status";
-    case BLE_GATT_STATUS_ATTERR_INVALID:
-      return "ATT Error: Invalid Error Code";
-    case BLE_GATT_STATUS_ATTERR_INVALID_HANDLE:
-      return "ATT Error: Invalid Attribute Handle";
-    case BLE_GATT_STATUS_ATTERR_READ_NOT_PERMITTED:
-      return "ATT Error: Read not permitted";
-    case BLE_GATT_STATUS_ATTERR_WRITE_NOT_PERMITTED:
-      return "ATT Error: Write not permitted";
-    case BLE_GATT_STATUS_ATTERR_INVALID_PDU:
-      return "ATT Error: Used in ATT as Invalid PDU";
-    case BLE_GATT_STATUS_ATTERR_INSUF_AUTHENTICATION:
-      return "ATT Error: Authenticated link required";
-    case BLE_GATT_STATUS_ATTERR_REQUEST_NOT_SUPPORTED:
-      return "ATT Error: Used in ATT as Request Not Supported";
-    case BLE_GATT_STATUS_ATTERR_INVALID_OFFSET:
-      return "ATT Error: Offset specified was past the end of the attribute";
-    case BLE_GATT_STATUS_ATTERR_INSUF_AUTHORIZATION:
-      return "ATT Error: Used in ATT as Insufficient Authorisation";
-    case BLE_GATT_STATUS_ATTERR_PREPARE_QUEUE_FULL:
-      return "ATT Error: Used in ATT as Prepare Queue Full";
-    case BLE_GATT_STATUS_ATTERR_ATTRIBUTE_NOT_FOUND:
-      return "ATT Error: Used in ATT as Attribute not found";
-    case BLE_GATT_STATUS_ATTERR_ATTRIBUTE_NOT_LONG:
-      return "ATT Error: Attribute cannot be read or written using read/write blob requests";
-    case BLE_GATT_STATUS_ATTERR_INSUF_ENC_KEY_SIZE:
-      return "ATT Error: Encryption key size used is insufficient";
-    case BLE_GATT_STATUS_ATTERR_INVALID_ATT_VAL_LENGTH:
-      return "ATT Error: Invalid value size";
-    case BLE_GATT_STATUS_ATTERR_UNLIKELY_ERROR:
-      return "ATT Error: Very unlikely error";
-    case BLE_GATT_STATUS_ATTERR_INSUF_ENCRYPTION:
-      return "ATT Error: Encrypted link required";
-    case BLE_GATT_STATUS_ATTERR_UNSUPPORTED_GROUP_TYPE:
-      return "ATT Error: Attribute type is not a supported grouping attribute";
-    case BLE_GATT_STATUS_ATTERR_INSUF_RESOURCES:
-      return "ATT Error: Encrypted link required";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE1_BEGIN:
-      return "ATT Error: Reserved for Future Use range #1 begin";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE1_END:
-      return "ATT Error: Reserved for Future Use range #1 end";
-    case BLE_GATT_STATUS_ATTERR_APP_BEGIN:
-      return "ATT Error: Application range begin";
-    case BLE_GATT_STATUS_ATTERR_APP_END:
-      return "ATT Error: Application range end";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE2_BEGIN:
-      return "ATT Error: Reserved for Future Use range #2 begin";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE2_END:
-      return "ATT Error: Reserved for Future Use range #2 end";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE3_BEGIN:
-      return "ATT Error: Reserved for Future Use range #3 begin";
-    case BLE_GATT_STATUS_ATTERR_RFU_RANGE3_END:
-      return "ATT Error: Reserved for Future Use range #3 end";
-    case BLE_GATT_STATUS_ATTERR_CPS_CCCD_CONFIG_ERROR:
-      return "ATT Common Profile and Service Error: Client Characteristic Configuration Descriptor improperly configured";
-    case BLE_GATT_STATUS_ATTERR_CPS_PROC_ALR_IN_PROG:
-      return "ATT Common Profile and Service Error: Procedure Already in Progress";
-    case BLE_GATT_STATUS_ATTERR_CPS_OUT_OF_RANGE:
-      return "ATT Common Profile and Service Error: Out Of Range";
-    default:
-      return "Unknown GATT status";
-  }
-}
-

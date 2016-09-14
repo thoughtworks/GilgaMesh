@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include "error.h"
-#include "logger.h"
 
 #ifndef TESTING
 #include <app_timer.h>

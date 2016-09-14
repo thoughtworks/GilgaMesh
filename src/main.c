@@ -1,11 +1,13 @@
 #include "main.h"
 
-#include <app_scheduler.h>
+#include <app/custom_message_types/group_value_message.h>
+#include <system/log.h>
 #include <nrf_log_ctrl.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
 #include "app/rtc.h"
+#include "app/storage.h"
 #include "message_types/heartbeat_message.h"
 #include "connection.h"
 #include "gap.h"
@@ -22,13 +24,12 @@ volatile uint32_t m_uicr_bootloader_start_address __attribute__ ((section(".uicr
 
 void HardFault_Handler(void)
 {
-  display_catastrophic_failure_feedback();
+  display_failure_feedback();
 }
-
 
 void initialize() {
   NRF_LOG_INIT(NULL);
-  NRF_LOG_INFO("\r\n[[ MeshyMesh is booting ]]\r\n");
+  MESH_LOG("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
   init_module("softdevice", softdevice_initialize);
@@ -39,20 +40,24 @@ void initialize() {
 #endif
   init_module("terminal", terminal_initialize);
   init_module("commands", command_initialize);
-#ifdef IS_PROD_BOARD
+  init_module("storage", storage_initialize);
   init_module("feedback", feedback_initialize);
-#endif
   init_module("RTC", rtc_init);
   init_module("connections", connections_initialize);
   init_module("GATT", gatt_initialize);
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
 
-  NRF_LOG_INFO("System ready.\r\n");
+  mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
+  mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
+  mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
+  add_write_event(Custom, receive_group_value_update);
+
+  MESH_LOG("System ready.\r\n");
 }
 
 init_module(char* module_name, void (*function)()) {
-  NRF_LOG_INFO("Init %s... \r\n", module_name);
+  MESH_LOG("Init %s... \r\n", module_name);
   (*function)();
 }
 

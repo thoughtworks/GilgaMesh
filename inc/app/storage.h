@@ -2,14 +2,11 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <pstorage.h>
+#include <fstorage.h>
 
-#include "votes.h"
-
+#define STORAGE_VOTE_CONFIG_RECORD_KEY  0x0001
+#define STORAGE_VOTE_RECORD_KEY         0x0002
 
 void storage_initialize();
-void set_vote_in_storage(userVote *vote, uint16_t index);
-void get_vote_from_storage(uint16_t index);
-void set_vote_metadata_in_storage(voteMetadata *metadata);
-void save_vote_configuration(void);
-void load_version_information(void);
+void* get_data_from_storage(uint16_t recordKey);
+void update_data_in_storage(void *data, uint16_t dataLength, uint16_t recordKey);

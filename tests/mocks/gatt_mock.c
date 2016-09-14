@@ -27,5 +27,6 @@ void propagate_message(ble_gatts_evt_t *gattsEvent) { }
 void send_message_from_connection_queue(connection *targetConnection){ }
 void scheduled_broadcast_request(void *data, uint16_t dataLength) { }
 void handle_write_event(void * data, uint16_t dataLength) { }
+void add_write_event(uint8_t type, write_event_handler handler) { }
 
 #endif

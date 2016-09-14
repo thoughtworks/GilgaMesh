@@ -5,11 +5,7 @@
 static const char HEX_DIGITS[16] = "0123456789ABCDEF";
 
 uint32_t get_raw_device_id() {
-#ifdef TESTING
-  return 0xDEADBEEF; // arbitrary device id for tests
-#else
   return NRF_FICR->DEVICEID[1];
-#endif
 }
 
 char* get_short_hex_device_id(uint32_t deviceId, char* result) {

@@ -13,7 +13,7 @@ static int readBufferIndex = 0;
 
 void terminal_putstring(char* string) {
   if(is_terminal_initialized) {
-    //SEGGER_RTT_printf("%s", string);
+    NRF_LOG_RAW_INFO("%s", string);
   }
 }
 

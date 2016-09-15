@@ -5,19 +5,38 @@
 
 #include "app/feedback.h"
 #include "app/storage.h"
+#include "system/timer.h"
+#include "system/util.h"
+
+#define CLEAR_VOTE_BUFFER_DURATION_IN_MS 3000
 
 static userVote buffer = { 0 };
 static userVote bufferForStorage __attribute__((aligned(4))) = { 0 };
+
+SYS_TIMER_DEF(clearBufferTimer);
+
+void votes_initialize() {
+  create_single_shot_timer(&clearBufferTimer);
+}
+
+static bool save_and_clear_vote_buffer_content();
+static void start_clear_buffer_timeout() {
+  start_timer(&clearBufferTimer, CLEAR_VOTE_BUFFER_DURATION_IN_MS, save_and_clear_vote_buffer_content);
+}
+
+static void stop_clear_buffer_timeout() {
+  stop_timer(&clearBufferTimer);
+}
 
 static bool local_vote_buffer_is_empty() {
   return buffer.voterId == 0 && buffer.hitCount == 0;
 }
 
-bool add_buffer_contents_to_storage() {
+static bool save_and_clear_vote_buffer_content() {
   if (local_vote_buffer_is_empty()) return true;
 
   if (get_vote_count() > MAX_VOTE_COUNT) {
-    //turn_on_buffer_clear_timeout();
+    start_clear_buffer_timeout();
     return false;
   }
 
@@ -28,21 +47,13 @@ bool add_buffer_contents_to_storage() {
   return true;
 }
 
-void clear_vote_buffer(void *data, uint16_t dataLength) {
-  UNUSED_PARAMETER(data);
-  UNUSED_PARAMETER(dataLength);
-
-  add_buffer_contents_to_storage();
-}
-
 void save_vote(uint16_t voterId) {
-  //turn_off_buffer_clear_timeout();
+  stop_clear_buffer_timeout();
 
   if (buffer.voterId == voterId) {
     buffer.hitCount++;
   } else {
-    bool successful = add_buffer_contents_to_storage();
-    if (!successful) return;
+    if (!save_and_clear_vote_buffer_content()) return;
 
     buffer.voterId = voterId;
     buffer.hitCount = 1;
@@ -52,10 +63,11 @@ void save_vote(uint16_t voterId) {
   }
   rtc_get_timestamp(buffer.timeOfLastVote);
 
-  //turn_on_buffer_clear_timeout();
+  start_clear_buffer_timeout();
 }
 
 void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands) {
+  SYS_UNUSED_PARAMETER(numCommands);
   uint16_t voterId = (uint16_t) atoi(parsedCommandArray[1]);
   save_vote(voterId);
 }
@@ -66,8 +78,5 @@ uint16_t get_vote_count() {
 }
 
 bool vote_storage_is_full() {
-#ifndef IS_PROD_BOARD
-  return false;
-#endif
   return get_vote_count() > MAX_VOTE_COUNT;
 }

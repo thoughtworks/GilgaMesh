@@ -45,6 +45,7 @@ void initialize() {
 #endif
   feedback_initialize();
   storage_initialize();
+  votes_initialize();
   rtc_init();
   connections_initialize();
   gatt_initialize();

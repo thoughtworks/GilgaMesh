@@ -1,7 +1,9 @@
 #include "message_types/heartbeat_message.h"
+
 #include <stdlib.h>
-#include <system/timer.h>
-#include <system/log.h>
+
+#include "system/log.h"
+#include "system/timer.h"
 #include "conversion.h"
 #include "device.h"
 #include "gatt.h"

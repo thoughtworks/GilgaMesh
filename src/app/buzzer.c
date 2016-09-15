@@ -10,7 +10,7 @@
 #include "boards.h"
 #include "error.h"
 
-#define MAX_SIZE_BUZZER_TONES_ARRAY   10
+#define MAX_SIZE_BUZZER_TONES_ARRAY   20
 #define BUZZER_VOLUME                 50
 
 static buzzerTone tonesToPlay[MAX_SIZE_BUZZER_TONES_ARRAY];

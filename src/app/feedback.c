@@ -84,6 +84,6 @@ void display_fun_feedback() {
 
   displaying_fun_feedback = true;
   rainbow_led_counter = 0;
-  uint16_t countdown_tones[20] = {150, 902, 150, 1012, 500, 902, 1000, 1351, 300, 0, 150, 851, 150, 902, 300, 851, 300, 902, 600, 1012};
-  play_tones(countdown_tones, 10);
+  uint16_t countdown_tones[24] = {150, 902, 150, 1012, 500, 902, 1000, 1351, 300, 0, 150, 851, 150, 902, 200, 851, 100, 0, 200, 902, 100, 0, 600, 1012};
+  play_tones(countdown_tones, 12);
 }

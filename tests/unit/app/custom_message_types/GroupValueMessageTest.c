@@ -1,5 +1,6 @@
 #include "app/custom_message_types/group_value_message.h"
 
+#include <ble_types.h>
 #include "cmocka_includes.h"
 
 static BleMessageGroupValueReq mockRequest;
@@ -48,7 +49,9 @@ static void GroupValueMessage_broadcast_sets_group_information() {
   mockRequest.newGroup = 4;
   char* commands[3] = { "grp", "123", "4" };
 
-  expect_memory(app_sched_event_put, p_event_data, &mockRequest, sizeof(mockRequest));
+  expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
+  expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
+  expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
   broadcast_group_value_update(commands, 3);
 }
 
@@ -58,7 +61,9 @@ static void GroupValueMessage_broadcast_sets_value_information() {
   mockRequest.newValue = 8;
   char* commands[3] = { "val", "567", "8" };
 
-  expect_memory(app_sched_event_put, p_event_data, &mockRequest, sizeof(mockRequest));
+  expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
+  expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
+  expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
   broadcast_group_value_update(commands, 3);
 }
 

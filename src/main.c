@@ -7,6 +7,7 @@
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
+#include "app/nfc.h"
 #include "app/storage.h"
 #include "message_types/heartbeat_message.h"
 #include "system/log.h"
@@ -36,10 +37,11 @@ void initialize() {
   init_module("softdevice", softdevice_initialize);
   init_module("timers", timer_initialize);
   init_module("leds", led_initialize);
+  init_module("terminal", terminal_initialize);
 #ifdef IS_PROD_BOARD
   init_module("buzzer", buzzer_initialize);
+  init_module("NFC", nfc_initialize);
 #endif
-  init_module("terminal", terminal_initialize);
   init_module("commands", command_initialize);
   init_module("storage", storage_initialize);
   init_module("feedback", feedback_initialize);
@@ -49,6 +51,7 @@ void initialize() {
   init_module("GAP", gap_initialize);
   init_module("heartbeat timer", heartbeat_initialize);
   init_module("vote message timer", vote_message_initialize);
+
 
   mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);

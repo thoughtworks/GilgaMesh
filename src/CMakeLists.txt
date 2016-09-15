@@ -77,6 +77,7 @@ endmacro(GEN_OUTPUTS)
 # includes common to all targets
 
 include_directories(${MeshyMesh_SOURCE_DIR}/inc)
+include_directories(${MeshyMesh_SOURCE_DIR}/inc/app/pn532)
 include_directories(${MeshyMesh_SOURCE_DIR}/config)
 
 # includes for nordic nrf51
@@ -192,9 +193,11 @@ list(APPEND MeshyMesh_SOURCES "main.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/group_value_message.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_message.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_ack_message.c")
+list(APPEND MeshyMesh_SOURCES "app/pn532/adafruit_pn532.c")
 list(APPEND MeshyMesh_SOURCES "app/buzzer.c")
 list(APPEND MeshyMesh_SOURCES "app/feedback.c")
 list(APPEND MeshyMesh_SOURCES "app/led.c")
+list(APPEND MeshyMesh_SOURCES "app/nfc.c")
 list(APPEND MeshyMesh_SOURCES "app/rtc.c")
 list(APPEND MeshyMesh_SOURCES "app/storage.c")
 list(APPEND MeshyMesh_SOURCES "app/votes.c")

@@ -53,9 +53,11 @@
 #define RTS_PIN_NUMBER 8
 #define HWFC           true
 
+// NFC config
+#define PN532_IRQ 2
+#define PN532_RESET 3
+#define PN532_CONFIG_TWI_INSTANCE 1
 
-#define RX_PIN_NUMBER_NFC  11
-#define TX_PIN_NUMBER_NFC  10
 #define BUZZER_PIN_NUMBER  6
 
 #define NRF_CLOCK_LFCLKSRC      {.source        = NRF_CLOCK_LF_SRC_SYNTH,                \

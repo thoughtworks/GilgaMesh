@@ -18,21 +18,13 @@ typedef struct {
 }__attribute__ ((packed)) userVote;
 
 typedef struct {
-  uint16_t count;
-  uint16_t startIndex;
-}__attribute__ ((packed)) voteMetadata;
-
-typedef struct {
   uint16_t voterId;
   timestamp_t timestamp;
 }__attribute__ ((packed)) userVoteAck;
 
 
-void user_votes_initialize(void);
 void save_vote(uint16_t voterId);
 void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands);
 void clear_vote_buffer(void *data, uint16_t dataLength);
-void process_vote_from_storage(userVote *vote);
 uint16_t get_vote_count(void);
 bool vote_storage_is_full(void);
-void set_vote_metadata(voteMetadata *metadata);

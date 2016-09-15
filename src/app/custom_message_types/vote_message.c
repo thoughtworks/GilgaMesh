@@ -15,8 +15,8 @@
 SYS_TIMER_DEF(voteMessageTimer);
 
 void vote_message_initialize() {
-  create_repeated_timer(&voteMessageTimer);
-  start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_vote);
+  create_single_shot_timer(&voteMessageTimer);
+  start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_next_vote);
 }
 
 static void log_vote(BleMessageVoteReq *request) {
@@ -34,18 +34,22 @@ static void log_vote(BleMessageVoteReq *request) {
   MESH_LOG("%s\r\n", voteLogInfo);
 }
 
-void broadcast_vote() {
+void broadcast_next_vote() {
+  stop_timer(&voteMessageTimer);
   userVote *voteToSend = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL);
-  if (voteToSend == NULL) return;
 
-  BleMessageVoteReq request;
-  memset(&request, 0, sizeof(request));
-  request.messageType = 5; // 5 == Vote
-  request.deviceId = get_raw_device_id();
-  request.vote = *voteToSend;
+  if (voteToSend != NULL) {
+    BleMessageVoteReq request;
+    memset(&request, 0, sizeof(request));
+    request.messageType = 5; // 5 == Vote
+    request.deviceId = get_raw_device_id();
+    request.vote = *voteToSend;
 
-  log_vote(&request);
-  send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageVoteReq));
+    log_vote(&request);
+    send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageVoteReq));
+  }
+
+  start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_next_vote);
 }
 
 MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket) {

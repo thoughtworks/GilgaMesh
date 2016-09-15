@@ -1,11 +1,14 @@
 //#include "app/led.h"
 #include "cmocka_includes.h"
 
+bool ledRedBright = false;
 bool ledWhiteBright = false;
 bool ledWhiteDim = false;
 
 void led_initialize(void) { }
-void led_red_bright(void) { }
+void led_red_bright(void) {
+  ledRedBright = true;
+}
 void led_green_bright(void) { }
 void led_blue_bright(void) { }
 void led_purple_bright(void) { }

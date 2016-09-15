@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <app_scheduler.h>
 #include <system/log.h>
+#include <app/storage.h>
+#include <app/custom_message_types/vote_message.h>
 
 #include "device.h"
 #include "gatt.h"
@@ -32,10 +34,13 @@ MessagePropagationType receive_vote_acknowledgement(uint16_t connectionHandle, u
   UNUSED_PARAMETER(connectionHandle);
   BleMessageVoteAckReq *voteAckReq = (BleMessageVoteAckReq *) dataPacket;
   if (voteAckReq->deviceId == get_raw_device_id()) {
-    MESH_LOG("recieved vote ack!\r\n");
-    //remove this vote from fstorage
-    //send out next vote to gateway:
-    //get_random_vote(NULL, 0);
+    userVoteAck voteAck = voteAckReq->voteAck;
+    userVote *matchingVote = get_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck.voterId);
+
+    if (matchingVote != NULL && rtc_is_equal_timestamp(voteAck.timestamp, matchingVote->timeOfLastVote)) {
+      delete_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck.voterId);
+    }
+    broadcast_next_vote();
     return DoNotPropagate;
   }
   return PropagateToAll;

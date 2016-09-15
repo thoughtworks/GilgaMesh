@@ -48,7 +48,7 @@ void set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint1
   }
 }
 
-static void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
+void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
   fds_record_desc_t record_desc;
   fds_find_token_t ftok = { 0 };
   if (fds_record_find(fileId, recordKey, &record_desc, &ftok) == FDS_SUCCESS) {
@@ -78,8 +78,6 @@ void* get_data_from_storage(uint16_t fileId, uint16_t recordKey) {
     } else {
       MESH_LOG("ERROR: Can't open data in storage!\r\n");
     }
-  } else {
-    MESH_LOG("ERROR: No matching data found in storage!\r\n");
   }
   return result;
 }

@@ -97,7 +97,6 @@ static void print_seeed_rtc_state() {
 
 static void seeed_rtc_init() {
   uint32_t err_code;
-  MESH_LOG("Init Seeed RTC...\r\n");
 
   nrf_drv_twi_config_t const twi_config = {
     .scl                = 14,

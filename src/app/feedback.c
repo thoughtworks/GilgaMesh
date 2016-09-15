@@ -4,6 +4,7 @@
 #include <system/timer.h>
 #include <app/buzzer.h>
 #include <command.h>
+#include <app/votes.h>
 #include "app/led.h"
 
 #define FEEDBACK_REFRESH_RATE_IN_MS 100
@@ -33,18 +34,13 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
 //  if (get_nfc_status() == NFC_STATUS_ERROR) { // nfc is broken, display red
 //    led_red_bright();
 //
-//  } else if (vote_storage_is_full()) { // votes reached maximum, display yellow
-//    led_red_bright();
-//    led_green_bright();
-//
-//  } else if (get_vote_count() > 0) { // votes are stored on the node, display teal
-//    led_blue_dim();
-//    led_green_dim();
-//
-//  } else { // neutral state, display dim white
+//  } else
+  if (vote_storage_is_full()) {         // votes reached maximum, display red
+    led_red_bright();
 
+  } else {                              // neutral state, display dim white
     led_white_dim();
-//  }
+  }
 }
 
 void feedback_initialize() {

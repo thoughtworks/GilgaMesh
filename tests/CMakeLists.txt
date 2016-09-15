@@ -152,6 +152,7 @@ add_executable(FeedbackTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/app/buzzer_mock.c
         mocks/app/led_mock.c
+        mocks/app/votes_mock.c
         mocks/command_mock.c
         ${SRC_PATH}/app/feedback.c
         unit/app/FeedbackTest.c)

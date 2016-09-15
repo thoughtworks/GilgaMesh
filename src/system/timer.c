@@ -1,7 +1,7 @@
 #include "system/timer.h"
 #include "error.h"
 
-#define APP_TIMER_OP_QUEUE_SIZE     4                                  /**< Size of timer operation queues. */
+#define APP_TIMER_OP_QUEUE_SIZE     8                                  /**< Size of timer operation queues. */
 
 void timer_initialize(void) {
   APP_TIMER_APPSH_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, true);

@@ -34,23 +34,23 @@ void initialize() {
   MESH_LOG("\r\n[[ MeshyMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
-  init_module("softdevice", softdevice_initialize);
-  init_module("timers", timer_initialize);
-  init_module("leds", led_initialize);
-  init_module("terminal", terminal_initialize);
+  softdevice_initialize();
+  timer_initialize();
+  terminal_initialize();
+  command_initialize();
+  led_initialize();
 #ifdef IS_PROD_BOARD
-  init_module("buzzer", buzzer_initialize);
-  init_module("NFC", nfc_initialize);
+  buzzer_initialize();
+  nfc_initialize();
 #endif
-  init_module("commands", command_initialize);
-  init_module("storage", storage_initialize);
-  init_module("feedback", feedback_initialize);
-  init_module("RTC", rtc_init);
-  init_module("connections", connections_initialize);
-  init_module("GATT", gatt_initialize);
-  init_module("GAP", gap_initialize);
-  init_module("heartbeat timer", heartbeat_initialize);
-  init_module("vote message timer", vote_message_initialize);
+  feedback_initialize();
+  storage_initialize();
+  rtc_init();
+  connections_initialize();
+  gatt_initialize();
+  gap_initialize();
+  heartbeat_initialize();
+  vote_message_initialize();
 
 
   mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
@@ -63,11 +63,6 @@ void initialize() {
   add_write_event(6, receive_vote_acknowledgement);
 
   MESH_LOG("System ready.\r\n");
-}
-
-init_module(char* module_name, void (*function)()) {
-  MESH_LOG("Init %s... \r\n", module_name);
-  (*function)();
 }
 
 void run() {

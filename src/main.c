@@ -4,6 +4,7 @@
 #include "app/custom_message_types/group_value_message.h"
 #include "app/custom_message_types/vote_ack_message.h"
 #include "app/custom_message_types/vote_message.h"
+#include <app/custom_message_types/voting_heartbeat_message.h>
 #include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
@@ -52,15 +53,14 @@ void initialize() {
   gap_initialize();
   heartbeat_initialize();
   vote_message_initialize();
+  voting_heartbeat_initialize();
 
 
   mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_update);
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_update);
-  mesh_add_terminal_command("vote", "Register a vote", save_vote_from_command_line);
   mesh_add_terminal_command("vack", "Broadcast vote ack", broadcast_vote_ack_from_cmd_line);
   add_write_event(Custom, receive_group_value_update);
-  add_write_event(5, receive_vote);
   add_write_event(6, receive_vote_acknowledgement);
 
   MESH_LOG("System ready.\r\n");

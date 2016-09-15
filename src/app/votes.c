@@ -7,6 +7,7 @@
 #include "app/storage.h"
 #include "system/timer.h"
 #include "system/util.h"
+#include "command.h"
 
 #define CLEAR_VOTE_BUFFER_DURATION_IN_MS 3000
 
@@ -16,6 +17,8 @@ static userVote bufferForStorage __attribute__((aligned(4))) = { 0 };
 SYS_TIMER_DEF(clearBufferTimer);
 
 void votes_initialize() {
+  mesh_add_terminal_command("vote", "Register a vote", save_vote_from_command_line);
+
   create_single_shot_timer(&clearBufferTimer);
 }
 

@@ -1,7 +1,9 @@
 #include "app/vote_config.h"
 #include "cmocka_includes.h"
 
-void get_vote_configuration(voteConfiguration *result) { }
+void get_vote_configuration(voteConfiguration *result) {
+  check_expected(result);
+}
 
 void print_current_vote_config(void) { }
 

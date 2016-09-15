@@ -9,5 +9,14 @@
 
 #define TAG_DATA_BUFFER_SIZE 512
 
+typedef enum {
+  NFC_STATUS_DISABLED,
+  NFC_STATUS_WORKING,
+  NFC_STATUS_ERROR
+} nfcStatus;
+
+
 void nfc_initialize(void);
 void nfc_scan(void);
+nfcStatus get_nfc_status(void);
+const char* get_nfc_status_string(nfcStatus status);

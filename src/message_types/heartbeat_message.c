@@ -9,13 +9,13 @@
 #include "gatt.h"
 #include "version.h"
 
-#define MS_RATE_TO_BROADCAST_HEARTBEAT 3000
+#define HEARTBEAT_MESSAGE_FREQUENCY_IN_MS 3000
 
 SYS_TIMER_DEF(heartbeatTimer);
 
 void heartbeat_initialize() {
   create_repeated_timer(&heartbeatTimer);
-  start_timer(&heartbeatTimer, MS_RATE_TO_BROADCAST_HEARTBEAT, send_heartbeat_message);
+  start_timer(&heartbeatTimer, HEARTBEAT_MESSAGE_FREQUENCY_IN_MS, send_heartbeat_message);
 }
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request) {

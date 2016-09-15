@@ -201,7 +201,6 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
 target_link_libraries(HeartbeatMessageTest cmocka)
 GEN_OUTPUTS(HeartbeatMessageTest)
 
-
 add_executable(LedTest ${TestFramework_SOURCES}
         ${SRC_PATH}/app/led.c
         unit/app/LedTest.c)
@@ -265,3 +264,16 @@ add_executable(VoteAckMessageTest ${TestFramework_SOURCES}
         unit/app/custom_message_types/VoteAckMessageTest.c)
 target_link_libraries(VoteAckMessageTest cmocka)
 GEN_OUTPUTS(VoteAckMessageTest)
+
+add_executable(VotingHeartbeatMessageTest ${TestFramework_SOURCES}
+        mocks/app/nfc_mock.c
+        mocks/app/vote_config_mock.c
+        mocks/app/votes_mock.c
+        mocks/system/timer_mock.c
+        mocks/device_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/app/custom_message_types/voting_heartbeat_message.c
+        unit/app/custom_message_types/VotingHeartbeatMessageTest.c)
+target_link_libraries(VotingHeartbeatMessageTest cmocka)
+GEN_OUTPUTS(VotingHeartbeatMessageTest)
+

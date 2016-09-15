@@ -2,19 +2,20 @@
 
 #include <sdk_common.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <app/storage.h>
-#include <system/timer.h>
 
+#include "app/storage.h"
+#include "system/log.h"
+#include "system/timer.h"
 #include "device.h"
 #include "gatt.h"
-#include "system/log.h"
 
 #define MS_RATE_TO_SEND_VOTE 5000
 
 SYS_TIMER_DEF(voteMessageTimer);
 
 void vote_message_initialize() {
+  add_write_event(5, receive_vote);
+
   create_single_shot_timer(&voteMessageTimer);
   start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_next_vote);
 }

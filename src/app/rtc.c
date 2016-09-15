@@ -11,6 +11,7 @@ APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 #ifdef SEEED_RTC
 #include <app_twi.h>
 #include <app_util_platform.h>
+#include <stdlib.h>
 
 #define MAX_PENDING_TRANSACTIONS 8
 #define RTC_TWI_ADDR 81
@@ -19,41 +20,6 @@ static app_twi_t rtcTwiInstance = APP_TWI_INSTANCE(0);
 static bool is_seeed_rtc_connected = false;
 
 static PCF85063TPState_t rtc_state;
-
-
-
-static void twi_event_handler(nrf_drv_twi_evt_t *twiEvent) {
-  if(twiEvent->type == NRF_DRV_TWI_EVT_DONE) {
-    MESH_LOG("I2C: Transfer completed address: %d length: %d\r\n",
-      twiEvent->xfer_desc.address, twiEvent->xfer_desc.primary_length);
-  }
-  else if(twiEvent->type == NRF_DRV_TWI_EVT_ADDRESS_NACK) {
-    MESH_LOG("I2C: Address error\r\n");
-  }
-  else if(twiEvent->type == NRF_DRV_TWI_EVT_DATA_NACK) {
-    MESH_LOG("I2C: Data error\r\n");
-  }
-  else {
-    MESH_LOG("I2C: Unknown error\r\n");
-  }
-}
-
-void rtc_i2c_read_callback(uint32_t result, void* user_data)
-{
-  UNUSED_PARAMETER(user_data);
-
-  if (result != NRF_SUCCESS)
-  {
-    is_seeed_rtc_connected = false;
-
-    MESH_LOG("I2C: Seeed RTC error: %d\r\n", (int)result);
-    return;
-  }
-  else
-  {
-    is_seeed_rtc_connected = true;
-  }
-}
 
 static void read_seeed_rtc_state() {
 
@@ -85,15 +51,15 @@ static void read_seeed_rtc_state() {
       APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_A.Years, 1, 0)
     };
 
-    static app_twi_transaction_t const readRtcTransaction =
-      {
-        .callback = rtc_i2c_read_callback,
-        .p_user_data = NULL,
-        .p_transfers = readRtcTransfers,
-        .number_of_transfers = sizeof(readRtcTransfers) / sizeof(readRtcTransfers[0])
-      };
+    err_code = app_twi_perform(&rtcTwiInstance, &readRtcTransfers,
+                                    sizeof(readRtcTransfers) / sizeof(readRtcTransfers[0]), NULL);
+    APP_ERROR_CHECK(err_code);
 
-    APP_ERROR_CHECK(app_twi_schedule(&rtcTwiInstance, &readRtcTransaction));
+    if(err_code != NRF_SUCCESS) {
+      is_seeed_rtc_connected = false;
+    } else {
+      is_seeed_rtc_connected = true;
+    }
 }
 
 static void print_seeed_rtc_state() {
@@ -273,8 +239,8 @@ void rtc_print_date_and_time() {
 void rtc_set_field(char* field, char* value) {
 #ifdef SEEED_RTC
 
+  static uint8_t register_to_update = 0;
   uint32_t err_code = 0;
-  uint8_t register_to_update = 0;
   uint8_t min = 0;
   uint8_t max = 0;
 
@@ -328,7 +294,6 @@ void rtc_set_field(char* field, char* value) {
     return;
   }
 
-//  err_code = nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &register_to_update, 1, true);
   if (err_code) {
     is_seeed_rtc_connected = false;
   }
@@ -336,9 +301,27 @@ void rtc_set_field(char* field, char* value) {
     is_seeed_rtc_connected = true;
 
     uint8_t intvalue = (uint8_t) atoi(value);
+    static uint8_t bcdvalue = 0;
     if (intvalue >= min && intvalue <= max) {
-      intvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
- //     nrf_drv_twi_tx(&rtcInterface, seeed_rtc_address, &intvalue, 1, false);
+      bcdvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
+
+      static app_twi_transfer_t const writeRtcTransfers[] =
+              {
+                      APP_TWI_WRITE(RTC_TWI_ADDR, &register_to_update, 1, APP_TWI_NO_STOP),
+                      APP_TWI_WRITE(RTC_TWI_ADDR, &bcdvalue, 1, 0)
+              };
+
+      err_code = app_twi_perform(&rtcTwiInstance, &writeRtcTransfers, 2, NULL);
+      APP_ERROR_CHECK(err_code);
+
+      if(err_code != NRF_SUCCESS) {
+        is_seeed_rtc_connected = false;
+        MESH_LOG_ERROR("RTC write failed.")
+      } else {
+        MESH_LOG_INFO("Successfully wrote value %d (BCD: %d) to RTC register %d", intvalue, bcdvalue, register_to_update);
+        is_seeed_rtc_connected = true;
+      }
+
     } else {
       MESH_LOG("Value out of range.\r\n");
     }
@@ -386,12 +369,7 @@ bool rtc_is_equal_timestamp(timestamp_t a, timestamp_t b)
 
 void rtc_print_status() {
 #ifdef SEEED_RTC
-  if(is_seeed_rtc_connected) {
-    print_seeed_rtc_state();
-  }
-  else {
-    MESH_LOG("Seeed RTC not responding.\r\n");
-  }
+  print_seeed_rtc_state();
 #else
   terminal_putstring("No RTC detected.\r\n");
 #endif // SEEED_RTC

@@ -2,8 +2,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <app_scheduler.h>
-#include <system/log.h>
 #include <app/storage.h>
 #include <app/custom_message_types/vote_message.h>
 
@@ -20,7 +18,7 @@ void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestrin
   request.voteAck.voterId = (uint16_t) atoi(voterIdStr);
   rtc_timestring_to_timestamp(timestampStr, request.voteAck.timestamp);
 
-  app_sched_event_put(&request, sizeof(BleMessageVoteAckReq), scheduled_broadcast_request);
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(BleMessageVoteAckReq));
   receive_vote_acknowledgement(NULL, &request);
 }
 

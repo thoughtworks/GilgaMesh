@@ -136,13 +136,13 @@ target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
 add_executable(CommandTest ${TestFramework_SOURCES}
+        mocks/app/rtc_mock.c
         mocks/message_types/broadcast_message_mock.c
         mocks/message_types/heartbeat_message_mock.c
         mocks/connection_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
-        mocks/system/rtc_mock.c
         ${SRC_PATH}/command.c
         unit/CommandTest.c)
 target_link_libraries(CommandTest cmocka)
@@ -254,3 +254,14 @@ add_executable(VoteConfigTest ${TestFramework_SOURCES}
         unit/app/VoteConfigTest.c)
 target_link_libraries(VoteConfigTest cmocka)
 GEN_OUTPUTS(VoteConfigTest)
+
+add_executable(VoteAckMessageTest ${TestFramework_SOURCES}
+        mocks/app/custom_message_types/vote_message_mock.c
+        mocks/app/rtc_mock.c
+        mocks/app/storage_mock.c
+        mocks/device_mock.c
+        mocks/gatt_mock.c
+        ${SRC_PATH}/app/custom_message_types/vote_ack_message.c
+        unit/app/custom_message_types/VoteAckMessageTest.c)
+target_link_libraries(VoteAckMessageTest cmocka)
+GEN_OUTPUTS(VoteAckMessageTest)

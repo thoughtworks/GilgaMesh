@@ -78,6 +78,3 @@ int RunGroupValueMessageTest(void) {
 int main() {
   return RunGroupValueMessageTest();
 }
-
-
-

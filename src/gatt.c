@@ -136,11 +136,6 @@ void send_to_all_connections(uint16_t originHandle, uint8_t *data, uint16_t data
   send_to_multiple_connections(ble_conn_state_conn_handles(), originHandle, data, dataLength);
 }
 
-void scheduled_broadcast_request(void *data, uint16_t dataLength) {
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)data, dataLength);
-}
-
-
 void propagate_message(ble_gatts_evt_t *gattsEvent) {
   uint16_t originHandle = gattsEvent->conn_handle;
   uint8_t *request = gattsEvent->params.write.data;
@@ -148,14 +143,12 @@ void propagate_message(ble_gatts_evt_t *gattsEvent) {
   send_to_all_connections(originHandle, request, dataLength);
 }
 
-
 void propagate_message_to_central(ble_gatts_evt_t *gattsEvent) {
   uint16_t originHandle = gattsEvent->conn_handle;
   uint8_t *request = gattsEvent->params.write.data;
   uint16_t dataLength = gattsEvent->params.write.len;
   send_to_central_connection(originHandle, request, dataLength);
 }
-
 
 void handle_write_event(void * data, uint16_t dataLength)
 {

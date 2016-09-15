@@ -23,7 +23,7 @@ void broadcast_group_value_update(char **parsedCommandArray, uint8_t numCommands
   }
 
   receive_group_value_update(BLE_CONN_HANDLE_INVALID, &request);
-  app_sched_event_put(&request, sizeof(BleMessageGroupValueReq), scheduled_broadcast_request);
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(BleMessageGroupValueReq));
 }
 
 MessagePropagationType receive_group_value_update(uint16_t connectionHandle, uint8_t *dataPacket) {

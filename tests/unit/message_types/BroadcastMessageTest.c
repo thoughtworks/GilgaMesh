@@ -13,11 +13,11 @@ static int test_setup(void **state) {
   return 0;
 }
 
-static void test_receive_broadcast_message_propagates_to_all() {
+static void BroadcastMessage_receive_propagates_to_all_connections() {
   assert_int_equal(PropagateToAll, receive_broadcast_message(0, &mockRequest));
 }
 
-static void test_send_broadcast_message_sends_data_to_all_connections() {
+static void BroadcastMessage_send_propagates_to_all_connections() {
   char* mockCommandArray[] = {"bro", "hey"};
   memcpy(mockRequest.message, mockCommandArray[1], strlen(mockCommandArray[1])+1);
 
@@ -27,7 +27,7 @@ static void test_send_broadcast_message_sends_data_to_all_connections() {
   send_broadcast_message(mockCommandArray, 0);
 }
 
-static void test_send_broadcast_message_fails_if_message_too_long() {
+static void BroadcastMessage_send_fails_if_message_is_too_long() {
   char* mockCommandArray[] = {"bro", "1234567890123"};
 
   // no expectations, message should not be sent
@@ -36,9 +36,9 @@ static void test_send_broadcast_message_fails_if_message_too_long() {
 
 int RunBroadcastMessageTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test_setup(test_receive_broadcast_message_propagates_to_all, test_setup),
-          cmocka_unit_test_setup(test_send_broadcast_message_sends_data_to_all_connections, test_setup),
-          cmocka_unit_test_setup(test_send_broadcast_message_fails_if_message_too_long, test_setup),
+          cmocka_unit_test_setup(BroadcastMessage_receive_propagates_to_all_connections, test_setup),
+          cmocka_unit_test_setup(BroadcastMessage_send_propagates_to_all_connections, test_setup),
+          cmocka_unit_test_setup(BroadcastMessage_send_fails_if_message_is_too_long, test_setup),
   };
 
   return cmocka_run_group_tests_name("BroadcastMessageTest", tests, NULL, NULL);

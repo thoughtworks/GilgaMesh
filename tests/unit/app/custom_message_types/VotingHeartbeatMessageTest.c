@@ -18,7 +18,7 @@ static int test_setup(void **state) {
   return 0;
 }
 
-static void VotingHeartbeat_send_message_sends_data_to_central_connection() {
+static void VotingHeartbeatMessage_send_propagates_to_central_connection() {
   will_return(get_nfc_status, mockStatus);
   will_return(get_vote_count, mockVoteCount);
 
@@ -30,14 +30,14 @@ static void VotingHeartbeat_send_message_sends_data_to_central_connection() {
   send_voting_heartbeat_message();
 }
 
-static void VotingHeartbeat_receive_message_propagates_to_central_connection() {
+static void VotingHeartbeatMessage_receive_propagates_to_central_connection() {
   assert_int_equal(PropagateToCentral, receive_voting_heartbeat_message(123, &mockRequest));
 }
 
 int RunVotingHeartbeatMessageTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test_setup(VotingHeartbeat_send_message_sends_data_to_central_connection, test_setup),
-          cmocka_unit_test_setup(VotingHeartbeat_receive_message_propagates_to_central_connection, test_setup),
+          cmocka_unit_test_setup(VotingHeartbeatMessage_send_propagates_to_central_connection, test_setup),
+          cmocka_unit_test_setup(VotingHeartbeatMessage_receive_propagates_to_central_connection, test_setup),
   };
 
   return cmocka_run_group_tests_name("VotingHeartbeatMessageTest", tests, NULL, NULL);

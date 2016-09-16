@@ -12,7 +12,7 @@ static MessagePropagationType foo_write_event_handler(uint16_t connectionHandle,
   return DoNotPropagate;
 }
 
-static void test_broadcast_event_handled() {
+static void Gatt_handle_write_event_handles_broadcast_messages() {
   ble_evt_t bleEvent;
   uint8_t broadcastEventMessageData[] = { Broadcast };
   uint16_t handle = 5;
@@ -24,7 +24,7 @@ static void test_broadcast_event_handled() {
   handle_write_event(&bleEvent, 0);
 }
 
-static void test_handshake_event_handled() {
+static void Gatt_handle_write_event_handles_handshake_messages() {
   ble_evt_t bleEvent;
   uint8_t handshakeEventMessageData[] = { Handshake };
   uint16_t handle = 5;
@@ -36,7 +36,7 @@ static void test_handshake_event_handled() {
   handle_write_event(&bleEvent, 0);
 }
 
-static void test_heartbeat_event_handled() {
+static void Gatt_handle_write_event_handles_heartbeat_messages() {
   ble_evt_t bleEvent;
   uint8_t heartbeatEventMessageData[] = { Heartbeat };
   uint16_t handle = 5;
@@ -48,7 +48,7 @@ static void test_heartbeat_event_handled() {
   handle_write_event(&bleEvent, 0);
 }
 
-static void test_new_event_handled() {
+static void Gatt_handle_write_event_handles_custom_message_types() {
   ble_evt_t bleEvent;
   uint8_t newEventMessageData[] = { 78 };
   uint16_t handle = 5;
@@ -64,10 +64,10 @@ static void test_new_event_handled() {
 
 int RunGattTest(void) {
     const struct CMUnitTest tests[] = {
-            cmocka_unit_test(test_new_event_handled),
-            cmocka_unit_test(test_heartbeat_event_handled),
-            cmocka_unit_test(test_broadcast_event_handled),
-            cmocka_unit_test(test_handshake_event_handled),
+            cmocka_unit_test(Gatt_handle_write_event_handles_broadcast_messages),
+            cmocka_unit_test(Gatt_handle_write_event_handles_handshake_messages),
+            cmocka_unit_test(Gatt_handle_write_event_handles_heartbeat_messages),
+            cmocka_unit_test(Gatt_handle_write_event_handles_custom_message_types),
     };
 
     return cmocka_run_group_tests_name("GattTest", tests, gatt_test_setup, NULL);

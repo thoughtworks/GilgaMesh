@@ -173,6 +173,7 @@ target_link_libraries(GattTest cmocka)
 GEN_OUTPUTS(GattTest)
 
 add_executable(GroupValueMessageTest ${TestFramework_SOURCES}
+        mocks/command_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
         mocks/app/vote_config_mock.c
@@ -208,7 +209,18 @@ target_link_libraries(LedTest cmocka)
 GEN_OUTPUTS(LedTest)
 
 #add_executable(MainTest ${TestFramework_SOURCES}
+#        mocks/app/custom_message_types/vote_message_mock.c
+#        mocks/app/custom_message_types/group_value_message_mock.c
+#        mocks/app/custom_message_types/vote_ack_message_mock.c
+#        mocks/app/custom_message_types/voting_heartbeat_message_mock.c
+#        mocks/app/feedback_mock.c
+#        mocks/app/led_mock.c
+#        mocks/app/rtc_mock.c
+#        mocks/app/storage_mock.c
+#        mocks/app/vote_config_mock.c
+#        mocks/app/votes_mock.c
 #        mocks/message_types/heartbeat_message_mock.c
+#        mocks/system/timer_mock.c
 #        mocks/connection_mock.c
 #        mocks/command_mock.c
 #        mocks/error_mock.c
@@ -216,23 +228,20 @@ GEN_OUTPUTS(LedTest)
 #        mocks/gatt_mock.c
 #        mocks/softdevice_mock.c
 #        mocks/terminal_mock.c
-#        mocks/app/feedback_mock.c
-#        mocks/system/timer_mock.c
-#        mocks/app/led_mock.c
-#        mocks/app/rtc_mock.c
 #        ${SRC_PATH}/conversion.c
 #        ${SRC_PATH}/main.c
 #        unit/MainTest.c)
 #target_link_libraries(MainTest cmocka)
 #GEN_OUTPUTS(MainTest)
 
-#add_executable(RTCTest ${TestFramework_SOURCES}
-#    mocks/terminal_mock.c
-#    ${SRC_PATH}/conversion.c
-#    ${SRC_PATH}/app/rtc.c
-#    unit/app/RTCTest.c)
-#target_link_libraries(RTCTest cmocka)
-#GEN_OUTPUTS(RTCTest)
+add_executable(RTCTest ${TestFramework_SOURCES}
+        mocks/command_mock.c
+        mocks/terminal_mock.c
+        ${SRC_PATH}/conversion.c
+        ${SRC_PATH}/app/rtc.c
+        unit/app/RTCTest.c)
+target_link_libraries(RTCTest cmocka)
+GEN_OUTPUTS(RTCTest)
 
 add_executable(QueueTest ${TestFramework_SOURCES}
         ${SRC_PATH}/queue.c
@@ -258,6 +267,7 @@ add_executable(VoteAckMessageTest ${TestFramework_SOURCES}
         mocks/app/custom_message_types/vote_message_mock.c
         mocks/app/rtc_mock.c
         mocks/app/storage_mock.c
+        mocks/command_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
         ${SRC_PATH}/app/custom_message_types/vote_ack_message.c

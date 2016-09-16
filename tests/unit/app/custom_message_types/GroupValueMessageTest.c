@@ -15,12 +15,12 @@ static int test_setup(void **state) {
 
 static void GroupValueMessage_receive_does_not_propagate_when_current_node_is_target() {
   mockRequest.deviceId = deviceId;
-  assert_int_equal(DoNotPropagate, receive_group_value_update(0, &mockRequest));
+  assert_int_equal(DoNotPropagate, receive_group_value_message(0, &mockRequest));
 }
 
 static void GroupValueMessage_receive_propagates_to_all_when_current_node_is_not_target() {
   mockRequest.deviceId = 0x9999;
-  assert_int_equal(PropagateToAll, receive_group_value_update(0, &mockRequest));
+  assert_int_equal(PropagateToAll, receive_group_value_message(0, &mockRequest));
 }
 
 static void GroupValueMessage_receive_updates_group_when_requested() {
@@ -30,7 +30,7 @@ static void GroupValueMessage_receive_updates_group_when_requested() {
   mockRequest.setGroup = true;
 
   expect_value(update_voting_group, newGroup, group);
-  receive_group_value_update(0, &mockRequest);
+  receive_group_value_message(0, &mockRequest);
 }
 
 static void GroupValueMessage_receive_updates_value_when_requested() {
@@ -40,7 +40,7 @@ static void GroupValueMessage_receive_updates_value_when_requested() {
   mockRequest.setValue = true;
 
   expect_value(update_voting_value, newValue, value);
-  receive_group_value_update(0, &mockRequest);
+  receive_group_value_message(0, &mockRequest);
 }
 
 static void GroupValueMessage_broadcast_sets_group_information() {
@@ -52,7 +52,7 @@ static void GroupValueMessage_broadcast_sets_group_information() {
   expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
   expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
-  broadcast_group_value_update(commands, 3);
+  broadcast_group_value_message(commands, 3);
 }
 
 static void GroupValueMessage_broadcast_sets_value_information() {
@@ -64,7 +64,7 @@ static void GroupValueMessage_broadcast_sets_value_information() {
   expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
   expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
-  broadcast_group_value_update(commands, 3);
+  broadcast_group_value_message(commands, 3);
 }
 
 int RunGroupValueMessageTest(void) {

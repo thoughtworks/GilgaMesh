@@ -1,10 +1,9 @@
-#include "cmocka_includes.h"
 #include "app/rtc.h"
-#include "time.h"
 #include "conversion.h"
+#include "time.h"
+#include "cmocka_includes.h"
 
-static void test_conversion(void **state) {
-  (void) state; // unused
+static void RTC_should_convert_between_timestamp_and_string() {
   timestring_t originalTime = "0F010B0203040100";
   timestring_t convertedTime;
   timestamp_t stamp;
@@ -15,8 +14,7 @@ static void test_conversion(void **state) {
   assert_string_equal(convertedTime, originalTime);
 }
 
-static void test_comparison(void **state) {
-  (void) state; // unused
+static void RTC_should_compare_timestamps() {
   timestring_t originalTime = "0F01010203040100";
   timestring_t equalTime = "0F01010203040100";
   timestring_t unEqualTime = "4201010203040300";
@@ -32,16 +30,14 @@ static void test_comparison(void **state) {
 
 int RunRTCTest(void) {
   const struct CMUnitTest tests[] = {
-    // list test functions here
-    cmocka_unit_test(test_conversion),
-    cmocka_unit_test(test_comparison),
+    cmocka_unit_test(RTC_should_convert_between_timestamp_and_string),
+    cmocka_unit_test(RTC_should_compare_timestamps),
   };
 
-  //set test suite name here
   return cmocka_run_group_tests_name("RTCTest", tests, NULL, NULL);
 }
 
-int main(int argc, char **argv) {
+int main() {
   return RunRTCTest();
 }
 

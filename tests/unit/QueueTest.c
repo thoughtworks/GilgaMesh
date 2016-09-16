@@ -6,20 +6,20 @@ static uint8_t testData[3] = { 1, 2, 3 };
 static uint8_t data[MAX_QUEUE_DATA_LENGTH] = { 0 };
 static uint16_t dataLength;
 
-static void test_queue_is_empty_with_no_elements() {
+static void Queue_is_empty_with_no_elements() {
   transmissionPacketQueue queue = { 0 };
 
   assert_true(queue_is_empty(&queue));
 }
 
-static void test_queue_is_not_empty_with_elements() {
+static void Queue_is_not_empty_with_elements() {
   transmissionPacketQueue queue = { 0 };
   push_onto_queue(&queue, testData, sizeof(testData));
 
   assert_false(queue_is_empty(&queue));
 }
 
-static void test_queue_is_empty_after_popping_all_elements() {
+static void Queue_is_empty_after_popping_all_elements() {
   transmissionPacketQueue queue = { 0 };
   push_onto_queue(&queue, testData, sizeof(testData));
   pop_from_queue(&queue);
@@ -27,13 +27,13 @@ static void test_queue_is_empty_after_popping_all_elements() {
   assert_true(queue_is_empty(&queue));
 }
 
-static void test_queue_push_succeeds_when_queue_has_empty_spots() {
+static void Queue_push_succeeds_when_queue_has_empty_spots() {
   transmissionPacketQueue queue = { 0 };
 
   assert_true(push_onto_queue(&queue, testData, sizeof(testData)));
 }
 
-static void test_queue_push_fails_when_queue_is_full() {
+static void Queue_push_fails_when_queue_is_full() {
   transmissionPacketQueue queue = { 0 };
   for (int i = 0; i < MAX_QUEUE_SIZE; i++) {
     uint8_t data[1] = { (uint8_t)(i + 1) };
@@ -43,14 +43,14 @@ static void test_queue_push_fails_when_queue_is_full() {
   assert_false(push_onto_queue(&queue, testData, sizeof(testData)));
 }
 
-static void test_queue_push_fails_when_data_is_too_big() {
+static void Queue_push_fails_when_data_is_too_big() {
   transmissionPacketQueue queue = { 0 };
   uint8_t data[MAX_QUEUE_DATA_LENGTH + 1] = { 1 };
 
   assert_false(push_onto_queue(&queue, data, sizeof(data)));
 }
 
-static void test_queue_push_adds_element_to_queue() {
+static void Queue_push_adds_element_to_queue() {
   transmissionPacketQueue queue = { 0 };
   push_onto_queue(&queue, testData, sizeof(testData));
 
@@ -60,7 +60,7 @@ static void test_queue_push_adds_element_to_queue() {
   assert_int_equal(sizeof(testData), dataLength);
 }
 
-static void test_queue_pop_frees_space_in_queue() {
+static void Queue_pop_frees_space_in_queue() {
   transmissionPacketQueue queue = { 0 };
   for (int i = 0; i < MAX_QUEUE_SIZE; i++) {
     uint8_t data[1] = { (uint8_t)(i + 1) };
@@ -72,7 +72,7 @@ static void test_queue_pop_frees_space_in_queue() {
   assert_true(push_onto_queue(&queue, testData, sizeof(testData)));
 }
 
-static void test_queue_peek_and_pop_return_elements_in_fifo_order() {
+static void Queue_peek_and_pop_return_elements_in_fifo_order() {
   uint8_t data1[1] = { 1 };
   uint8_t data2[2] = { 1, 2 };
   uint8_t data3[3] = { 1, 2, 3 };
@@ -98,12 +98,12 @@ static void test_queue_peek_and_pop_return_elements_in_fifo_order() {
   assert_true(pop_from_queue(&queue));
 }
 
-static void test_queue_pop_returns_false_when_queue_is_empty() {
+static void Queue_pop_returns_false_when_queue_is_empty() {
   transmissionPacketQueue queue = { 0 };
   assert_false(pop_from_queue(&queue));
 };
 
-static void test_queue_pop_returns_true_when_queue_has_elements() {
+static void Queue_pop_returns_true_when_queue_has_elements() {
   transmissionPacketQueue queue = { 0 };
 
   push_onto_queue(&queue, testData, sizeof(testData));
@@ -111,7 +111,7 @@ static void test_queue_pop_returns_true_when_queue_has_elements() {
   assert_true(pop_from_queue(&queue));
 }
 
-static void test_queue_wraps_around_when_adding_elements() {
+static void Queue_wraps_around_when_adding_elements() {
   transmissionPacketQueue queue = { 0 };
   queue.front = MAX_QUEUE_SIZE - 1;
 
@@ -134,18 +134,18 @@ static void test_queue_wraps_around_when_adding_elements() {
 
 int RunQueueTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test(test_queue_is_empty_with_no_elements),
-          cmocka_unit_test(test_queue_is_not_empty_with_elements),
-          cmocka_unit_test(test_queue_is_empty_after_popping_all_elements),
-          cmocka_unit_test(test_queue_push_succeeds_when_queue_has_empty_spots),
-          cmocka_unit_test(test_queue_push_fails_when_queue_is_full),
-          cmocka_unit_test(test_queue_push_fails_when_data_is_too_big),
-          cmocka_unit_test(test_queue_push_adds_element_to_queue),
-          cmocka_unit_test(test_queue_pop_frees_space_in_queue),
-          cmocka_unit_test(test_queue_peek_and_pop_return_elements_in_fifo_order),
-          cmocka_unit_test(test_queue_pop_returns_false_when_queue_is_empty),
-          cmocka_unit_test(test_queue_pop_returns_true_when_queue_has_elements),
-          cmocka_unit_test(test_queue_wraps_around_when_adding_elements)
+          cmocka_unit_test(Queue_is_empty_with_no_elements),
+          cmocka_unit_test(Queue_is_not_empty_with_elements),
+          cmocka_unit_test(Queue_is_empty_after_popping_all_elements),
+          cmocka_unit_test(Queue_push_succeeds_when_queue_has_empty_spots),
+          cmocka_unit_test(Queue_push_fails_when_queue_is_full),
+          cmocka_unit_test(Queue_push_fails_when_data_is_too_big),
+          cmocka_unit_test(Queue_push_adds_element_to_queue),
+          cmocka_unit_test(Queue_pop_frees_space_in_queue),
+          cmocka_unit_test(Queue_peek_and_pop_return_elements_in_fifo_order),
+          cmocka_unit_test(Queue_pop_returns_false_when_queue_is_empty),
+          cmocka_unit_test(Queue_pop_returns_true_when_queue_has_elements),
+          cmocka_unit_test(Queue_wraps_around_when_adding_elements)
   };
 
   return cmocka_run_group_tests_name("QueueTest", tests, NULL, NULL);

@@ -20,23 +20,23 @@ static int test_setup(void **state) {
   return 0;
 }
 
-static void Heartbeat_send_message_sends_data_to_central_connection() {
+static void HeartbeatMessage_send_propagates_to_central_connection() {
   will_return(get_central_connection_device_id, centralDeviceId);
 
-  expect_value(send_to_central_connection, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_memory(send_to_central_connection, data, &mockRequest, sizeof(mockRequest));
+  expect_value(send_to_central_connection, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_value(send_to_central_connection, dataLength, sizeof(mockRequest));
   send_heartbeat_message(NULL, 0);
 }
 
-static void Heartbeat_receive_message_propagates_to_central_connection() {
+static void HeartbeatMessage_receive_propagates_to_central_connection() {
   assert_int_equal(PropagateToCentral, receive_heartbeat_message(123, &mockRequest));
 }
 
 int RunHeartbeatMessageTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test_setup(Heartbeat_send_message_sends_data_to_central_connection, test_setup),
-          cmocka_unit_test_setup(Heartbeat_receive_message_propagates_to_central_connection, test_setup),
+          cmocka_unit_test_setup(HeartbeatMessage_send_propagates_to_central_connection, test_setup),
+          cmocka_unit_test_setup(HeartbeatMessage_receive_propagates_to_central_connection, test_setup),
   };
 
   return cmocka_run_group_tests_name("HeartbeatMessageTest", tests, NULL, NULL);

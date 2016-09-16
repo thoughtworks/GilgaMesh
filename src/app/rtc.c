@@ -6,7 +6,7 @@
 
 #define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
 static bool is_sysclock_suspended = false;
-APP_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
+SYS_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 
 #ifdef SEEED_RTC
 #include <app_twi.h>

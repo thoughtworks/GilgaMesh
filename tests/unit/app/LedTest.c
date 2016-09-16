@@ -2,7 +2,7 @@
 #include <nrf_error.h>
 #include "cmocka_includes.h"
 
-static void test_led_initialize_starts_all_pwm_instances() {
+static void Led_initialize_starts_all_pwm_instances() {
   will_return_always(low_power_pwm_init, NRF_SUCCESS);
   will_return_always(low_power_pwm_start, NRF_SUCCESS);
 
@@ -17,7 +17,7 @@ static void test_led_initialize_starts_all_pwm_instances() {
 
 int RunLedTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test(test_led_initialize_starts_all_pwm_instances),
+          cmocka_unit_test(Led_initialize_starts_all_pwm_instances),
   };
 
   return cmocka_run_group_tests_name("LedTest", tests, NULL, NULL);

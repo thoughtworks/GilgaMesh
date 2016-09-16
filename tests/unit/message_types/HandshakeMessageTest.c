@@ -18,20 +18,20 @@ static int test_setup(void **state) {
   return 0;
 }
 
-static void test_send_handshake_message_sends_data_to_one_connection() {
+static void HandshakeMessage_send_propagates_data_to_one_connection() {
   expect_value(send_to_single_connection, targetConnection, &mockConnection);
   expect_memory(send_to_single_connection, data, &mockRequest, sizeof(mockRequest));
   expect_value(send_to_single_connection, dataLength, sizeof(mockRequest));
   send_handshake_message(&mockConnection);
 }
 
-static void test_receive_handshake_message_does_not_fail_when_connection_is_not_found() {
+static void HandshakeMessage_receive_does_not_fail_when_connection_is_not_found() {
   will_return(find_active_connection_by_handle, NULL);
 
   assert_int_equal(DoNotPropagate, receive_handshake_message(0, &mockRequest));
 }
 
-static void test_receive_handshake_message_sets_data_for_connection() {
+static void HandshakeMessage_receive_sets_data_for_connection() {
   will_return(find_active_connection_by_handle, &mockConnection);
 
   assert_int_equal(DoNotPropagate, receive_handshake_message(0, &mockRequest));
@@ -42,9 +42,9 @@ static void test_receive_handshake_message_sets_data_for_connection() {
 
 int RunHandshakeMessageTest(void) {
   const struct CMUnitTest tests[] = {
-          cmocka_unit_test_setup(test_send_handshake_message_sends_data_to_one_connection, test_setup),
-          cmocka_unit_test_setup(test_receive_handshake_message_does_not_fail_when_connection_is_not_found, test_setup),
-          cmocka_unit_test_setup(test_receive_handshake_message_sets_data_for_connection, test_setup),
+          cmocka_unit_test_setup(HandshakeMessage_send_propagates_data_to_one_connection, test_setup),
+          cmocka_unit_test_setup(HandshakeMessage_receive_does_not_fail_when_connection_is_not_found, test_setup),
+          cmocka_unit_test_setup(HandshakeMessage_receive_sets_data_for_connection, test_setup),
   };
 
   return cmocka_run_group_tests_name("HandshakeMessageTest", tests, NULL, NULL);

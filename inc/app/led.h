@@ -3,14 +3,12 @@
 #include <nrf51.h>
 #include <nrf51_bitfields.h>
 
-#ifdef BOARD_SEEED
-#define LED_BRIGHT_DUTY_CYCLE         0
-#define LED_DIM_DUTY_CYCLE            250
-#define LED_OFF_DUTY_CYCLE            255
-#else
 #define LED_BRIGHT_DUTY_CYCLE         255
 #define LED_DIM_DUTY_CYCLE            5
 #define LED_OFF_DUTY_CYCLE            0
+
+#ifndef INVERT_LEDS
+#define INVERT_LEDS                   false
 #endif
 
 void led_initialize(void);

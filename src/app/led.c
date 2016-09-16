@@ -25,8 +25,12 @@ static void set_rgb_leds(uint8_t redValue, uint8_t greenValue, uint8_t blueValue
 }
 
 static void individual_led_initialize(low_power_pwm_t *pwm, const app_timer_id_t *timer, uint32_t mask) {
-  low_power_pwm_config_t pwm_config = LOW_POWER_PWM_DEFAULT_CONFIG(mask);
-  pwm_config.p_timer_id = timer;
+  low_power_pwm_config_t pwm_config = {
+          .bit_mask    = mask,
+          .p_timer_id  = timer,
+          .period      = LED_BRIGHT_DUTY_CYCLE,
+          .active_high = INVERT_LEDS
+  };
 
   EC(low_power_pwm_init(pwm, &pwm_config, NULL));
   EC(low_power_pwm_start(pwm, mask));

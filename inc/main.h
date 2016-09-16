@@ -36,9 +36,6 @@
 #define SCHED_MAX_EVENT_DATA_SIZE       (sizeof(ble_evt_t))       /**< Maximum size of scheduler events. */
 #define SCHED_QUEUE_SIZE                20                        /**< Maximum number of events in the scheduler queue. */
 
-void initialize();
-void run();
-void panic();
 
 #ifndef TESTING
 int main();

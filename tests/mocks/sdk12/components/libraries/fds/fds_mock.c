@@ -46,4 +46,13 @@ ret_code_t fds_record_close(fds_record_desc_t* const p_desc) {
   return FDS_SUCCESS;
 }
 
+ret_code_t fds_file_delete(uint16_t file_id) {
+  check_expected(file_id);
+  return FDS_SUCCESS;
+}
+
+ret_code_t fds_gc(void) {
+  return FDS_SUCCESS;
+}
+
 

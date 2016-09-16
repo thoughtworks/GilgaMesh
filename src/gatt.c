@@ -1,10 +1,10 @@
-#include <gatt.h>
-#include <system/ble_gap.h>
-#include <message_types/heartbeat_message.h>
-#include <message_types/broadcast_message.h>
-#include <message_types/handshake_message.h>
+#include "gatt.h"
+
 #include <ble_conn_state.h>
-#include <system/log.h>
+#include <stdlib.h>
+
+#include "system/log.h"
+#include "gap.h"
 
 typedef struct {
   BleMessageType messageType;
@@ -15,12 +15,6 @@ uint8_t writeEventCount = 0;
 ble_gatts_char_handles_t characteristicHandles;
 static writeEvent** writeEvents;
 
-
-void initialize_write_events() {
-  add_write_event(Broadcast, receive_broadcast_message);
-  add_write_event(Handshake, receive_handshake_message);
-  add_write_event(Heartbeat, receive_heartbeat_message);
-}
 
 void gatt_initialize() {
   ble_uuid_t serviceUUID;
@@ -76,13 +70,10 @@ void gatt_initialize() {
   memset(&characteristicHandles, 0, sizeof(characteristicHandles));
 
   EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
-
-  initialize_write_events();
 }
 
 
-void send_message_from_connection_queue(connection *targetConnection)
-{
+void send_message_from_connection_queue(connection *targetConnection) {
   if (targetConnection == NULL) return;
   if (queue_is_empty(&targetConnection->unsentMessages)) return;
 
@@ -108,8 +99,7 @@ void send_message_from_connection_queue(connection *targetConnection)
 }
 
 
-void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength)
-{
+void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength) {
   if (push_onto_queue(&targetConnection->unsentMessages, data, dataLength)) {
     send_message_from_connection_queue(targetConnection);
   } else {
@@ -150,8 +140,7 @@ void propagate_message_to_central(ble_gatts_evt_t *gattsEvent) {
   send_to_central_connection(originHandle, request, dataLength);
 }
 
-void handle_write_event(void * data, uint16_t dataLength)
-{
+void handle_write_event(void * data, uint16_t dataLength) {
   UNUSED_PARAMETER(dataLength);
   ble_evt_t *bleEvent = (ble_evt_t *)data;
   uint8_t messageType = bleEvent->evt.gatts_evt.params.write.data[0];
@@ -174,13 +163,16 @@ void handle_write_event(void * data, uint16_t dataLength)
   MESH_LOG("unknown message type: %d\r\n", messageType);
 }
 
-void add_write_event(uint8_t type, write_event_handler handler) {
+uint8_t register_message_type(write_event_handler handler) {
+  writeEventCount++;
+
   writeEvent *newWriteEvent = malloc(sizeof(writeEvent));
-  newWriteEvent->messageType = type;
+  newWriteEvent->messageType = writeEventCount;
   newWriteEvent->handler = handler;
 
-  writeEventCount++;
   writeEvents = realloc(writeEvents, writeEventCount * sizeof(writeEvent*));
   writeEvents[writeEventCount - 1] = newWriteEvent;
+
+  return writeEventCount;
 }
 

@@ -4,6 +4,7 @@
 #include "cmocka_includes.h"
 
 static BleMessageVotingHeartbeatReq mockRequest;
+static BleMessageType mockMessageType = 123;
 static uint32_t deviceId;
 static nfcStatus mockStatus = NFC_STATUS_WORKING;
 static uint16_t mockVoteCount = 3;
@@ -11,11 +12,21 @@ static uint16_t mockVoteCount = 3;
 static int test_setup(void **state) {
   deviceId = get_raw_device_id();
   memset(&mockRequest, 0, sizeof(mockRequest));
-  mockRequest.head.messageType = 7;
+  mockRequest.messageType = mockMessageType;
   mockRequest.deviceId = deviceId;
   mockRequest.voteCount = mockVoteCount;
   mockRequest.nfcStatus = mockStatus;
   return 0;
+}
+
+static void VotingHeartbeatMessage_initialize_registers_message_and_starts_timer() {
+  will_return(register_message_type, mockMessageType);
+
+  expect_any(create_repeated_timer, timer_id);
+  expect_value(start_timer, ms_to_execute, VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS);
+  expect_any(start_timer, timer_id);
+
+  voting_heartbeat_message_initialize();
 }
 
 static void VotingHeartbeatMessage_send_propagates_to_central_connection() {
@@ -36,6 +47,7 @@ static void VotingHeartbeatMessage_receive_propagates_to_central_connection() {
 
 int RunVotingHeartbeatMessageTest(void) {
   const struct CMUnitTest tests[] = {
+          cmocka_unit_test_setup(VotingHeartbeatMessage_initialize_registers_message_and_starts_timer, test_setup),
           cmocka_unit_test_setup(VotingHeartbeatMessage_send_propagates_to_central_connection, test_setup),
           cmocka_unit_test_setup(VotingHeartbeatMessage_receive_propagates_to_central_connection, test_setup),
   };

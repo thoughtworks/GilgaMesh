@@ -5,7 +5,7 @@
 
 
 typedef struct {
-  BleMessageHead head;
+  BleMessageType messageType;
   uint32_t deviceId;
   userVoteAck voteAck;
 }__attribute__ ((packed)) BleMessageVoteAckReq;

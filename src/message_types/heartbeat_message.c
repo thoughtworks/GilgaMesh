@@ -9,11 +9,13 @@
 #include "gatt.h"
 #include "version.h"
 
-#define HEARTBEAT_MESSAGE_FREQUENCY_IN_MS 3000
-
 SYS_TIMER_DEF(heartbeatTimer);
 
-void heartbeat_initialize() {
+static BleMessageType heartbeatMessageType;
+
+void heartbeat_message_initialize() {
+  heartbeatMessageType = register_message_type(receive_heartbeat_message);
+
   create_repeated_timer(&heartbeatTimer);
   start_timer(&heartbeatTimer, HEARTBEAT_MESSAGE_FREQUENCY_IN_MS, send_heartbeat_message);
 }
@@ -32,13 +34,10 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
       deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
 }
 
-void send_heartbeat_message(void *data, uint16_t dataLength) {
-  UNUSED_PARAMETER(data);
-  UNUSED_PARAMETER(dataLength);
-
+void send_heartbeat_message() {
   BleMessageHeartbeatReq request;
   memset(&request, 0, sizeof(request));
-  request.head.messageType = Heartbeat;
+  request.messageType = heartbeatMessageType;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
   request.deviceId = get_raw_device_id();

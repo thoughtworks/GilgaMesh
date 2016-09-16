@@ -4,13 +4,23 @@
 #include "cmocka_includes.h"
 
 static BleMessageGroupValueReq mockRequest;
+static BleMessageType mockMessageType = 123;
 static uint32_t deviceId;
 
 static int test_setup(void **state) {
   deviceId = get_raw_device_id();
   memset(&mockRequest, 0, sizeof(mockRequest));
-  mockRequest.head.messageType = Custom;
+  mockRequest.messageType = mockMessageType;
   return 0;
+}
+
+static void GroupValueMessage_initialize_registers_message_and_adds_terminal_commands() {
+  will_return(register_message_type, mockMessageType);
+
+  expect_string(mesh_add_terminal_command, commandName, "vc");
+  expect_string(mesh_add_terminal_command, commandName, "grp");
+  expect_string(mesh_add_terminal_command, commandName, "val");
+  group_value_message_initialize();
 }
 
 static void GroupValueMessage_receive_does_not_propagate_when_current_node_is_target() {
@@ -69,6 +79,7 @@ static void GroupValueMessage_broadcast_sets_value_information() {
 
 int RunGroupValueMessageTest(void) {
   const struct CMUnitTest tests[] = {
+          cmocka_unit_test_setup(GroupValueMessage_initialize_registers_message_and_adds_terminal_commands, test_setup),
           cmocka_unit_test_setup(GroupValueMessage_receive_does_not_propagate_when_current_node_is_target, test_setup),
           cmocka_unit_test_setup(GroupValueMessage_receive_propagates_to_all_when_current_node_is_not_target, test_setup),
           cmocka_unit_test_setup(GroupValueMessage_receive_updates_group_when_requested, test_setup),

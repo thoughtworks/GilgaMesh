@@ -4,7 +4,7 @@
 #include "message_types/message.h"
 
 typedef struct {
-  BleMessageHead head;
+  BleMessageType messageType;
   uint32_t deviceId;
   bool setGroup;
   uint8_t newGroup;

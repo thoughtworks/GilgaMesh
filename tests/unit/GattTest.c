@@ -1,76 +1,45 @@
-#include "cmocka_includes.h"
 #include "gatt.h"
+#include "cmocka_includes.h"
 
-static int gatt_test_setup(void **state) {
-  initialize_write_events();
-  return 0;
-}
+static uint16_t handle = 123;
 
-static MessagePropagationType foo_write_event_handler(uint16_t connectionHandle, uint8_t *dataPacket) {
+static MessagePropagationType custom_write_event_handler(uint16_t connectionHandle, uint8_t *dataPacket) {
   check_expected(connectionHandle);
   check_expected_ptr(dataPacket);
   return DoNotPropagate;
 }
 
-static void Gatt_handle_write_event_handles_broadcast_messages() {
-  ble_evt_t bleEvent;
-  uint8_t broadcastEventMessageData[] = { Broadcast };
-  uint16_t handle = 5;
-  bleEvent.evt.gap_evt.conn_handle = handle;
-  memcpy(bleEvent.evt.gatts_evt.params.write.data, broadcastEventMessageData, sizeof(uint8_t));
-    
-  expect_value(receive_broadcast_message, connectionHandle, handle);
-  expect_memory(receive_broadcast_message, dataPacket, broadcastEventMessageData, sizeof(uint8_t));
-  handle_write_event(&bleEvent, 0);
-}
-
-static void Gatt_handle_write_event_handles_handshake_messages() {
-  ble_evt_t bleEvent;
-  uint8_t handshakeEventMessageData[] = { Handshake };
-  uint16_t handle = 5;
-  bleEvent.evt.gap_evt.conn_handle = handle;
-  memcpy(bleEvent.evt.gatts_evt.params.write.data, handshakeEventMessageData, sizeof(uint8_t));
-
-  expect_value(receive_handshake_message, connectionHandle, handle);
-  expect_memory(receive_handshake_message, dataPacket, handshakeEventMessageData, sizeof(uint8_t));
-  handle_write_event(&bleEvent, 0);
-}
-
-static void Gatt_handle_write_event_handles_heartbeat_messages() {
-  ble_evt_t bleEvent;
-  uint8_t heartbeatEventMessageData[] = { Heartbeat };
-  uint16_t handle = 5;
-  bleEvent.evt.gap_evt.conn_handle = handle;
-  memcpy(bleEvent.evt.gatts_evt.params.write.data, heartbeatEventMessageData, sizeof(uint8_t));
-
-  expect_value(receive_heartbeat_message, connectionHandle, handle);
-  expect_memory(receive_heartbeat_message, dataPacket, heartbeatEventMessageData, sizeof(uint8_t));
-  handle_write_event(&bleEvent, 0);
-}
-
 static void Gatt_handle_write_event_handles_custom_message_types() {
+  BleMessageType newMessageType = register_message_type(custom_write_event_handler);
+  uint8_t newEventMessageData[1] = { newMessageType };
+
   ble_evt_t bleEvent;
-  uint8_t newEventMessageData[] = { 78 };
-  uint16_t handle = 5;
   bleEvent.evt.gap_evt.conn_handle = handle;
   memcpy(bleEvent.evt.gatts_evt.params.write.data, newEventMessageData, sizeof(uint8_t));
 
-  add_write_event(78, foo_write_event_handler);
-  
-  expect_value(foo_write_event_handler, connectionHandle, handle);
-  expect_memory(foo_write_event_handler, dataPacket, newEventMessageData, sizeof(uint8_t));
+  expect_value(custom_write_event_handler, connectionHandle, handle);
+  expect_memory(custom_write_event_handler, dataPacket, newEventMessageData, sizeof(uint8_t));
+  handle_write_event(&bleEvent, 0);
+}
+
+static void Gatt_handle_write_event_does_not_handle_unknown_message_types() {
+  uint8_t newEventMessageData[1] = { 99 };
+
+  ble_evt_t bleEvent;
+  bleEvent.evt.gap_evt.conn_handle = handle;
+  memcpy(bleEvent.evt.gatts_evt.params.write.data, newEventMessageData, sizeof(uint8_t));
+
+  // no expectations: nothing should happen
   handle_write_event(&bleEvent, 0);
 }
 
 int RunGattTest(void) {
     const struct CMUnitTest tests[] = {
-            cmocka_unit_test(Gatt_handle_write_event_handles_broadcast_messages),
-            cmocka_unit_test(Gatt_handle_write_event_handles_handshake_messages),
-            cmocka_unit_test(Gatt_handle_write_event_handles_heartbeat_messages),
             cmocka_unit_test(Gatt_handle_write_event_handles_custom_message_types),
+            cmocka_unit_test(Gatt_handle_write_event_does_not_handle_unknown_message_types),
     };
 
-    return cmocka_run_group_tests_name("GattTest", tests, gatt_test_setup, NULL);
+    return cmocka_run_group_tests_name("GattTest", tests, NULL, NULL);
 }
 
 int main() {

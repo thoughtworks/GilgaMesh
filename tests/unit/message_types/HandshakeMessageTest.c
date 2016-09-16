@@ -4,6 +4,7 @@
 #include "version.h"
 
 static BleMessageHandshakeReq mockRequest;
+static BleMessageType mockMessageType = 123;
 static connection mockConnection;
 static uint32_t deviceId;
 
@@ -11,11 +12,17 @@ static int test_setup(void **state) {
   deviceId = get_raw_device_id();
   memset(&mockConnection, 0, sizeof(mockConnection));
   memset(&mockRequest, 0, sizeof(mockRequest));
-  mockRequest.head.messageType = Handshake;
+  mockRequest.messageType = mockMessageType;
   mockRequest.majorVersion = APP_VERSION_MAIN;
   mockRequest.minorVersion = APP_VERSION_SUB;
   mockRequest.deviceId = deviceId;
   return 0;
+}
+
+static void HandshakeMessage_initialize_registers_message() {
+  will_return(register_message_type, mockMessageType);
+
+  handshake_message_initialize();
 }
 
 static void HandshakeMessage_send_propagates_data_to_one_connection() {
@@ -42,6 +49,7 @@ static void HandshakeMessage_receive_sets_data_for_connection() {
 
 int RunHandshakeMessageTest(void) {
   const struct CMUnitTest tests[] = {
+          cmocka_unit_test_setup(HandshakeMessage_initialize_registers_message, test_setup),
           cmocka_unit_test_setup(HandshakeMessage_send_propagates_data_to_one_connection, test_setup),
           cmocka_unit_test_setup(HandshakeMessage_receive_does_not_fail_when_connection_is_not_found, test_setup),
           cmocka_unit_test_setup(HandshakeMessage_receive_sets_data_for_connection, test_setup),

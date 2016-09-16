@@ -5,6 +5,7 @@
 
 extern bool did_broadcast_next_vote;
 static BleMessageVoteAckReq mockRequest;
+static BleMessageType mockMessageType = 123;
 static uint32_t deviceId;
 static uint32_t otherDeviceId = 0x3456;
 userVote mockVote;
@@ -13,9 +14,16 @@ static int test_setup(void **state) {
   did_broadcast_next_vote = false;
   deviceId = get_raw_device_id();
   memset(&mockRequest, 0, sizeof(mockRequest));
-  mockRequest.head.messageType = 6;
+  mockRequest.messageType = mockMessageType;
 
   return 0;
+}
+
+static void VoteAckMessage_initialize_registers_message_and_adds_terminal_command() {
+  will_return(register_message_type, mockMessageType);
+
+  expect_string(mesh_add_terminal_command, commandName, "vack");
+  vote_ack_message_initialize();
 }
 
 static void VoteAckMessage_receive_propagates_to_all_when_current_node_is_not_target() {
@@ -78,6 +86,7 @@ static void VoteAckMessage_broadcast_sends_to_all_connections() {
 
 int RunVoteAckMessageTest(void) {
   const struct CMUnitTest tests[] = {
+          cmocka_unit_test_setup(VoteAckMessage_initialize_registers_message_and_adds_terminal_command, test_setup),
           cmocka_unit_test_setup(VoteAckMessage_receive_propagates_to_all_when_current_node_is_not_target, test_setup),
           cmocka_unit_test_setup(VoteAckMessage_receive_does_not_propagate_when_current_node_is_target, test_setup),
           cmocka_unit_test_setup(VoteAckMessage_receive_deletes_correct_vote_from_storage_when_timestamp_matches, test_setup),

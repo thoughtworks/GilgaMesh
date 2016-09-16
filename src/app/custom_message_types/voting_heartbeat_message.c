@@ -11,12 +11,12 @@
 #include "gatt.h"
 
 
-#define VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS 3000
-
 SYS_TIMER_DEF(votingHeartbeatTimer);
 
-void voting_heartbeat_initialize() {
-  add_write_event(7, receive_voting_heartbeat_message);
+static BleMessageType votingHeartbeatMessageType;
+
+void voting_heartbeat_message_initialize() {
+  votingHeartbeatMessageType = register_message_type(receive_voting_heartbeat_message);
 
   create_repeated_timer(&votingHeartbeatTimer);
   start_timer(&votingHeartbeatTimer, VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS, send_voting_heartbeat_message);
@@ -33,7 +33,7 @@ static void log_voting_heartbeat_info(BleMessageVotingHeartbeatReq *request) {
 void send_voting_heartbeat_message() {
   BleMessageVotingHeartbeatReq request;
   memset(&request, 0, sizeof(request));
-  request.head.messageType = 7; // Voting Heartbeat = 7
+  request.messageType = votingHeartbeatMessageType;
   request.deviceId = get_raw_device_id();
   request.nfcStatus = get_nfc_status();
   request.voteCount = get_vote_count();

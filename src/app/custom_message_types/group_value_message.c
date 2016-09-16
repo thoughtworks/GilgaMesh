@@ -2,15 +2,19 @@
 
 #include <app_scheduler.h>
 #include <stdlib.h>
-#include <command.h>
+
+#include "command.h"
 #include "device.h"
 #include "gatt.h"
 
+static BleMessageType groupValueMessageType;
+
 void group_value_message_initialize() {
+  groupValueMessageType = register_message_type(receive_group_value_message);
+
   mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
   mesh_add_terminal_command("grp", "Update group", broadcast_group_value_message);
   mesh_add_terminal_command("val", "Update value", broadcast_group_value_message);
-  add_write_event(Custom, receive_group_value_message);
 }
 
 void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommands) {
@@ -18,7 +22,7 @@ void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommand
 
   BleMessageGroupValueReq request;
   memset(&request, 0, sizeof(request));
-  request.head.messageType = Custom;
+  request.messageType = groupValueMessageType;
   request.deviceId = (uint32_t) atoll(parsedCommandArray[1]);
 
   bool isGroupUpdate = (strcmp(parsedCommandArray[0], "grp") == 0) ? true : false;
@@ -30,8 +34,8 @@ void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommand
     request.newValue = (uint8_t) atoi(parsedCommandArray[2]);
   }
 
-  receive_group_value_message(BLE_CONN_HANDLE_INVALID, &request);
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *)&request, sizeof(BleMessageGroupValueReq));
+  receive_group_value_message(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request);
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageGroupValueReq));
 }
 
 MessagePropagationType receive_group_value_message(uint16_t connectionHandle, uint8_t *dataPacket) {

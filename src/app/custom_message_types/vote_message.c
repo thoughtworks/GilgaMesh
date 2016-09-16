@@ -9,15 +9,15 @@
 #include "device.h"
 #include "gatt.h"
 
-#define MS_RATE_TO_SEND_VOTE 5000
-
 SYS_TIMER_DEF(voteMessageTimer);
 
+static BleMessageType voteMessageType;
+
 void vote_message_initialize() {
-  add_write_event(5, receive_vote);
+  voteMessageType = register_message_type(receive_vote_message);
 
   create_single_shot_timer(&voteMessageTimer);
-  start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_next_vote);
+  start_timer(&voteMessageTimer, VOTE_MESSAGE_FREQUENCY_IN_MS, send_vote_message);
 }
 
 static void log_vote(BleMessageVoteReq *request) {
@@ -35,14 +35,14 @@ static void log_vote(BleMessageVoteReq *request) {
   MESH_LOG("%s\r\n", voteLogInfo);
 }
 
-void broadcast_next_vote() {
+void send_vote_message() {
   stop_timer(&voteMessageTimer);
   userVote *voteToSend = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL);
 
   if (voteToSend != NULL) {
     BleMessageVoteReq request;
     memset(&request, 0, sizeof(request));
-    request.messageType = 5; // 5 == Vote
+    request.messageType = voteMessageType;
     request.deviceId = get_raw_device_id();
     request.vote = *voteToSend;
 
@@ -50,10 +50,10 @@ void broadcast_next_vote() {
     send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageVoteReq));
   }
 
-  start_timer(&voteMessageTimer, MS_RATE_TO_SEND_VOTE, broadcast_next_vote);
+  start_timer(&voteMessageTimer, VOTE_MESSAGE_FREQUENCY_IN_MS, send_vote_message);
 }
 
-MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket) {
+MessagePropagationType receive_vote_message(uint16_t connectionHandle, uint8_t *dataPacket) {
   UNUSED_PARAMETER(connectionHandle);
   log_vote((BleMessageVoteReq *)dataPacket);
   return PropagateToCentral;

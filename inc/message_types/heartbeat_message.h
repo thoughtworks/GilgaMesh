@@ -3,8 +3,10 @@
 #include "message.h"
 #include "queue.h"
 
+#define HEARTBEAT_MESSAGE_FREQUENCY_IN_MS 3000
+
 typedef struct {
-  BleMessageHead head;
+  BleMessageType messageType;
   uint32_t deviceId;
   uint32_t centralConnectionDeviceId;
   uint8_t majorVersion;
@@ -12,6 +14,6 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageHeartbeatReq;
 
 
-void send_heartbeat_message(void *data, uint16_t dataLength);
+void heartbeat_message_initialize(void);
+void send_heartbeat_message(void);
 MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint8_t *dataPacket);
-void heartbeat_initialize();

@@ -3,10 +3,16 @@
 #include "gatt.h"
 #include "version.h"
 
+static BleMessageType handshakeMessageType;
+
+void handshake_message_initialize() {
+  handshakeMessageType = register_message_type(receive_handshake_message);
+}
+
 void send_handshake_message(connection *targetConnection) {
   BleMessageHandshakeReq request;
   memset(&request, 0, sizeof(request));
-  request.head.messageType = Handshake;
+  request.messageType = handshakeMessageType;
   request.majorVersion = APP_VERSION_MAIN;
   request.minorVersion = APP_VERSION_SUB;
   request.deviceId = get_raw_device_id();

@@ -6,11 +6,18 @@
 #include "connection.h"
 
 static BleMessageBroadcastReq mockRequest;
+static BleMessageType mockMessageType = 123;
 
 static int test_setup(void **state) {
   memset(&mockRequest, 0, sizeof(mockRequest));
-  mockRequest.head.messageType = Broadcast;
+  mockRequest.messageType = mockMessageType;
   return 0;
+}
+
+static void BroadcastMessage_initialize_registers_message_type() {
+  will_return(register_message_type, mockMessageType);
+
+  broadcast_message_initialize();
 }
 
 static void BroadcastMessage_receive_propagates_to_all_connections() {
@@ -36,6 +43,7 @@ static void BroadcastMessage_send_fails_if_message_is_too_long() {
 
 int RunBroadcastMessageTest(void) {
   const struct CMUnitTest tests[] = {
+          cmocka_unit_test_setup(BroadcastMessage_initialize_registers_message_type, test_setup),
           cmocka_unit_test_setup(BroadcastMessage_receive_propagates_to_all_connections, test_setup),
           cmocka_unit_test_setup(BroadcastMessage_send_propagates_to_all_connections, test_setup),
           cmocka_unit_test_setup(BroadcastMessage_send_fails_if_message_is_too_long, test_setup),

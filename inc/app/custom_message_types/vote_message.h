@@ -2,6 +2,8 @@
 
 #include "app/votes.h"
 
+#define VOTE_MESSAGE_FREQUENCY_IN_MS 5000
+
 typedef struct {
   uint8_t messageType;
   uint32_t deviceId;
@@ -9,5 +11,5 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageVoteReq;
 
 void vote_message_initialize(void);
-void broadcast_next_vote(void);
-MessagePropagationType receive_vote(uint16_t connectionHandle, uint8_t *dataPacket);
+void send_vote_message(void);
+MessagePropagationType receive_vote_message(uint16_t connectionHandle, uint8_t *dataPacket);

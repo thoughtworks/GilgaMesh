@@ -1,7 +1,12 @@
-#include <system/log.h>
 #include "message_types/broadcast_message.h"
+#include "system/log.h"
 #include "gatt.h"
 
+static BleMessageType broadcastMessageType;
+
+void broadcast_message_initialize() {
+  broadcastMessageType = register_message_type(receive_broadcast_message);
+}
 
 void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
   UNUSED_PARAMETER(numCommands);
@@ -13,7 +18,7 @@ void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {
 
   BleMessageBroadcastReq request;
   memset(&request, 0, sizeof(request));
-  request.head.messageType = Broadcast;
+  request.messageType = broadcastMessageType;
   memcpy(request.message, parsedCommandArray[1], strlen(parsedCommandArray[1])+1);
 
   send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageBroadcastReq));

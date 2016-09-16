@@ -58,6 +58,12 @@ void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
   }
 }
 
+void delete_file_from_storage(uint16_t fileId) {
+  if(fds_file_delete(fileId) == NRF_SUCCESS) {
+    fds_gc();
+  }
+};
+
 void* get_data_from_storage(uint16_t fileId, uint16_t recordKey) {
   void *result = NULL;
   fds_record_desc_t record_desc;

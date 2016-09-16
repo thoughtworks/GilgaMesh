@@ -59,6 +59,8 @@ void initialize() {
   vote_ack_message_initialize();
   voting_heartbeat_message_initialize();
 
+  mesh_add_terminal_command("clr", "Clear all votes", clear_all_votes);
+
   MESH_LOG("System ready.\r\n");
 }
 

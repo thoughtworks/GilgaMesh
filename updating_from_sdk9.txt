@@ -25,5 +25,5 @@ $> JlinkRTTClient (should show Connected to process: JLinkExe)
 J-Link> r
 J-Link> g
 
-You sould now see the MeshyMesh boot messages on the JLinkRTTClient window
+You should now see the MeshyMesh boot messages on the JLinkRTTClient window
  

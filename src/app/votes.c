@@ -83,3 +83,13 @@ uint16_t get_vote_count() {
 bool vote_storage_is_full() {
   return get_vote_count() > MAX_VOTE_COUNT;
 }
+
+void clear_all_votes() {
+  delete_file_from_storage(VOTES_STORAGE_FILE_ID);
+
+  if(!local_vote_buffer_is_empty()) {
+    stop_clear_buffer_timeout();
+    memset(&buffer, 0, sizeof(buffer));
+    start_clear_buffer_timeout();
+  }
+}

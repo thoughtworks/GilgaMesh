@@ -2321,6 +2321,10 @@
 // </h> 
 //==========================================================
 
+#define NFC_NDEF_MSG_PARSER_ENABLED 1
+#define NFC_NDEF_RECORD_PARSER_ENABLED 1
+#define NFC_T2T_PARSER_ENABLED 1
+
 // <<< end of configuration section >>>
 #endif //SDK_CONFIG_H
 

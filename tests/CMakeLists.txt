@@ -46,6 +46,7 @@ include_directories(${COMPONENTS}/libraries/timer)
 #include_directories(${COMPONENTS}/libraries/uart)
 include_directories(${COMPONENTS}/libraries/log)
 include_directories(${COMPONENTS}/libraries/log/src)
+include_directories(${COMPONENTS}/libraries/twi)
 include_directories(${COMPONENTS}/softdevice/common/softdevice_handler)
 #include_directories(${COMPONENTS}/softdevice/s130/headers)
 #include_directories(${COMPONENTS}/toolchain)
@@ -56,11 +57,11 @@ include_directories(${COMPONENTS}/drivers_nrf/common)
 #include_directories(${COMPONENTS}/drivers_nrf/config)
 #include_directories(${COMPONENTS}/drivers_nrf/delay)
 #include_directories(${COMPONENTS}/drivers_nrf/gpiote)
-#include_directories(${COMPONENTS}/drivers_nrf/hal)
+include_directories(${COMPONENTS}/drivers_nrf/hal)
 #include_directories(${COMPONENTS}/drivers_nrf/ppi)
 #include_directories(${COMPONENTS}/drivers_nrf/pstorage)
 #include_directories(${COMPONENTS}/drivers_nrf/timer)
-#include_directories(${COMPONENTS}/drivers_nrf/twi_master)
+include_directories(${COMPONENTS}/drivers_nrf/twi_master)
 #include_directories(${COMPONENTS}/drivers_nrf/uart)
 include_directories(${EXTERNAL}/segger_rtt)
 include_directories(${SOFTDEVICE}/include)
@@ -234,14 +235,14 @@ GEN_OUTPUTS(LedTest)
 #target_link_libraries(MainTest cmocka)
 #GEN_OUTPUTS(MainTest)
 
-add_executable(RTCTest ${TestFramework_SOURCES}
-        mocks/command_mock.c
-        mocks/terminal_mock.c
-        ${SRC_PATH}/conversion.c
-        ${SRC_PATH}/app/rtc.c
-        unit/app/RTCTest.c)
-target_link_libraries(RTCTest cmocka)
-GEN_OUTPUTS(RTCTest)
+#add_executable(RTCTest ${TestFramework_SOURCES}
+#        mocks/command_mock.c
+#        mocks/terminal_mock.c
+#        ${SRC_PATH}/conversion.c
+#        ${SRC_PATH}/app/rtc.c
+#        unit/app/RTCTest.c)
+#target_link_libraries(RTCTest cmocka)
+#GEN_OUTPUTS(RTCTest)
 
 add_executable(QueueTest ${TestFramework_SOURCES}
         ${SRC_PATH}/queue.c

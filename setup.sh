@@ -59,12 +59,12 @@ if [ ! -d "$GCC_ARM_TOOLCHAIN/lib/gcc/arm-none-eabi/5.4.1" ]; then
     if [[ $platform == 'osx' ]]; then
         wget -O $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_MAC https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q2-update/+download/$GCC_ARM_TAR_FILE_MAC
         tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_MAC
-        mv -u $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
+        mv -f $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
         rm -r $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_MAC $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/
     elif [[ $platform == 'linux' ]]; then
         wget -O $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_LINUX https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q2-update/+download/$GCC_ARM_TAR_FILE_LINUX
         tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_LINUX
-        mv -u $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
+        mv -f $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/* $GCC_ARM_TOOLCHAIN
         rm -r $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_LINUX $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q2/
     fi
 fi

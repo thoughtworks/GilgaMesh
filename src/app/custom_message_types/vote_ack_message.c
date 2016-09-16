@@ -2,12 +2,17 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <app/storage.h>
-#include <app/custom_message_types/vote_message.h>
 
+#include "app/storage.h"
+#include "app/custom_message_types/vote_message.h"
+#include "command.h"
 #include "device.h"
 #include "gatt.h"
 
+void vote_ack_message_initialize() {
+  mesh_add_terminal_command("vack", "Broadcast vote ack", broadcast_vote_ack_from_cmd_line);
+  add_write_event(6, receive_vote_acknowledgement);
+}
 
 void broadcast_vote_acknowledgement(char* nodeIdStr, char* voterIdStr, timestring_t timestampStr) {
   BleMessageVoteAckReq request;

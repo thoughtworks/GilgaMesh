@@ -3,6 +3,8 @@
 #include "app/storage.h"
 
 extern bool displayed_group_value_feedback;
+static uint8_t group = 17;
+static uint8_t value = 23;
 
 static int test_setup(void **state) {
   displayed_group_value_feedback = false;
@@ -10,35 +12,27 @@ static int test_setup(void **state) {
 }
 
 static void VoteConfig_updates_voting_group_and_displays_feedback() {
-  uint8_t group = 17;
-  will_return(get_data_from_storage, NULL);
-
-  voteConfiguration expectedConfig = { 17, 0 };
-  expect_memory(update_data_in_storage, data, &expectedConfig, sizeof(voteConfiguration));
-  expect_value(update_data_in_storage, dataLength, sizeof(voteConfiguration));
+  expect_memory(update_data_in_storage, data, &group, sizeof(group));
+  expect_value(update_data_in_storage, dataLength, sizeof(group));
   expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
-  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_STORAGE_RECORD_KEY);
+  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_GROUP_STORAGE_RECORD_KEY);
 
   update_voting_group(group);
   assert_true(displayed_group_value_feedback);
 }
 
 static void VoteConfig_updates_voting_value_and_displays_feedback() {
-  uint8_t value = 23;
-  will_return(get_data_from_storage, NULL);
-
-  voteConfiguration expectedConfig = { 0, 23 };
-  expect_memory(update_data_in_storage, data, &expectedConfig, sizeof(voteConfiguration));
-  expect_value(update_data_in_storage, dataLength, sizeof(voteConfiguration));
+  expect_memory(update_data_in_storage, data, &value, sizeof(value));
+  expect_value(update_data_in_storage, dataLength, sizeof(value));
   expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
-  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_STORAGE_RECORD_KEY);
+  expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_VALUE_STORAGE_RECORD_KEY);
 
   update_voting_value(value);
   assert_true(displayed_group_value_feedback);
 }
 
 static void VoteConfig_update_result_with_null_vote_config_when_no_config_exists() {
-  will_return(get_data_from_storage, NULL);
+  will_return_always(get_data_from_storage, NULL);
   voteConfiguration result;
 
   get_vote_configuration(&result);
@@ -47,13 +41,13 @@ static void VoteConfig_update_result_with_null_vote_config_when_no_config_exists
 }
 
 static void VoteConfig_update_result_with_stored_config_if_it_exists() {
-  voteConfiguration storedConfig = {2, 3};
-  will_return(get_data_from_storage, &storedConfig);
+  will_return(get_data_from_storage, &group);
+  will_return(get_data_from_storage, &value);
   voteConfiguration result;
 
   get_vote_configuration(&result);
-  assert_int_equal(result.group, 2);
-  assert_int_equal(result.value, 3);
+  assert_int_equal(result.group, group);
+  assert_int_equal(result.value, value);
 }
 
 int RunVoteConfigTest(void) {

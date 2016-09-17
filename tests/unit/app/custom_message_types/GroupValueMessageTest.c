@@ -17,7 +17,6 @@ static int test_setup(void **state) {
 static void GroupValueMessage_initialize_registers_message_and_adds_terminal_commands() {
   will_return(register_message_type, mockMessageType);
 
-  expect_string(mesh_add_terminal_command, commandName, "vc");
   expect_string(mesh_add_terminal_command, commandName, "grp");
   expect_string(mesh_add_terminal_command, commandName, "val");
   group_value_message_initialize();
@@ -53,7 +52,7 @@ static void GroupValueMessage_receive_updates_value_when_requested() {
   receive_group_value_message(0, &mockRequest);
 }
 
-static void GroupValueMessage_broadcast_sets_group_information() {
+static void GroupValueMessage_send_sets_group_information() {
   mockRequest.deviceId = 123;
   mockRequest.setGroup = true;
   mockRequest.newGroup = 4;
@@ -62,10 +61,10 @@ static void GroupValueMessage_broadcast_sets_group_information() {
   expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
   expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
-  broadcast_group_value_message(commands, 3);
+  send_group_value_message(commands, 3);
 }
 
-static void GroupValueMessage_broadcast_sets_value_information() {
+static void GroupValueMessage_send_sets_value_information() {
   mockRequest.deviceId = 567;
   mockRequest.setValue = true;
   mockRequest.newValue = 8;
@@ -74,7 +73,7 @@ static void GroupValueMessage_broadcast_sets_value_information() {
   expect_value(send_to_all_connections, originHandle, BLE_CONN_HANDLE_INVALID);
   expect_value(send_to_all_connections, dataLength, sizeof(mockRequest));
   expect_memory(send_to_all_connections, data, &mockRequest, sizeof(mockRequest));
-  broadcast_group_value_message(commands, 3);
+  send_group_value_message(commands, 3);
 }
 
 int RunGroupValueMessageTest(void) {
@@ -84,8 +83,8 @@ int RunGroupValueMessageTest(void) {
           cmocka_unit_test_setup(GroupValueMessage_receive_propagates_to_all_when_current_node_is_not_target, test_setup),
           cmocka_unit_test_setup(GroupValueMessage_receive_updates_group_when_requested, test_setup),
           cmocka_unit_test_setup(GroupValueMessage_receive_updates_value_when_requested, test_setup),
-          cmocka_unit_test_setup(GroupValueMessage_broadcast_sets_group_information, test_setup),
-          cmocka_unit_test_setup(GroupValueMessage_broadcast_sets_value_information, test_setup),
+          cmocka_unit_test_setup(GroupValueMessage_send_sets_group_information, test_setup),
+          cmocka_unit_test_setup(GroupValueMessage_send_sets_value_information, test_setup),
   };
 
   return cmocka_run_group_tests_name("GroupValueMessageTest", tests, NULL, NULL);

@@ -13,5 +13,5 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageGroupValueReq;
 
 void group_value_message_initialize(void);
-void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommands);
+void send_group_value_message(char **parsedCommandArray, uint8_t numCommands);
 MessagePropagationType receive_group_value_message(uint16_t connectionHandle, uint8_t *dataPacket);

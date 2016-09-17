@@ -1,40 +1,33 @@
 #include "app/vote_config.h"
 
-#include <string.h>
+#include <stddef.h>
 #include "app/feedback.h"
 #include "app/storage.h"
 #include "system/log.h"
 
-voteConfiguration tempVoteConfig __attribute__((aligned(4)));
+uint8_t tempVal __attribute__((aligned(4)));
+
+static void update_vote_config_field(const char* fieldName, uint8_t newVal, uint16_t recordKey) {
+  tempVal = newVal;
+  update_data_in_storage(&tempVal, sizeof(tempVal), VOTE_CONFIG_STORAGE_FILE_ID, recordKey);
+  display_group_value_change_feedback();
+  MESH_LOG("Updated vote config %s to: %u", fieldName, newVal);
+}
+
+static uint8_t get_stored_val(uint16_t recordKey) {
+  uint8_t* storedVal = get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, recordKey);
+  return (storedVal == NULL) ? (uint8_t) 0 : *storedVal;
+}
 
 void update_voting_group(uint8_t newGroup) {
-  get_vote_configuration(&tempVoteConfig);
-  tempVoteConfig.group = newGroup;
-  MESH_LOG("Updated group to: %u", newGroup);
-  display_group_value_change_feedback();
-  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
+  update_vote_config_field("group", newGroup, VOTE_CONFIG_GROUP_STORAGE_RECORD_KEY);
 }
 
 void update_voting_value(uint8_t newValue) {
-  get_vote_configuration(&tempVoteConfig);
-  tempVoteConfig.value = newValue;
-  MESH_LOG("Updated value to: %u", newValue);
-  display_group_value_change_feedback();
-  update_data_in_storage(&tempVoteConfig, sizeof(voteConfiguration), VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
+  update_vote_config_field("value", newValue, VOTE_CONFIG_VALUE_STORAGE_RECORD_KEY);
 }
 
 void get_vote_configuration(voteConfiguration *result) {
-  void* savedVoteConfig = get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, VOTE_CONFIG_STORAGE_RECORD_KEY);
-  if (savedVoteConfig == NULL) {
-    result->group = 0;
-    result->value = 0;
-  } else {
-    memcpy(result, savedVoteConfig, sizeof(voteConfiguration));
-  }
-}
-
-void print_current_vote_config() {
-  voteConfiguration voteConfig;
-  get_vote_configuration(&voteConfig);
-  MESH_LOG("   Group: %u, Value: %u\r\n", voteConfig.group, voteConfig.value);
+  result->group = get_stored_val(VOTE_CONFIG_GROUP_STORAGE_RECORD_KEY);
+  result->value = get_stored_val(VOTE_CONFIG_VALUE_STORAGE_RECORD_KEY);
 }

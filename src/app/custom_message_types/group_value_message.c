@@ -1,8 +1,8 @@
 #include "app/custom_message_types/group_value_message.h"
 
-#include <app_scheduler.h>
 #include <stdlib.h>
 
+#include "system/util.h"
 #include "command.h"
 #include "device.h"
 #include "gatt.h"
@@ -12,16 +12,14 @@ static BleMessageType groupValueMessageType;
 void group_value_message_initialize() {
   groupValueMessageType = register_message_type(receive_group_value_message);
 
-  mesh_add_terminal_command("vc", "Print current vote configuration", print_current_vote_config);
-  mesh_add_terminal_command("grp", "Update group", broadcast_group_value_message);
-  mesh_add_terminal_command("val", "Update value", broadcast_group_value_message);
+  mesh_add_terminal_command("grp", "Update group", send_group_value_message);
+  mesh_add_terminal_command("val", "Update value", send_group_value_message);
 }
 
-void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommands) {
-  UNUSED_PARAMETER(numCommands);
+void send_group_value_message(char **parsedCommandArray, uint8_t numCommands) {
+  SYS_UNUSED_PARAMETER(numCommands);
 
-  BleMessageGroupValueReq request;
-  memset(&request, 0, sizeof(request));
+  BleMessageGroupValueReq request = { 0 };
   request.messageType = groupValueMessageType;
   request.deviceId = (uint32_t) atoll(parsedCommandArray[1]);
 
@@ -35,11 +33,11 @@ void broadcast_group_value_message(char **parsedCommandArray, uint8_t numCommand
   }
 
   receive_group_value_message(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request);
-  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageGroupValueReq));
+  send_to_all_connections(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(request));
 }
 
 MessagePropagationType receive_group_value_message(uint16_t connectionHandle, uint8_t *dataPacket) {
-  UNUSED_PARAMETER(connectionHandle);
+  SYS_UNUSED_PARAMETER(connectionHandle);
   BleMessageGroupValueReq *req = (BleMessageGroupValueReq *) dataPacket;
   if (req->deviceId == get_raw_device_id()) {
     if (req->setGroup) update_voting_group(req->newGroup);

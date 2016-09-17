@@ -22,6 +22,12 @@ void votes_initialize() {
   create_single_shot_timer(&clearBufferTimer);
 }
 
+void vote_six_times() {
+  for(int i = 1; i <= 6; i++) {
+    save_vote(i);
+  }
+}
+
 static bool save_and_clear_vote_buffer_content();
 static void start_clear_buffer_timeout() {
   start_timer(&clearBufferTimer, CLEAR_VOTE_BUFFER_DURATION_IN_MS, save_and_clear_vote_buffer_content);

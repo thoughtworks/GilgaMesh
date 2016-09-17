@@ -1,6 +1,5 @@
 #include "app/storage.h"
 
-#include <stddef.h>
 #include <fds.h>
 #include "system/log.h"
 
@@ -28,6 +27,36 @@ static uint16_t get_length_in_words(uint16_t dataLength) {
   return lengthInWords;
 }
 
+static void garbage_collect_if_storage_is_limited() {
+  fds_stat_t fds_statistics;
+  fds_stat(&fds_statistics);
+  uint16_t total_words_in_storage = (FDS_VIRTUAL_PAGES - 1) * FDS_VIRTUAL_PAGE_SIZE;
+  double percent_words_free = (double)(total_words_in_storage - fds_statistics.words_used) / (double)total_words_in_storage;
+  if( percent_words_free <= .05) {
+    fds_gc();
+  }
+}
+
+void check_fds_stats() {
+  fds_stat_t fds_statistics;
+  fds_stat(&fds_statistics);
+  MESH_LOG("total words: %u\r\n", ((FDS_VIRTUAL_PAGES -1) * FDS_VIRTUAL_PAGE_SIZE));
+  MESH_LOG("words used: %u\r\n", fds_statistics.words_used);
+  MESH_LOG("dirty records: %u\r\n", fds_statistics.dirty_records);
+  MESH_LOG("valid records: %u\r\n", fds_statistics.valid_records);
+  MESH_LOG("open records: %u\r\n", fds_statistics.open_records);
+  MESH_LOG("freeable words: %u\r\n", fds_statistics.freeable_words);
+}
+
+void whats_in_storage_right_now() {
+  fds_record_desc_t record_desc;
+  fds_find_token_t p_token = { 0 };
+  while(fds_record_iterate(&record_desc, &p_token) == FDS_SUCCESS) {
+    fds_flash_record_t flash_record;
+    fds_record_open(&record_desc, &flash_record);
+  }
+}
+
 void set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
   fds_record_chunk_t record_chunk = {
           .p_data       = data,
@@ -44,8 +73,9 @@ void set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint1
   fds_record_desc_t record_desc;
   ret_code_t result = fds_record_write(&record_desc, &record);
   if (result != FDS_SUCCESS) {
-    MESH_LOG("ERROR: Writing data to storage failed! Result: %u\r\n", result);
+    MESH_LOG("ERROR: Writing data to storage failed!\r\n");
   }
+  garbage_collect_if_storage_is_limited();
 }
 
 void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
@@ -56,6 +86,7 @@ void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
       MESH_LOG("ERROR: Deleting data from storage failed!\r\n");
     }
   }
+  garbage_collect_if_storage_is_limited();
 }
 
 void delete_file_from_storage(uint16_t fileId) {

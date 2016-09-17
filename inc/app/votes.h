@@ -29,3 +29,4 @@ void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands)
 uint16_t get_vote_count(void);
 bool vote_storage_is_full(void);
 void clear_all_votes(void);
+void vote_six_times();

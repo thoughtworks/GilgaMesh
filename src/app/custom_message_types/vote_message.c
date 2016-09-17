@@ -37,7 +37,7 @@ static void log_vote(BleMessageVoteReq *request) {
 
 void send_vote_message() {
   stop_timer(&voteMessageTimer);
-  userVote *voteToSend = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL);
+  userVote* voteToSend = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL);
 
   if (voteToSend != NULL) {
     BleMessageVoteReq request;

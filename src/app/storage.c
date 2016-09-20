@@ -1,5 +1,6 @@
 #include "app/storage.h"
 
+#include <stddef.h>
 #include <fds.h>
 #include "system/log.h"
 

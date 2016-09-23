@@ -35,7 +35,7 @@
 #include <string.h>
 #include "adafruit_pn532.h"
 #include "nrf_gpio.h"
-#include "nrf_delay.h"
+#include "system/delay.h"
 #include "nrf_drv_twi.h"
 #include "app_error.h"
 #include "nordic_common.h"
@@ -101,7 +101,7 @@
 #define PN532_ACK_PACKET_SIZE               6
 
 // Default time-out for read_passive_target_id (time required for field scan).
-#define PN532_DEFAULT_WAIT_FOR_READY_TIMEOUT    100
+#define PN532_DEFAULT_WAIT_FOR_READY_TIMEOUT    10
 
 // ACK frame format.
 static const uint8_t pn532_ack[] = {0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00};
@@ -230,7 +230,7 @@ ret_code_t adafruit_pn532_init(bool force)
     adafruit_pn532_pin_setup();
 
     // Delay for PN532 to catch up with NRF.
-    nrf_delay_ms(100);
+    system_delay_ms(10);
 
     PN532_LOG("Looking for PN532\r\n");
 
@@ -474,7 +474,7 @@ ret_code_t adafruit_pn532_power_down(void)
 
     // From PN532 user manual: "The PN532 needs approximately 1 ms to get into Power Down mode,
     // after the command response." (Rev. 02, p. 7.2.11, page 98)
-    nrf_delay_ms(1);
+    system_delay_ms(1);
 
     return NRF_SUCCESS;
 }
@@ -500,7 +500,7 @@ ret_code_t adafruit_pn532_wake_up(void)
     }
     // Wait specified time to ensure that the PN532 shield is fully operational
     // (PN532 data sheet, Rev. 3.2, page 209).
-    nrf_delay_ms(2);
+    system_delay_ms(2);
 
     return NRF_SUCCESS;
 }
@@ -884,7 +884,7 @@ bool adafruit_pn532_waitready_ms(uint16_t timeout)
     while ((!result) && (timer < timeout))
     {
         timer += 1;
-        nrf_delay_ms(1);
+        system_delay_ms(1);
         result = adafruit_pn532_is_ready();
     }
 

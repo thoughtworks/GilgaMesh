@@ -10,6 +10,7 @@
 static uint8_t tag_data[TAG_DATA_BUFFER_SIZE];
 static bool nfcEnabled = false;
 static bool nfcErrorCondition = false;
+static uint32_t delay_time_left_x100ms = 0;
 
 SYS_TIMER_DEF(nfcScanTimer);
 
@@ -66,7 +67,8 @@ static void after_read_delay(void)
   // Turn off the RF field.
   err_code = adafruit_pn532_field_off();
   APP_ERROR_CHECK(err_code);
-  system_delay_ms(TAG_AFTER_READ_DELAY);
+
+  delay_time_left_x100ms = TAG_AFTER_READ_DELAY;
 }
 
 /**
@@ -102,42 +104,42 @@ static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size)
   {
     return NRF_ERROR_NOT_FOUND;
   }
-
-  if (uid_length != TAG_TYPE_2_UID_LENGTH)
-  {
-    return NRF_ERROR_NOT_SUPPORTED;
-  }
+//
+//  if (uid_length != TAG_TYPE_2_UID_LENGTH)
+//  {
+//    return NRF_ERROR_NOT_SUPPORTED;
+//  }
 
   // Read pages 0 - 3 to get the header information.
-  for (i = 0; i < 4; i++)
-  {
-    err_code = adafruit_pn532_ntag2xx_read_page(i, buffer + 4 * i);
-    if (err_code)
-    {
-      MESH_LOG_ERROR("Failed to read page %d\r\n", i);
-      return NRF_ERROR_INTERNAL;
-    }
-  }
+//  for (i = 0; i < 4; i++)
+//  {
+//    err_code = adafruit_pn532_ntag2xx_read_page(i, buffer + 4 * i);
+//    if (err_code)
+//    {
+//      MESH_LOG_ERROR("Failed to read page %d\r\n", i);
+//      return NRF_ERROR_INTERNAL;
+//    }
+//  }
 
-  uint16_t data_bytes_in_tag = TAG_TYPE_2_DATA_AREA_MULTIPLICATOR *
-                               buffer[TAG_TYPE_2_DATA_AREA_SIZE_OFFSET];
-
-  if (data_bytes_in_tag + T2T_FIRST_DATA_BLOCK_OFFSET > buffer_size)
-  {
-    return NRF_ERROR_NO_MEM;
-  }
-
-  uint8_t pages_to_read = data_bytes_in_tag / T2T_BLOCK_SIZE;
-  for (i = 0; i < pages_to_read; i++)
-  {
-    uint16_t offset_for_page = T2T_FIRST_DATA_BLOCK_OFFSET + 4 * i;
-    err_code = adafruit_pn532_ntag2xx_read_page(i + 4, buffer + offset_for_page);
-    if (err_code)
-    {
-      MESH_LOG_ERROR("Failed to read page %d\r\n", i + 4);
-      return NRF_ERROR_INTERNAL;
-    }
-  }
+//  uint16_t data_bytes_in_tag = TAG_TYPE_2_DATA_AREA_MULTIPLICATOR *
+//                               buffer[TAG_TYPE_2_DATA_AREA_SIZE_OFFSET];
+//
+//  if (data_bytes_in_tag + T2T_FIRST_DATA_BLOCK_OFFSET > buffer_size)
+//  {
+//    return NRF_ERROR_NO_MEM;
+//  }
+//
+//  uint8_t pages_to_read = data_bytes_in_tag / T2T_BLOCK_SIZE;
+//  for (i = 0; i < pages_to_read; i++)
+//  {
+//    uint16_t offset_for_page = T2T_FIRST_DATA_BLOCK_OFFSET + 4 * i;
+//    err_code = adafruit_pn532_ntag2xx_read_page(i + 4, buffer + offset_for_page);
+//    if (err_code)
+//    {
+//      MESH_LOG_ERROR("Failed to read page %d\r\n", i + 4);
+//      return NRF_ERROR_INTERNAL;
+//    }
+//  }
 
   return NRF_SUCCESS;
 }
@@ -212,32 +214,36 @@ static void tag_data_analyze(uint8_t * buffer)
 void nfc_scan(void) {
   uint32_t err_code;
 
-  if(nfcEnabled && !nfcErrorCondition) {
-//    err_code = tag_data_read(tag_data, TAG_DATA_BUFFER_SIZE);
-//    switch (err_code)
-//    {
-//      case NRF_SUCCESS:
-//        MESH_LOG_INFO("NFC tag found!\r\n");
-//            tag_data_analyze(tag_data);
-//            after_read_delay();
-//            break;
-//      case NRF_ERROR_NO_MEM:
-//        MESH_LOG_INFO("Declared buffer is to small to store tag data.\r\n");
-//            after_read_delay();
-//            break;
-//      case NRF_ERROR_NOT_FOUND:
-//        MESH_LOG_INFO("No Tag found.\r\n");
-//            // No delay here as we want to search for another tag immediately.
-//            break;
-//      case NRF_ERROR_NOT_SUPPORTED:
-//        MESH_LOG_INFO("Tag not supported.\r\n");
-//            after_read_delay();
-//            break;
-//      default:
-//        MESH_LOG_INFO("Error during tag read.\r\n");
-//            adafruit_pn532_field_off();
-//            break;
-//    }
+  if(delay_time_left_x100ms != 0) {
+    delay_time_left_x100ms--;
+  }
+  else {
+    if (nfcEnabled && !nfcErrorCondition && adafruit_pn532_is_ready()) {
+      err_code = tag_data_read(tag_data, TAG_DATA_BUFFER_SIZE);
+      switch (err_code) {
+        case NRF_SUCCESS:
+        MESH_LOG_INFO("NFC tag found!\r\n");
+          //tag_data_analyze(tag_data);
+          after_read_delay();
+          break;
+        case NRF_ERROR_NO_MEM:
+        MESH_LOG_WARNING("Declared buffer is to small to store tag data.\r\n");
+          after_read_delay();
+          break;
+        case NRF_ERROR_NOT_FOUND:
+        MESH_LOG_DEBUG("No Tag found.\r\n");
+          // No delay here as we want to search for another tag immediately.
+          break;
+        case NRF_ERROR_NOT_SUPPORTED:
+        MESH_LOG_WARNING("Tag not supported.\r\n");
+          after_read_delay();
+          break;
+        default:
+        MESH_LOG_ERROR("Error during tag read.\r\n");
+          adafruit_pn532_field_off();
+          break;
+      }
+    }
   }
 }
 

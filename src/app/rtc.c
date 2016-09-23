@@ -4,7 +4,7 @@
 #include "terminal.h"
 #include "system/timer.h"
 
-#define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 1
+#define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 500
 static bool is_sysclock_suspended = false;
 SYS_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 
@@ -181,16 +181,9 @@ uint64_t rtc_get_seconds_since_boot() {
 }
 
 void rtc_periodic_update_handler() {
-  system_time.clock_time.millis++;
-  if(system_time.clock_time.millis >= 1000) {
-    system_time.clock_time.millis = 0;
-    system_time.seconds_since_boot++;
-  }
 
 #ifdef SEEED_RTC
-  if(system_time.clock_time.millis % 250 == 0) { // read RTC 4 times per second
     app_sched_event_put(NULL, 0, update_system_time_from_seeed_rtc);
-  }
 # else // sloppy approximation of time and date if no RTC hardware..
   if(system_time.clock_time.millis == 0) {
     system_time.clock_time.seconds++;

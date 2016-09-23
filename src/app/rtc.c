@@ -1,17 +1,18 @@
-#include <app/rtc.h>
-#include <system/log.h>
+#include "app/rtc.h"
+#include "system/log.h"
 #include "conversion.h"
 #include "terminal.h"
 #include "system/timer.h"
 
 #define MS_RATE_TO_UPDATE_SYSTEM_CLOCK 500
-static bool is_sysclock_suspended = false;
+
 SYS_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 
 #ifdef SEEED_RTC
 #include <app_twi.h>
 #include <app_util_platform.h>
 #include <stdlib.h>
+#include "error.h"
 
 #define MAX_PENDING_TRANSACTIONS 8
 #define RTC_TWI_ADDR 81
@@ -51,7 +52,7 @@ static void read_seeed_rtc_state() {
       APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_A.Years, 1, 0)
     };
 
-    err_code = app_twi_perform(&rtcTwiInstance, &readRtcTransfers,
+    err_code = app_twi_perform(&rtcTwiInstance, readRtcTransfers,
                                     sizeof(readRtcTransfers) / sizeof(readRtcTransfers[0]), NULL);
     APP_ERROR_CHECK(err_code);
 
@@ -78,20 +79,13 @@ static void print_seeed_rtc_state() {
         rtc_state.register_1.MI);
     MESH_LOG("RTC Offset: %d\r\n", rtc_state.register_2.Offset);
     MESH_LOG("RTC RAM_byte: %d\r\n", rtc_state.register_3.RAM_byte);
-    MESH_LOG("RTC Seconds OS:%d SECONDS:%d%d\r\n", rtc_state.register_4.OS,
-        rtc_state.register_4.TENS,
-        rtc_state.register_4.UNIT);
-    MESH_LOG("RTC Minutes: %d%d\r\n", rtc_state.register_5.TENS,
-        rtc_state.register_5.UNIT);
-    MESH_LOG("RTC Hours: %d%d\r\n", rtc_state.register_6.TENS,
-        rtc_state.register_6.UNIT);
-    MESH_LOG("RTC Days: %d%d\r\n", rtc_state.register_7.TENS,
-        rtc_state.register_7.UNIT);
+    MESH_LOG("RTC Seconds OS:%d SECONDS:%d%d\r\n", rtc_state.register_4.OS, rtc_state.register_4.TENS, rtc_state.register_4.UNIT);
+    MESH_LOG("RTC Minutes: %d%d\r\n", rtc_state.register_5.TENS, rtc_state.register_5.UNIT);
+    MESH_LOG("RTC Hours: %d%d\r\n", rtc_state.register_6.TENS, rtc_state.register_6.UNIT);
+    MESH_LOG("RTC Days: %d%d\r\n", rtc_state.register_7.TENS, rtc_state.register_7.UNIT);
     MESH_LOG("RTC Weekdays: %d\r\n", rtc_state.register_8.UNIT);
-    MESH_LOG("RTC Months: %d%d\r\n", rtc_state.register_9.TENS,
-        rtc_state.register_9.UNIT);
-    MESH_LOG("RTC Years: 20%d%d\r\n", rtc_state.register_A.TENS,
-        rtc_state.register_A.UNIT);
+    MESH_LOG("RTC Months: %d%d\r\n", rtc_state.register_9.TENS, rtc_state.register_9.UNIT);
+    MESH_LOG("RTC Years: 20%d%d\r\n", rtc_state.register_A.TENS, rtc_state.register_A.UNIT);
   }
 };
 
@@ -118,15 +112,15 @@ static void update_system_time_from_seeed_rtc(void * p_event_data, uint16_t even
 
   read_seeed_rtc_state();
 
-  system_time.clock_time.seconds = rtc_state.register_4.TENS * 10 + rtc_state.register_4.UNIT;
+  system_time.clock_time.seconds = rtc_state.register_4.TENS * (uint8_t)10 + rtc_state.register_4.UNIT;
   system_time.clock_time.minutes = rtc_state.register_5.TENS * 10 + rtc_state.register_5.UNIT;
   system_time.clock_time.hours = rtc_state.register_6.TENS * 10 + rtc_state.register_6.UNIT;
   system_time.clock_time.day = rtc_state.register_7.TENS * 10 + rtc_state.register_7.UNIT;
   system_time.clock_time.weekday = rtc_state.register_8.UNIT;
   system_time.clock_time.month = rtc_state.register_9.TENS * 10 + rtc_state.register_9.UNIT;
-  system_time.clock_time.years_since_y2k = rtc_state.register_A.TENS * 10 + rtc_state.register_A.UNIT;
-  system_time.clock_time.year = 2000 + system_time.clock_time.years_since_y2k;
-  system_time.clock_time.UTC_offset_in_minutes = rtc_state.register_2.Offset * 30;
+  system_time.clock_time.years_since_y2k = rtc_state.register_A.TENS * (uint8_t)10 + rtc_state.register_A.UNIT;
+  system_time.clock_time.year = (uint16_t)2000 + system_time.clock_time.years_since_y2k;
+  system_time.clock_time.UTC_offset_in_minutes = rtc_state.register_2.Offset * (int16_t)30;
 }
 
 #endif // SEEED_RTC
@@ -136,27 +130,25 @@ void rtc_sysclock_timer_initialize() {
   start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
 }
 
-void rtc_sysclock_timer_suspend() {
-  if(!is_sysclock_suspended) {
-    is_sysclock_suspended = true;
-    stop_timer(&SYSCLOCK_TIMER);
+static void execute_rtc_command(char **parsedCommandArray, uint8_t numCommands) {
+  if (numCommands >= 2 && strcmp(parsedCommandArray[1], "info") == 0) {
+    rtc_print_status();
+    return;
   }
-}
-
-void rtc_sysclock_timer_resume() {
-  if(is_sysclock_suspended) {
-    is_sysclock_suspended = false;
-    start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
+  if (numCommands >= 4 && strcmp(parsedCommandArray[1], "set") == 0) {
+    rtc_set_field(parsedCommandArray[2], parsedCommandArray[3]);
+    return;
   }
-}
 
+  print_help_rtc();
+}
 
 void rtc_init() {
   system_time.clock_time.day = 1;
   system_time.clock_time.month = 1;
   system_time.clock_time.year = 2000;
 
-  for(int i = 0 ; i < NUMBER_OF_RTC_REGISTERS ; i++) {
+  for(uint8_t i = 0 ; i < NUMBER_OF_RTC_REGISTERS ; i++) {
     rtc_register_indices[i] = i;
   }
 
@@ -286,39 +278,33 @@ void rtc_set_field(char* field, char* value) {
     return;
   }
 
-  if (err_code) {
-    is_seeed_rtc_connected = false;
-  }
-  else {
-    is_seeed_rtc_connected = true;
+  uint8_t intvalue = (uint8_t) atoi(value);
+  static uint8_t bcdvalue = 0;
+  if (intvalue >= min && intvalue <= max) {
+    bcdvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
 
-    uint8_t intvalue = (uint8_t) atoi(value);
-    static uint8_t bcdvalue = 0;
-    if (intvalue >= min && intvalue <= max) {
-      bcdvalue = (((intvalue / (uint8_t)10) << (uint8_t)4) | (intvalue % (uint8_t)10)); // convert to BCD
+    static uint8_t updatedData[2];
+    updatedData[0] = register_to_update;
+    updatedData[1] = bcdvalue;
+    static app_twi_transfer_t const writeRtcTransfers[] =
+            {
+                    APP_TWI_WRITE(RTC_TWI_ADDR, updatedData, sizeof(updatedData), 0)
+            };
 
-      static app_twi_transfer_t const writeRtcTransfers[] =
-              {
-                      APP_TWI_WRITE(RTC_TWI_ADDR, &register_to_update, 1, APP_TWI_NO_STOP),
-                      APP_TWI_WRITE(RTC_TWI_ADDR, &bcdvalue, 1, 0)
-              };
+    err_code = app_twi_perform(&rtcTwiInstance, writeRtcTransfers, 1, NULL);
+    EC(err_code);
 
-      err_code = app_twi_perform(&rtcTwiInstance, &writeRtcTransfers, 2, NULL);
-      APP_ERROR_CHECK(err_code);
-
-      if(err_code != NRF_SUCCESS) {
-        is_seeed_rtc_connected = false;
-        MESH_LOG_ERROR("RTC write failed.")
-      } else {
-        MESH_LOG_INFO("Successfully wrote value %d (BCD: %d) to RTC register %d", intvalue, bcdvalue, register_to_update);
-        is_seeed_rtc_connected = true;
-      }
-
+    if(err_code != NRF_SUCCESS) {
+      is_seeed_rtc_connected = false;
+      MESH_LOG_ERROR("RTC write failed.")
     } else {
-      MESH_LOG("Value out of range.\r\n");
+      is_seeed_rtc_connected = true;
+      MESH_LOG_INFO("Successfully wrote value %d (BCD: %d) to RTC register %d", intvalue, bcdvalue, register_to_update);
     }
-  }
 
+  } else {
+    MESH_LOG("Value out of range.\r\n");
+  }
 
 #endif // SEEED_RTC
 }
@@ -366,21 +352,6 @@ void rtc_print_status() {
   terminal_putstring("No RTC detected.\r\n");
 #endif // SEEED_RTC
   rtc_print_date_and_time();
-}
-
-void execute_rtc_command(char **parsedCommandArray)
-{
-  if (strcmp(parsedCommandArray[1], "info") == 0) {
-    rtc_print_status();
-    return;
-  }
-  else if (strcmp(parsedCommandArray[1], "set") == 0) {
-    rtc_set_field(parsedCommandArray[2], parsedCommandArray[3]);
-  }
-  else {
-    print_help_rtc();
-    return;
-  }
 }
 
 void print_help_rtc() {

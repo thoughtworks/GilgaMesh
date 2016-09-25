@@ -54,8 +54,16 @@ void display_vote_recorded_feedback() {
   if(!initialization_completed) return;
 
   led_green_bright();
-  uint16_t success_tones[4] = {100, 956, 200, 716};
+  uint16_t success_tones[4] = {50, 956, 50, 716};
   play_tones(success_tones, 2);
+}
+
+void display_vote_hit_recorded_feedback() {
+  if(!initialization_completed) return;
+
+  led_green_bright();
+  uint16_t success_tones[4] = {25, 758};
+  play_tones(success_tones, 1);
 }
 
 void display_successful_start_up_feedback() {

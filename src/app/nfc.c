@@ -90,14 +90,14 @@ void nfc_ndef_msg_to_vote(nfc_ndef_msg_desc_t * const p_msg_desc)
   uint32_t i;
 
   system_delay_ms(100);
-  MESH_LOG_INFO("NDEF message contains %d record(s)\r\n\r\n", p_msg_desc->record_count);
+  MESH_LOG_DEBUG("NDEF message contains %d record(s)\r\n\r\n", p_msg_desc->record_count);
 
   for (i = 0; i < p_msg_desc->record_count; i++)
   {
     //ndef_record_printout(i, p_msg_desc->pp_record[i]);
 
-    MESH_LOG_INFO("NDEF record %d content:\r\n", i);
-    MESH_LOG_INFO("TNF: %s",(uint32_t)nfc_tnf_descs[p_msg_desc->pp_record[i]->tnf]);
+    MESH_LOG_DEBUG("NDEF record %d content:\r\n", i);
+    MESH_LOG_DEBUG("TNF: %s",(uint32_t)nfc_tnf_descs[p_msg_desc->pp_record[i]->tnf]);
 
     if (p_msg_desc->pp_record[i]->payload_constructor == (p_payload_constructor_t) nfc_ndef_bin_payload_memcopy)
     {
@@ -115,7 +115,7 @@ void nfc_ndef_msg_to_vote(nfc_ndef_msg_desc_t * const p_msg_desc)
       }
       else
       {
-        MESH_LOG_INFO("No payload\r\n");
+        MESH_LOG_INFO("No NFC tag payload\r\n");
       }
     }
   }
@@ -177,7 +177,7 @@ static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size)
     err_code = adafruit_pn532_ntag2xx_read_page(i, buffer + 4 * i);
     if (err_code)
     {
-      MESH_LOG_ERROR("Failed to read page %d\r\n", i);
+      MESH_LOG_WARNING("Failed to read page %d\r\n", i);
       return NRF_ERROR_INTERNAL;
     }
   }
@@ -197,7 +197,7 @@ static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size)
     err_code = adafruit_pn532_ntag2xx_read_page(i + 4, buffer + offset_for_page);
     if (err_code)
     {
-      MESH_LOG_ERROR("Failed to read page %d\r\n", i + 4);
+      MESH_LOG_WARNING("Failed to read page %d\r\n", i + 4);
       return NRF_ERROR_INTERNAL;
     }
   }
@@ -265,7 +265,7 @@ static void tag_data_analyze(uint8_t * buffer)
   tlv_block_t * p_tlv_block = test_type_2_tag->p_tlv_block_array;
   uint32_t i;
 
-  MESH_LOG_INFO("The tag has %d TLV blocks\r\n", test_type_2_tag->tlv_count);
+  MESH_LOG_DEBUG("The tag has %d TLV blocks\r\n", test_type_2_tag->tlv_count);
   for (i = 0; i < test_type_2_tag->tlv_count; i++)
   {
     ndef_data_analyze(p_tlv_block);
@@ -301,7 +301,7 @@ void nfc_scan(void) {
           after_read_delay();
           break;
         default:
-          MESH_LOG_ERROR("Error during tag read.\r\n");
+          MESH_LOG_WARNING("Tag removed.\r\n");
           adafruit_pn532_field_off();
           break;
       }

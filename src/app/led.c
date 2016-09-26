@@ -12,13 +12,14 @@ typedef void(*display_led_function)(void);
 
 static const void* ledPWM;
 
-static display_led_function flash[6] = {
+static display_led_function flash[] = {
         led_red_bright,
-        led_yellow_bright,
+//        led_yellow_bright,
         led_green_bright,
-        led_teal_bright,
-        led_blue_bright,
-        led_purple_bright
+//        led_teal_bright,
+        led_blue_bright
+//        led_purple_bright
+//        led_white_bright
 };
 
 static void set_non_pwm_led(uint32_t pinNumber, uint8_t dutyCycle) {

@@ -9,6 +9,7 @@
 #include "system/util.h"
 #include "device.h"
 #include "gatt.h"
+#include "terminal.h"
 
 
 SYS_TIMER_DEF(votingHeartbeatTimer);
@@ -26,8 +27,11 @@ static void log_voting_heartbeat_info(BleMessageVotingHeartbeatReq *request) {
   char deviceId[HEX_DEVICE_ID_LENGTH];
   get_short_hex_device_id(request->deviceId, deviceId);
 
-  MESH_LOG("VOTING HB: {\"id\": \"%s\", \"rawId\": %u, \"nfcStatus\": \"%s\", \"group\": %u, \"value\": %u, \"voteCount\": %u}\r\n",
-      deviceId, request->deviceId, get_nfc_status_string(request->nfcStatus), request->voteConfig.group, request->voteConfig.value, request->voteCount);
+  char logMessage[256];
+  sprintf(logMessage, "VOTING HB: {\"id\": \"%s\", \"rawId\": %u, \"nfcStatus\": \"%s\", \"group\": %u, \"value\": %u, \"voteCount\": %u}\r\n",
+          deviceId, (unsigned int) request->deviceId, get_nfc_status_string(request->nfcStatus), request->voteConfig.group, request->voteConfig.value, request->voteCount);
+  MESH_LOG("%s", logMessage);
+  log_to_uart(logMessage, sizeof(logMessage));
 }
 
 void send_voting_heartbeat_message() {

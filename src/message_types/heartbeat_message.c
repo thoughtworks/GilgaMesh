@@ -1,13 +1,14 @@
 #include "message_types/heartbeat_message.h"
 
 #include <stdlib.h>
+#include <nrf51.h>
+#include <app_uart.h>
 
 #include "system/log.h"
 #include "system/timer.h"
-#include "conversion.h"
 #include "device.h"
 #include "gatt.h"
-#include "version.h"
+#include "terminal.h"
 
 SYS_TIMER_DEF(heartbeatTimer);
 
@@ -30,8 +31,13 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
     memcpy(parentDeviceId, "ROOT", 5);
   }
 
-  MESH_LOG("HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
-      deviceId, request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
+  char heartbeatLog[256];
+  sprintf(heartbeatLog, "HEARTBEAT: {\"id\": \"%s\", \"rawId\": %u, \"parentId\": \"%s\", \"version\": \"%u.%u\"}\r\n",
+          deviceId, (unsigned int) request->deviceId, parentDeviceId, request->majorVersion, request->minorVersion);
+
+
+  MESH_LOG("%s", heartbeatLog);
+  log_to_uart(heartbeatLog, sizeof(heartbeatLog));
 }
 
 void send_heartbeat_message() {

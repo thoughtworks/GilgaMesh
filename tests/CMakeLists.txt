@@ -43,7 +43,7 @@ include_directories(${COMPONENTS}/libraries/low_power_pwm)
 #include_directories(${COMPONENTS}/libraries/pwm)
 include_directories(${COMPONENTS}/libraries/scheduler)
 include_directories(${COMPONENTS}/libraries/timer)
-#include_directories(${COMPONENTS}/libraries/uart)
+include_directories(${COMPONENTS}/libraries/uart)
 include_directories(${COMPONENTS}/libraries/log)
 include_directories(${COMPONENTS}/libraries/log/src)
 include_directories(${COMPONENTS}/libraries/twi)
@@ -63,12 +63,12 @@ include_directories(${COMPONENTS}/drivers_nrf/hal)
 #include_directories(${COMPONENTS}/drivers_nrf/timer)
 include_directories(${COMPONENTS}/drivers_nrf/twi_master)
 #include_directories(${COMPONENTS}/drivers_nrf/uart)
+include_directories(${COMPONENTS}/device)
 include_directories(${EXTERNAL}/segger_rtt)
 include_directories(${SOFTDEVICE}/include)
 include_directories(${SOFTDEVICE}/include/nrf51)
 
 # include project mock headers, mosty for working around static implementations in header files
-include_directories(mocks/include/sdk12/components/device)
 include_directories(mocks/include/sdk12/components/toolchain)
 include_directories(mocks/include/sdk12/components/toolchain/cmsis/include)
 include_directories(mocks/include/sdk12/components/libraries/util)
@@ -196,6 +196,7 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
+        mocks/terminal_mock.c
         mocks/system/timer_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/message_types/heartbeat_message.c
@@ -282,6 +283,7 @@ add_executable(VoteMessageTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
+        mocks/terminal_mock.c
         ${SRC_PATH}/app/custom_message_types/vote_message.c
         unit/app/custom_message_types/VoteMessageTest.c)
 target_link_libraries(VoteMessageTest cmocka)
@@ -294,6 +296,7 @@ add_executable(VotingHeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/system/timer_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
+        mocks/terminal_mock.c
         ${SRC_PATH}/app/custom_message_types/voting_heartbeat_message.c
         unit/app/custom_message_types/VotingHeartbeatMessageTest.c)
 target_link_libraries(VotingHeartbeatMessageTest cmocka)

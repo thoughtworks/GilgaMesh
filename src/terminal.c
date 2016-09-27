@@ -1,8 +1,11 @@
 #include "terminal.h"
 
-#include <stdlib.h>
+#include <app_uart.h>
 #include <SEGGER_RTT.h>
+
 #include "system/log.h"
+#include "boards.h"
+#include "error.h"
 
 #define ENTER_KEY 0xA
 #define ESCAPE_KEY 0x1b
@@ -31,6 +34,37 @@ static void print_prompt() {
   terminal_putstring(TERMINAL_PROMPT);
 }
 
+static void uart_event_handle(app_uart_evt_t * p_event) {
+  // don't do anything
+}
+
+static void uart_initialize() {
+  uint32_t                     err_code;
+  const app_uart_comm_params_t comm_params =
+          {
+                  RX_PIN_NUMBER,
+                  TX_PIN_NUMBER,
+                  RTS_PIN_NUMBER,
+                  CTS_PIN_NUMBER,
+                  APP_UART_FLOW_CONTROL_DISABLED,
+                  false,
+                  UART_BAUDRATE_BAUDRATE_Baud38400
+          };
+
+  APP_UART_INIT(&comm_params,
+                uart_event_handle,
+                APP_IRQ_PRIORITY_LOW,
+                err_code);
+  EC(err_code);
+}
+
+void log_to_uart(char *logMessage, uint16_t messageLength) {
+  for (int i = 0; i < messageLength; i++) {
+    while (app_uart_put((uint8_t) logMessage[i]) != NRF_SUCCESS);
+    if (logMessage[i] == '\0') break;
+  }
+}
+
 void terminal_initialize(void) {
   is_terminal_initialized = true;
 
@@ -57,6 +91,8 @@ void terminal_initialize(void) {
 
   terminal_putstring(", nRF51s ");
   terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
+
+  uart_initialize();
 
 }
 

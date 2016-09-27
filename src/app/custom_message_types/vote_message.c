@@ -8,6 +8,7 @@
 #include "system/timer.h"
 #include "device.h"
 #include "gatt.h"
+#include "terminal.h"
 
 SYS_TIMER_DEF(voteMessageTimer);
 
@@ -29,10 +30,12 @@ static void log_vote(BleMessageVoteReq *request) {
   rtc_timestamp_to_timestring(request->vote.timeOfLastVote, timestring);
 
   char voteLogInfo[200];
-  sprintf(voteLogInfo, "VOTE: {\"id\": \"%s\", \"rawId\": %u, \"voterId\": \"%u\", \"hitCount\": %u, \"group\": %u, \"value\": %u, \"timestamp\": \"%s\"}",
+  sprintf(voteLogInfo, "VOTE: {\"id\": \"%s\", \"rawId\": %u, \"voterId\": \"%u\", \"hitCount\": %u, \"group\": %u, \"value\": %u, \"timestamp\": \"%s\"}\r\n",
           votingNodeName, (unsigned int) request->deviceId, request->vote.voterId, request->vote.hitCount, request->vote.config.group,
           request->vote.config.value, timestring);
-  MESH_LOG("%s\r\n", voteLogInfo);
+  MESH_LOG("%s", voteLogInfo);
+  log_to_uart(voteLogInfo, sizeof(voteLogInfo));
+
 }
 
 void send_vote_message() {

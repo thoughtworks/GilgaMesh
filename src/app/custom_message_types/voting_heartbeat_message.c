@@ -19,8 +19,10 @@ static BleMessageType votingHeartbeatMessageType;
 void voting_heartbeat_message_initialize() {
   votingHeartbeatMessageType = register_message_type(receive_voting_heartbeat_message);
 
+#ifdef IS_PROD_BOARD
   create_repeated_timer(&votingHeartbeatTimer);
   start_timer(&votingHeartbeatTimer, VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS, send_voting_heartbeat_message);
+#endif
 }
 
 static void log_voting_heartbeat_info(BleMessageVotingHeartbeatReq *request) {

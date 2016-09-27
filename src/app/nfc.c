@@ -63,16 +63,24 @@ static void nfc_ndef_record_printout(uint32_t num, nfc_ndef_record_desc_t * cons
 
 void nfc_submit_vote(uint8_t * url_data, uint32_t data_length)
 {
-  char* tag_position;
-  tag_position = strstr(url_data, "?id=");
-  if(tag_position != NULL) {
-    uint16_t id;
-    char urlstr[data_length+1];
+  int url_length = data_length + 1; // reserve space for null termination
+  char urlstr[url_length];
+  char* id_tag_position;
 
-    memcpy(urlstr, url_data, data_length);
-    urlstr[data_length] = '\0';
-    tag_position = strstr(urlstr, "?id=");
-    id = atoi(tag_position + 4);
+  memcpy(urlstr, url_data, data_length);
+  for(int i = 0 ; i < url_length + 1 ; i++) {
+    urlstr[i] == 0 ? urlstr[i] = 0xFF : false; // replace any terminating characters with 0xFF
+  }
+
+  urlstr[data_length] = '\0'; // null terminate the url data at the end
+  id_tag_position = strstr(urlstr, ID_TAG_STRING);
+
+  if(id_tag_position != NULL) {
+    char id_string[NUMBER_OF_ID_DIGITS + 1];
+    memcpy(id_string, id_tag_position + ID_TAG_LENGTH, NUMBER_OF_ID_DIGITS);
+    id_string[NUMBER_OF_ID_DIGITS] = '\0'; // null terminate the id string
+
+    uint16_t id = atoi(id_string);
 
     MESH_LOG(COLOR_CODE_BLUE);
     MESH_LOG("Voter id: %d\r\n", id);

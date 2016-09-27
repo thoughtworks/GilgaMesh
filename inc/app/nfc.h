@@ -16,6 +16,9 @@
 #define TAG_TYPE_2_DATA_AREA_SIZE_OFFSET    T2T_CC_BLOCK_OFFSET + 2       /// Offset of the byte with Tag's Data size.
 #define TAG_TYPE_2_DATA_AREA_MULTIPLICATOR  8                             /// Multiplicator for a value stored in the Tag's Data size byte.
 
+#define ID_TAG_STRING "?id="
+#define ID_TAG_LENGTH 4
+#define NUMBER_OF_ID_DIGITS 4
 
 typedef enum {
   NFC_STATUS_DISABLED,

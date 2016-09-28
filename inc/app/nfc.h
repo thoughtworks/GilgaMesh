@@ -12,7 +12,7 @@
 #define TAG_TYPE_2_UID_LENGTH               7                             /// Length of the Tag's UID.
 #define TAG_DATA_BUFFER_SIZE                512                           /// Buffer size for data from a Tag.
 #define TAG_DETECT_TIMEOUT                  30                            /// Timeout for function which searches for a tag.
-#define TAG_AFTER_READ_DELAY                5                             /// Number of scan cycles to skip after read (in multiples of NFC_SCAN_FREQUENCY_IN_MS)
+#define TAG_AFTER_READ_DELAY                1                             /// Number of scan cycles to skip after read (in multiples of NFC_SCAN_FREQUENCY_IN_MS)
 #define TAG_TYPE_2_DATA_AREA_SIZE_OFFSET    T2T_CC_BLOCK_OFFSET + 2       /// Offset of the byte with Tag's Data size.
 #define TAG_TYPE_2_DATA_AREA_MULTIPLICATOR  8                             /// Multiplicator for a value stored in the Tag's Data size byte.
 

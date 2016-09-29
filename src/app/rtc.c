@@ -12,6 +12,7 @@ SYS_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 #include <app_twi.h>
 #include <app_util_platform.h>
 #include <stdlib.h>
+#include <app/rtc.h>
 #include "error.h"
 
 #define MAX_PENDING_TRANSACTIONS 8
@@ -49,7 +50,7 @@ static void read_seeed_rtc_state() {
       APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0x9], 1, APP_TWI_NO_STOP),
       APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_9.Months, 1, 0),
       APP_TWI_WRITE(RTC_TWI_ADDR, &rtc_register_indices[0xA], 1, APP_TWI_NO_STOP),
-      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_A.Years, 1, 0)
+      APP_TWI_READ(RTC_TWI_ADDR, &rtc_state.register_A.Years, 1, 0),
     };
 
     err_code = app_twi_perform(&rtcTwiInstance, readRtcTransfers,

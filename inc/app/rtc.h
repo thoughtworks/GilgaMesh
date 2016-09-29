@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <nrf_log.h>
-#define NUMBER_OF_RTC_REGISTERS 10
+#define NUMBER_OF_RTC_REGISTERS 11
 
 typedef struct {
   uint16_t millis;

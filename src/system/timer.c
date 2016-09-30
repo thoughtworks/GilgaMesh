@@ -8,7 +8,7 @@ void timer_initialize(void) {
 }
 
 static void generic_timer_handler(void *context) {
-  app_sched_event_put(NULL, 0, (app_sched_event_handler_t)context);
+  EC(app_sched_event_put(NULL, 0, (app_sched_event_handler_t)context));
 }
 
 void create_repeated_timer(const system_timer_id_t *timer_id) {

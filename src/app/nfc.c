@@ -125,7 +125,7 @@ void nfc_scan(void) {
       err_code = tag_data_read(tag_data, TAG_DATA_BUFFER_SIZE);
       switch (err_code) {
         case NRF_SUCCESS:
-          MESH_LOG_INFO("NFC tag present.\r\n");
+        MESH_LOG_INFO("NFC tag present.\r\n");
           nfc_submit_vote(tag_data, TAG_DATA_BUFFER_SIZE);
           after_read_delay();
           break;
@@ -134,7 +134,7 @@ void nfc_scan(void) {
           after_read_delay();
           break;
         case NRF_ERROR_NOT_FOUND:
-          MESH_LOG_DEBUG("No Tag found.\r\n");
+        MESH_LOG_DEBUG("No Tag found.\r\n");
           // No delay here as we want to search for another tag immediately.
           break;
         case NRF_ERROR_NOT_SUPPORTED:

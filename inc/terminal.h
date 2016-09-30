@@ -7,7 +7,7 @@
 #include "version.h"
 
 #define TERMINAL_PROMPT "\r\n#> "
-#define READ_BUFFER_SIZE 128
+#define READ_BUFFER_SIZE 48
 #define MAX_ARGUMENTS 8
 #define TERMINAL_READ_TIMEOUT_US 10
 

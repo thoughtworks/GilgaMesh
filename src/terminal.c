@@ -1,5 +1,6 @@
 #include "terminal.h"
 
+#include <app_scheduler.h>
 #include <app_uart.h>
 #include <SEGGER_RTT.h>
 
@@ -8,11 +9,14 @@
 #include "error.h"
 
 #define ENTER_KEY 0xA
+#define CARRIAGE_RETURN_KEY 0xD
 #define ESCAPE_KEY 0x1b
 
 static bool is_terminal_initialized = false;
 static char readBuffer[READ_BUFFER_SIZE] = {0};
 static int readBufferIndex = 0;
+
+static void uart_event_handle(app_uart_evt_t * p_event);
 
 void terminal_putstring(char* string) {
   if(is_terminal_initialized) {
@@ -34,8 +38,8 @@ static void print_prompt() {
   terminal_putstring(TERMINAL_PROMPT);
 }
 
-static void uart_event_handle(app_uart_evt_t * p_event) {
-  // don't do anything
+static bool char_ends_message(char someCharacter) {
+  return someCharacter == ENTER_KEY || someCharacter == CARRIAGE_RETURN_KEY;
 }
 
 static void uart_initialize() {
@@ -81,7 +85,7 @@ void terminal_initialize(void) {
   terminal_putstring(".");
   terminal_putstring(itoa(APP_VERSION_SUB, subVersion, 10));
   terminal_putstring("\r\n");
-  terminal_putstring("                        |__/\r\n");
+  terminal_putstring("                      |__/\r\n");
 
 
   terminal_putstring("  compile date: ");
@@ -97,28 +101,26 @@ void terminal_initialize(void) {
 }
 
 static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {
-   uint8_t i = 0;
-   uint8_t argumentCount = 0;
-   char *token = strtok(readBuffer, " ");
+  uint8_t i = 0;
+  uint8_t argumentCount = 0;
+  char *token = strtok(readBuffer, " ");
 
-   while (token != NULL && argumentCount <= MAX_ARGUMENTS) {
-      parsedCommandArray[i++] = token;
-      token = strtok(NULL, " ");
-      argumentCount++;
-   }
+  while (token != NULL && argumentCount <= MAX_ARGUMENTS) {
+    parsedCommandArray[i++] = token;
+    token = strtok(NULL, " ");
+    argumentCount++;
+  }
 
-   return argumentCount;
+  return argumentCount;
 }
 
 static void append_char_to_buffer(char new_character) {
   readBuffer[readBufferIndex++] = new_character;
 }
 
-static void act_upon_user_input() {
-  readBuffer[readBufferIndex] = '\0';
-
+static void act_upon_user_input(char *command) {
   char *parsedCommand[MAX_ARGUMENTS + 1];
-  uint8_t numberOfArguments = find_arguments(parsedCommand, readBuffer);
+  uint8_t numberOfArguments = find_arguments(parsedCommand, command);
 
   command_execute(parsedCommand, numberOfArguments);
   terminal_putstring("\r\n");
@@ -134,9 +136,10 @@ void terminal_process_input(void) {
 
   uint8_t nextCharacter = terminal_get();
   if(nextCharacter != 0 && in_user_input_mode()) {
-    if (nextCharacter == ENTER_KEY|| readBufferIndex >= READ_BUFFER_SIZE-1) {
+    if (nextCharacter == ENTER_KEY || readBufferIndex >= READ_BUFFER_SIZE - 1) {
       set_user_input_mode(false);
-      act_upon_user_input();
+      append_char_to_buffer('\0');
+      act_upon_user_input(readBuffer);
       reset_terminal_input();
     }
     else
@@ -145,5 +148,27 @@ void terminal_process_input(void) {
   else if (nextCharacter == ESCAPE_KEY) {
     print_prompt();
     set_user_input_mode(true);
+  }
+}
+
+static void uart_event_handle(app_uart_evt_t * p_event) {
+  uint8_t inputChar;
+  switch (p_event->evt_type) {
+    case APP_UART_DATA:
+      while (app_uart_get(&inputChar) != NRF_SUCCESS);
+
+      if (char_ends_message(inputChar) || readBufferIndex >= READ_BUFFER_SIZE - 1) {
+        append_char_to_buffer('\0');
+        static char bufferCopy[READ_BUFFER_SIZE];
+        memcpy(bufferCopy, readBuffer, READ_BUFFER_SIZE);
+        EC(app_sched_event_put(bufferCopy, READ_BUFFER_SIZE, act_upon_user_input));
+        reset_terminal_input();
+
+      } else {
+        append_char_to_buffer(inputChar);
+      }
+      break;
+    default:
+      break;
   }
 }

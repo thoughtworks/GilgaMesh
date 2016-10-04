@@ -126,6 +126,10 @@ static void act_upon_user_input(char *command) {
   terminal_putstring("\r\n");
 }
 
+void terminal_execute_command(char* string) {
+  act_upon_user_input(string);
+}
+
 static void reset_terminal_input() {
   memset(readBuffer, 0, READ_BUFFER_SIZE);
   readBufferIndex = 0;

@@ -16,3 +16,4 @@ void terminal_putstring(char* string);
 uint8_t terminal_get(void);
 void terminal_process_input(void);
 void log_to_uart(char *logMessage, uint16_t messageLength);
+void terminal_execute_command(char* string);

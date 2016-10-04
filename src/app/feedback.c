@@ -38,8 +38,8 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
   if (vote_storage_is_full()) {         // votes reached maximum, display red
     led_red_bright();
 
-  } else {                              // neutral state, display dim white
-    led_white_dim();
+  } else {                              // neutral state, display dim blue
+    led_blue_dim();
   }
 }
 

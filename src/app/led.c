@@ -1,13 +1,16 @@
 #include "app/led.h"
 
-#include <low_power_pwm.h>
+#include "system/gpio.h"
+#include "system/log.h"
+#include "system/pwm.h"
 #include "boards.h"
 #include "error.h"
 
+#define LED_DEFAULT_PERIOD  10000
+
 typedef void(*display_led_function)(void);
-static low_power_pwm_t led_pwm_red;
-static low_power_pwm_t led_pwm_green;
-static low_power_pwm_t led_pwm_blue;
+
+static const void* ledPWM;
 
 static display_led_function flash[6] = {
         led_red_bright,
@@ -18,32 +21,32 @@ static display_led_function flash[6] = {
         led_purple_bright
 };
 
-static void set_rgb_leds(uint8_t redValue, uint8_t greenValue, uint8_t blueValue) {
-  EC(low_power_pwm_duty_set(&led_pwm_red, redValue));
-  EC(low_power_pwm_duty_set(&led_pwm_green, greenValue));
-  EC(low_power_pwm_duty_set(&led_pwm_blue, blueValue));
+static void set_non_pwm_led(uint32_t pinNumber, uint8_t dutyCycle) {
+  if ((dutyCycle > 0 && INVERT_LEDS) || (dutyCycle == 0 && !INVERT_LEDS)) {
+    sys_gpio_pin_set(pinNumber);
+  } else {
+    sys_gpio_pin_clear(pinNumber);
+  }
 }
 
-static void individual_led_initialize(low_power_pwm_t *pwm, const app_timer_id_t *timer, uint32_t mask) {
-  low_power_pwm_config_t pwm_config = {
-          .bit_mask    = mask,
-          .p_timer_id  = timer,
-          .period      = LED_BRIGHT_DUTY_CYCLE,
-          .active_high = INVERT_LEDS
-  };
+static void set_rgb_leds(uint8_t redDutyCycle, uint8_t greenDutyCycle, uint8_t blueDutyCycle) {
+  while (sys_pwm_channel_duty_set(ledPWM, 0, blueDutyCycle) == NRF_ERROR_BUSY);
 
-  EC(low_power_pwm_init(pwm, &pwm_config, NULL));
-  EC(low_power_pwm_start(pwm, mask));
+  set_non_pwm_led(BSP_LED_0, redDutyCycle);
+  set_non_pwm_led(BSP_LED_1, greenDutyCycle);
 }
 
 void led_initialize() {
-  APP_TIMER_DEF(led_timer_red);
-  APP_TIMER_DEF(led_timer_green);
-  APP_TIMER_DEF(led_timer_blue);
+  ledPWM = create_led_pwm_instance();
 
-  individual_led_initialize(&led_pwm_red,   &led_timer_red,   BSP_LED_0_MASK);
-  individual_led_initialize(&led_pwm_green, &led_timer_green, BSP_LED_1_MASK);
-  individual_led_initialize(&led_pwm_blue,  &led_timer_blue,  BSP_LED_2_MASK);
+  EC(sys_pwm_init(ledPWM, LED_DEFAULT_PERIOD, BSP_LED_2, INVERT_LEDS));
+  sys_pwm_enable(ledPWM);
+  EC(sys_pwm_channel_duty_set(ledPWM, 0, LED_OFF_DUTY_CYCLE));
+
+  sys_gpio_cfg_output(BSP_LED_0);
+  sys_gpio_cfg_output(BSP_LED_1);
+  sys_gpio_pin_clear(BSP_LED_0);
+  sys_gpio_pin_clear(BSP_LED_1);
 }
 
 void flash_color(int rainbow_led_counter) {
@@ -78,6 +81,6 @@ void led_white_bright() {
   set_rgb_leds(LED_BRIGHT_DUTY_CYCLE, LED_BRIGHT_DUTY_CYCLE, LED_BRIGHT_DUTY_CYCLE);
 }
 
-void led_white_dim() {
-  set_rgb_leds(LED_DIM_DUTY_CYCLE, LED_DIM_DUTY_CYCLE, LED_DIM_DUTY_CYCLE);
+void led_blue_dim() {
+  set_rgb_leds(LED_OFF_DUTY_CYCLE, LED_OFF_DUTY_CYCLE, LED_DIM_DUTY_CYCLE);
 }

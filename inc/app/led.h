@@ -3,8 +3,8 @@
 #include <nrf51.h>
 #include <nrf51_bitfields.h>
 
-#define LED_BRIGHT_DUTY_CYCLE         255
-#define LED_DIM_DUTY_CYCLE            5
+#define LED_BRIGHT_DUTY_CYCLE         100
+#define LED_DIM_DUTY_CYCLE            3
 #define LED_OFF_DUTY_CYCLE            0
 
 #ifndef INVERT_LEDS
@@ -20,6 +20,6 @@ void led_purple_bright();
 void led_teal_bright();
 void led_yellow_bright();
 void led_white_bright(void);
-void led_white_dim(void);
+void led_blue_dim(void);
 
 void flash_color(int rainbow_led_counter);

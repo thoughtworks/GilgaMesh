@@ -6,17 +6,18 @@
 
 #define BUZZER_VOLUME                 50
 
-static void setup_with_buzzer_enabled() {
-  expect_any(create_single_shot_timer, timer_id);
-  expect_any(sys_gpio_pin_clear, pin_number);
-  buzzer_initialize();
-}
+char *mockPWMInstance = "foo";
 
-static void Buzzer_initialize_creates_timer_and_clears_pin() {
+static void setup_with_buzzer_enabled() {
+  will_return(create_buzzer_pwm_instance, mockPWMInstance);
   expect_any(create_single_shot_timer, timer_id);
   expect_value(sys_gpio_pin_clear, pin_number, BUZZER_PIN_NUMBER);
 
   buzzer_initialize();
+}
+
+static void Buzzer_initialize_creates_timer_and_clears_pin() {
+  setup_with_buzzer_enabled();
 }
 
 static void Buzzer_is_on_returns_false_when_buzzer_is_not_playing() {
@@ -32,6 +33,9 @@ static void Buzzer_play_tones_can_process_single_tone() {
   uint16_t period = 250;
   uint16_t tones[1] = {duration, period};
 
+  expect_value(sys_pwm_init, pwmInstance, mockPWMInstance);
+  expect_value(sys_pwm_enable, pwmInstance, mockPWMInstance);
+  expect_value(sys_pwm_channel_duty_set, pwmInstance, mockPWMInstance);
   expect_value(sys_pwm_channel_duty_set, channel, 0);
   expect_value(sys_pwm_channel_duty_set, duty, BUZZER_VOLUME);
   expect_value(start_timer, ms_to_execute, duration);

@@ -27,20 +27,10 @@ include_directories(${INC_PATH})
 include_directories(${CONFIG_PATH})
 
 # includes for real nordic sdk11 headers
-#include_directories(${COMPONENTS}/ble/ble_db_discovery)
-#include_directories(${COMPONENTS}/ble/ble_radio_notification)
 include_directories(${COMPONENTS}/ble/common)
-#include_directories(${COMPONENTS}/ble/device_manager)
-#include_directories(${COMPONENTS}/libraries/button)
 include_directories(${COMPONENTS}/libraries/experimental_section_vars)
 include_directories(${COMPONENTS}/libraries/fds)
 include_directories(${COMPONENTS}/libraries/fstorage)
-#include_directories(${COMPONENTS}/libraries/fifo)
-#include_directories(${COMPONENTS}/libraries/gpiote)
-#include_directories(${COMPONENTS}/libraries/hardfault)
-include_directories(${COMPONENTS}/libraries/low_power_pwm)
-#include_directories(${COMPONENTS}/libraries/ppi)
-#include_directories(${COMPONENTS}/libraries/pwm)
 include_directories(${COMPONENTS}/libraries/scheduler)
 include_directories(${COMPONENTS}/libraries/timer)
 include_directories(${COMPONENTS}/libraries/uart)
@@ -48,21 +38,9 @@ include_directories(${COMPONENTS}/libraries/log)
 include_directories(${COMPONENTS}/libraries/log/src)
 include_directories(${COMPONENTS}/libraries/twi)
 include_directories(${COMPONENTS}/softdevice/common/softdevice_handler)
-#include_directories(${COMPONENTS}/softdevice/s130/headers)
-#include_directories(${COMPONENTS}/toolchain)
-#include_directories(${COMPONENTS}/toolchain/arm)
-#include_directories(${COMPONENTS}/toolchain/gcc)
-#include_directories(${COMPONENTS}/drivers_nrf/clock)
 include_directories(${COMPONENTS}/drivers_nrf/common)
-#include_directories(${COMPONENTS}/drivers_nrf/config)
-#include_directories(${COMPONENTS}/drivers_nrf/delay)
-#include_directories(${COMPONENTS}/drivers_nrf/gpiote)
 include_directories(${COMPONENTS}/drivers_nrf/hal)
-#include_directories(${COMPONENTS}/drivers_nrf/ppi)
-#include_directories(${COMPONENTS}/drivers_nrf/pstorage)
-#include_directories(${COMPONENTS}/drivers_nrf/timer)
 include_directories(${COMPONENTS}/drivers_nrf/twi_master)
-#include_directories(${COMPONENTS}/drivers_nrf/uart)
 include_directories(${COMPONENTS}/device)
 include_directories(${EXTERNAL}/segger_rtt)
 include_directories(${SOFTDEVICE}/include)
@@ -87,7 +65,6 @@ list(APPEND TestFramework_SOURCES "mocks/sdk12/components/ble/common/ble_conn_st
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/fds/fds_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/util/app_util_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/low_power_pwm/low_power_pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/log/nrf_log_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/libraries/scheduler/app_scheduler_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/sdk12/components/softdevice/common/softdevice_handler/softdevice_handler_appsh_mock.c")
@@ -99,6 +76,7 @@ list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
+list(APPEND TestFramework_SOURCES "mocks/system/pwm_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/timer_mock.c")
 
 #add other useful files
@@ -117,9 +95,6 @@ target_link_libraries(BroadcastMessageTest cmocka)
 GEN_OUTPUTS(BroadcastMessageTest)
 
 add_executable(BuzzerTest ${TestFramework_SOURCES}
-        mocks/system/timer_mock.c
-        mocks/system/gpio_mock.c
-        mocks/system/pwm_mock.c
         ${SRC_PATH}/app/buzzer.c
         unit/app/BuzzerTest.c)
 target_link_libraries(BuzzerTest cmocka)
@@ -150,7 +125,6 @@ target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
 
 add_executable(FeedbackTest ${TestFramework_SOURCES}
-        mocks/system/timer_mock.c
         mocks/app/buzzer_mock.c
         mocks/app/led_mock.c
         mocks/app/votes_mock.c
@@ -167,7 +141,6 @@ add_executable(GattTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/gap_mock.c
         mocks/queue_mock.c
-        mocks/system/timer_mock.c
         ${SRC_PATH}/gatt.c
         unit/GattTest.c)
 target_link_libraries(GattTest cmocka)
@@ -197,7 +170,6 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/device_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
-        mocks/system/timer_mock.c
         ${SRC_PATH}/conversion.c
         ${SRC_PATH}/message_types/heartbeat_message.c
         unit/message_types/HeartbeatMessageTest.c)
@@ -280,7 +252,6 @@ GEN_OUTPUTS(VoteAckMessageTest)
 add_executable(VoteMessageTest ${TestFramework_SOURCES}
         mocks/app/rtc_mock.c
         mocks/app/storage_mock.c
-        mocks/system/timer_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
@@ -293,7 +264,6 @@ add_executable(VotingHeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/app/nfc_mock.c
         mocks/app/vote_config_mock.c
         mocks/app/votes_mock.c
-        mocks/system/timer_mock.c
         mocks/device_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c

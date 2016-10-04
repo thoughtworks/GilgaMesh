@@ -5,13 +5,13 @@
 
 extern bool ledRedBright;
 extern bool ledWhiteBright;
-extern bool ledWhiteDim;
+extern bool ledBlueDim;
 extern void execute_timer_callback(bool value);
 
 static int test_setup(void **state) {
   ledRedBright = false;
   ledWhiteBright = false;
-  ledWhiteDim = false;
+  ledBlueDim = false;
   return 0;
 }
 
@@ -34,7 +34,7 @@ static void Feedback_initialize_displays_general_user_feedback() {
   expect_any(mesh_add_terminal_command, commandName);
 
   feedback_initialize();
-  assert_true(ledWhiteDim);
+  assert_true(ledBlueDim);
 };
 
 static void Feedback_initialize_displays_failure_when_vote_storage_is_full() {
@@ -59,7 +59,7 @@ static void Feedback_initialize_does_not_display_feedback_if_buzzer_is_on() {
   expect_any(mesh_add_terminal_command, commandName);
 
   feedback_initialize();
-  assert_false(ledWhiteDim);
+  assert_false(ledBlueDim);
   assert_false(ledRedBright);
 };
 

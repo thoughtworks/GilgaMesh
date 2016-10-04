@@ -3,7 +3,7 @@
 
 bool ledRedBright = false;
 bool ledWhiteBright = false;
-bool ledWhiteDim = false;
+bool ledBlueDim = false;
 
 void led_initialize(void) { }
 void led_red_bright(void) {
@@ -17,7 +17,7 @@ void led_yellow_bright(void) { }
 void led_white_bright(void) {
   ledWhiteBright = true;
 }
-void led_white_dim(void) {
-  ledWhiteDim = true;
+void led_blue_dim(void) {
+  ledBlueDim = true;
 }
 void flash_color(int rainbow_led_counter) { }

@@ -22,10 +22,13 @@ static bool buzzerPlaying = false;
 
 SYS_TIMER_DEF(buzzerTimer);
 
+static const void* buzzerPWM;
+
 static void make_noise(void * p_event_data, uint16_t event_size);
 
 void buzzer_initialize() {
   buzzerEnabled = true;
+  buzzerPWM = create_buzzer_pwm_instance();
 
   create_single_shot_timer(&buzzerTimer);
   sys_gpio_pin_clear(BUZZER_PIN_NUMBER);
@@ -52,17 +55,17 @@ static void add_pause() {
 }
 
 static void turn_buzzer_on() {
-  EC(sys_pwm_init());
-  sys_pwm_enable();
-  EC(sys_pwm_channel_duty_set(0, BUZZER_VOLUME));
+  EC(sys_pwm_init(buzzerPWM, tonesToPlay[currentTone].period, BUZZER_PIN_NUMBER, false));
+  sys_pwm_enable(buzzerPWM);
+  EC(sys_pwm_channel_duty_set(buzzerPWM, 0, BUZZER_VOLUME));
   start_timer(&buzzerTimer, tonesToPlay[currentTone++].duration, make_noise);
   buzzerPlaying = true;
 }
 
 static void turn_buzzer_off() {
-  sys_pwm_channel_duty_set(0, 0);
-  sys_pwm_disable();
-  sys_pwm_uninit();
+  sys_pwm_channel_duty_set(buzzerPWM, 0, 0);
+  sys_pwm_disable(buzzerPWM);
+  sys_pwm_uninit(buzzerPWM);
 }
 
 static void make_noise(void * p_event_data, uint16_t event_size) {
@@ -72,7 +75,6 @@ static void make_noise(void * p_event_data, uint16_t event_size) {
   if (buzzerPlaying) turn_buzzer_off();
 
   if(currentTone < MAX_SIZE_BUZZER_TONES_ARRAY && (tonesToPlay[currentTone].duration > 0 || tonesToPlay[currentTone].period > 0)) {
-    sys_pwm_set_default_period(tonesToPlay[currentTone].period);
     turn_buzzer_on();
   }
   else {

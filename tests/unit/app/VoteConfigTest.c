@@ -3,6 +3,7 @@
 #include "app/storage.h"
 
 extern bool displayed_group_value_feedback;
+extern void* mockStoredData;
 static uint8_t group = 17;
 static uint8_t value = 23;
 
@@ -12,6 +13,8 @@ static int test_setup(void **state) {
 }
 
 static void VoteConfig_updates_voting_group_and_displays_feedback() {
+  will_return(update_data_in_storage, SUCCESS);
+
   expect_memory(update_data_in_storage, data, &group, sizeof(group));
   expect_value(update_data_in_storage, dataLength, sizeof(group));
   expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
@@ -22,6 +25,8 @@ static void VoteConfig_updates_voting_group_and_displays_feedback() {
 }
 
 static void VoteConfig_updates_voting_value_and_displays_feedback() {
+  will_return(update_data_in_storage, SUCCESS);
+
   expect_memory(update_data_in_storage, data, &value, sizeof(value));
   expect_value(update_data_in_storage, dataLength, sizeof(value));
   expect_value(update_data_in_storage, fileId, VOTE_CONFIG_STORAGE_FILE_ID);
@@ -32,22 +37,24 @@ static void VoteConfig_updates_voting_value_and_displays_feedback() {
 }
 
 static void VoteConfig_update_result_with_null_vote_config_when_no_config_exists() {
-  will_return_always(get_data_from_storage, NULL);
-  voteConfiguration result;
+  will_return_always(get_data_from_storage, NOT_FOUND);
 
+  voteConfiguration result;
   get_vote_configuration(&result);
-  assert_int_equal(result.group, 0);
-  assert_int_equal(result.value, 0);
+
+  assert_int_equal(result.group, INVALID_VOTE_CONFIG);
+  assert_int_equal(result.value, INVALID_VOTE_CONFIG);
 }
 
 static void VoteConfig_update_result_with_stored_config_if_it_exists() {
-  will_return(get_data_from_storage, &group);
-  will_return(get_data_from_storage, &value);
-  voteConfiguration result;
+  mockStoredData = &group;
+  will_return_always(get_data_from_storage, SUCCESS);
 
+  voteConfiguration result;
   get_vote_configuration(&result);
+
   assert_int_equal(result.group, group);
-  assert_int_equal(result.value, value);
+  assert_int_equal(result.value, group);
 }
 
 int RunVoteConfigTest(void) {

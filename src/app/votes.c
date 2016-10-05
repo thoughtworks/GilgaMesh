@@ -2,6 +2,7 @@
 
 #include <sdk_common.h>
 #include <stdlib.h>
+#include <system/log.h>
 
 #include "app/feedback.h"
 #include "app/storage.h"
@@ -29,6 +30,9 @@ void vote_six_times() {
 }
 
 static bool save_and_clear_vote_buffer_content();
+
+storageOperationResult save_buffer_content_to_storage();
+
 static void start_clear_buffer_timeout() {
   start_timer(&clearBufferTimer, CLEAR_VOTE_BUFFER_DURATION_IN_MS, save_and_clear_vote_buffer_content);
 }
@@ -44,16 +48,23 @@ static bool local_vote_buffer_is_empty() {
 static bool save_and_clear_vote_buffer_content() {
   if (local_vote_buffer_is_empty()) return true;
 
-  if (get_vote_count() > MAX_VOTE_COUNT) {
+  if (vote_storage_is_full()) {
     start_clear_buffer_timeout();
     return false;
   }
 
-  memcpy(&bufferForStorage, &buffer, sizeof(buffer));
-  set_data_in_storage(&bufferForStorage, sizeof(bufferForStorage), VOTES_STORAGE_FILE_ID, bufferForStorage.voterId);
-  memset(&buffer, 0, sizeof(buffer));
+  if(save_buffer_content_to_storage() != SUCCESS) {
+    start_clear_buffer_timeout();
+    return false;
+  }
 
+  memset(&buffer, 0, sizeof(buffer));
   return true;
+}
+
+storageOperationResult save_buffer_content_to_storage() {
+  memcpy(&bufferForStorage, &buffer, sizeof(buffer));
+  return set_data_in_storage(&bufferForStorage, sizeof(bufferForStorage), VOTES_STORAGE_FILE_ID, bufferForStorage.voterId);
 }
 
 void save_vote(uint16_t voterId) {
@@ -63,11 +74,18 @@ void save_vote(uint16_t voterId) {
     buffer.hitCount++;
     display_vote_hit_recorded_feedback();
   } else {
-    if (!save_and_clear_vote_buffer_content()) return;
+    if (!save_and_clear_vote_buffer_content()) {
+      display_failure_feedback();
+      return;
+    }
+
+    if (!get_vote_configuration(&buffer.config)) {
+      display_failure_feedback();
+      return;
+    }
 
     buffer.voterId = voterId;
     buffer.hitCount = 1;
-    get_vote_configuration(&buffer.config);
 
     display_vote_recorded_feedback();
   }

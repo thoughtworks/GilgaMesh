@@ -2,6 +2,7 @@
 
 #include <sdk_common.h>
 #include <stdlib.h>
+#include <app/feedback.h>
 
 #include "app/storage.h"
 #include "app/uart.h"
@@ -40,17 +41,21 @@ static void log_vote(BleMessageVoteReq *request) {
 
 void send_vote_message() {
   stop_timer(&voteMessageTimer);
-  userVote* voteToSend = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL);
+  userVote voteToSend;
+  storageOperationResult result = get_data_from_storage(VOTES_STORAGE_FILE_ID, NULL, &voteToSend, sizeof(voteToSend));
 
-  if (voteToSend != NULL) {
+  if (result == SUCCESS) {
     BleMessageVoteReq request;
     memset(&request, 0, sizeof(request));
     request.messageType = voteMessageType;
     request.deviceId = get_raw_device_id();
-    request.vote = *voteToSend;
+    request.vote = voteToSend;
 
     log_vote(&request);
     send_to_central_connection(BLE_CONN_HANDLE_INVALID, (uint8_t *) &request, sizeof(BleMessageVoteReq));
+
+  } else if (result == FAILURE) {
+    display_failure_feedback();
   }
 
   start_timer(&voteMessageTimer, VOTE_MESSAGE_FREQUENCY_IN_MS, send_vote_message);

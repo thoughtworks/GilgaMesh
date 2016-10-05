@@ -127,6 +127,7 @@ GEN_OUTPUTS(CommandTest)
 add_executable(FeedbackTest ${TestFramework_SOURCES}
         mocks/app/buzzer_mock.c
         mocks/app/led_mock.c
+        mocks/app/vote_config_mock.c
         mocks/app/votes_mock.c
         mocks/command_mock.c
         ${SRC_PATH}/app/feedback.c
@@ -239,6 +240,7 @@ GEN_OUTPUTS(VoteConfigTest)
 
 add_executable(VoteAckMessageTest ${TestFramework_SOURCES}
         mocks/app/custom_message_types/vote_message_mock.c
+        mocks/app/feedback_mock.c
         mocks/app/rtc_mock.c
         mocks/app/storage_mock.c
         mocks/command_mock.c
@@ -250,6 +252,7 @@ target_link_libraries(VoteAckMessageTest cmocka)
 GEN_OUTPUTS(VoteAckMessageTest)
 
 add_executable(VoteMessageTest ${TestFramework_SOURCES}
+        mocks/app/feedback_mock.c
         mocks/app/rtc_mock.c
         mocks/app/storage_mock.c
         mocks/device_mock.c

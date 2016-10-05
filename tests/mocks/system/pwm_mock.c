@@ -9,7 +9,7 @@ const void* create_led_pwm_instance() {
     return mock_type(void *);
 }
 
-uint32_t sys_pwm_init(void* pwmInstance, uint32_t period, uint32_t pinNumber, bool highPolarity) {
+uint32_t sys_pwm_init(void *pwmInstance, uint32_t period, bool highPolarity, uint32_t pinNumber1, uint32_t pinNumber2) {
     check_expected(pwmInstance);
     return 0;
 }

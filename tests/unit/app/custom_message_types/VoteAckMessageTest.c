@@ -1,9 +1,12 @@
 #include "app/custom_message_types/vote_ack_message.h"
 
+#include "app/storage.h"
 #include "cmocka_includes.h"
 #include <ble_types.h>
 
 extern bool did_broadcast_next_vote;
+extern void* mockStoredData;
+extern bool delete_data_called;
 static BleMessageVoteAckReq mockRequest;
 static BleMessageType mockMessageType = 123;
 static uint32_t deviceId;
@@ -12,6 +15,7 @@ userVote mockVote;
 
 static int test_setup(void **state) {
   did_broadcast_next_vote = false;
+  delete_data_called = false;
   deviceId = get_raw_device_id();
   memset(&mockRequest, 0, sizeof(mockRequest));
   mockRequest.messageType = mockMessageType;
@@ -34,14 +38,16 @@ static void VoteAckMessage_receive_propagates_to_all_when_current_node_is_not_ta
 
 static void VoteAckMessage_receive_does_not_propagate_when_current_node_is_target() {
   mockRequest.deviceId = deviceId;
-  will_return(get_data_from_storage, NULL);
+  will_return(get_data_from_storage, NOT_FOUND);
 
   assert_int_equal(DoNotPropagate, receive_vote_acknowledgement(0, &mockRequest));
 }
 
 static void VoteAckMessage_receive_deletes_correct_vote_from_storage_when_timestamp_matches() {
   mockRequest.deviceId = deviceId;
-  will_return(get_data_from_storage, &mockVote);
+  mockStoredData = &mockVote;
+  will_return(get_data_from_storage, SUCCESS);
+  will_return(delete_data_from_storage, SUCCESS);
   will_return(rtc_is_equal_timestamp, true);
 
   expect_value(delete_data_from_storage, fileId, VOTES_STORAGE_FILE_ID);
@@ -51,15 +57,17 @@ static void VoteAckMessage_receive_deletes_correct_vote_from_storage_when_timest
 
 static void VoteAckMessage_receive_does_not_delete_vote_from_storage_when_timestamps_do_not_match() {
   mockRequest.deviceId = deviceId;
-  will_return(get_data_from_storage, &mockVote);
+
+  will_return(get_data_from_storage, SUCCESS);
   will_return(rtc_is_equal_timestamp, false);
 
   receive_vote_acknowledgement(0, &mockRequest);
+  assert_false(delete_data_called);
 }
 
 static void VoteAckMessage_receive_broadcasts_next_vote_when_current_node_is_target() {
   mockRequest.deviceId = deviceId;
-  will_return(get_data_from_storage, NULL);
+  will_return(get_data_from_storage, NOT_FOUND);
 
   receive_vote_acknowledgement(0, &mockRequest);
   assert_true(did_broadcast_next_vote);

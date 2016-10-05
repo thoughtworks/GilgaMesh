@@ -8,6 +8,8 @@
 #define VOTE_CONFIG_GROUP_STORAGE_RECORD_KEY  0x0001
 #define VOTE_CONFIG_VALUE_STORAGE_RECORD_KEY  0x0002
 
+#define INVALID_VOTE_CONFIG 255
+
 typedef struct {
   uint8_t group;
   uint8_t value;
@@ -15,4 +17,5 @@ typedef struct {
 
 void update_voting_group(uint8_t newGroup);
 void update_voting_value(uint8_t newValue);
-void get_vote_configuration(voteConfiguration *result);
+bool get_vote_configuration(voteConfiguration *result);
+bool vote_config_is_set(void);

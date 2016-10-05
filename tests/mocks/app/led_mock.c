@@ -20,4 +20,5 @@ void led_white_bright(void) {
 void led_blue_dim(void) {
   ledBlueDim = true;
 }
+void led_red_dim(void) { }
 void flash_color(int rainbow_led_counter) { }

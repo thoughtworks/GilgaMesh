@@ -1,7 +1,9 @@
 #include "app/storage.h"
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <fds.h>
+#include <string.h>
 #include "system/log.h"
 
 static void fds_evt_handler(fds_evt_t const * const p_fds_evt) {
@@ -58,7 +60,7 @@ void whats_in_storage_right_now() {
   }
 }
 
-void set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
+storageOperationResult set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
   fds_record_chunk_t record_chunk = {
           .p_data       = data,
           .length_words = get_length_in_words(dataLength)
@@ -73,21 +75,34 @@ void set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint1
 
   fds_record_desc_t record_desc;
   ret_code_t result = fds_record_write(&record_desc, &record);
+  while (result == FDS_ERR_NO_SPACE_IN_QUEUES) {
+    result = fds_record_write(&record_desc, &record);
+  }
   if (result != FDS_SUCCESS) {
     MESH_LOG("ERROR: Writing data to storage failed!\r\n");
+    return FAILURE;
   }
   garbage_collect_if_storage_is_limited();
+  return SUCCESS;
 }
 
-void delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
+storageOperationResult delete_data_from_storage(uint16_t fileId, uint16_t recordKey) {
   fds_record_desc_t record_desc;
   fds_find_token_t ftok = { 0 };
+
   if (fds_record_find(fileId, recordKey, &record_desc, &ftok) == FDS_SUCCESS) {
-    if (fds_record_delete(&record_desc) != FDS_SUCCESS) {
+    ret_code_t result = fds_record_delete(&record_desc);
+    while (result == FDS_ERR_NO_SPACE_IN_QUEUES) {
+      result = fds_record_delete(&record_desc);
+    }
+    if (result != FDS_SUCCESS) {
       MESH_LOG("ERROR: Deleting data from storage failed!\r\n");
+      return FAILURE;
     }
   }
+
   garbage_collect_if_storage_is_limited();
+  return SUCCESS;
 }
 
 void delete_file_from_storage(uint16_t fileId) {
@@ -96,8 +111,7 @@ void delete_file_from_storage(uint16_t fileId) {
   }
 };
 
-void* get_data_from_storage(uint16_t fileId, uint16_t recordKey) {
-  void *result = NULL;
+storageOperationResult get_data_from_storage(uint16_t fileId, uint16_t recordKey, void* storedData, uint16_t dataLength) {
   fds_record_desc_t record_desc;
   fds_find_token_t ftok = { 0 };
 
@@ -108,16 +122,14 @@ void* get_data_from_storage(uint16_t fileId, uint16_t recordKey) {
     findResult = fds_record_find(fileId, recordKey, &record_desc, &ftok);
   }
 
-  if (findResult == FDS_SUCCESS) {
-    fds_flash_record_t flash_record;
-    if (fds_record_open(&record_desc, &flash_record) == FDS_SUCCESS) {
-      result = (void *) flash_record.p_data;
-      fds_record_close(&record_desc);
-    } else {
-      MESH_LOG("ERROR: Can't open data in storage!\r\n");
-    }
-  }
-  return result;
+  if (findResult != FDS_SUCCESS) return NOT_FOUND;
+
+  fds_flash_record_t flash_record;
+  if (fds_record_open(&record_desc, &flash_record) != FDS_SUCCESS) return FAILURE;
+
+  memcpy(storedData, (void *) flash_record.p_data, dataLength);
+  fds_record_close(&record_desc);
+  return SUCCESS;
 }
 
 uint16_t get_record_count_in_storage(uint16_t fileId) {
@@ -131,8 +143,8 @@ uint16_t get_record_count_in_storage(uint16_t fileId) {
   return count;
 }
 
-void update_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
-  delete_data_from_storage(fileId, recordKey);
-  set_data_in_storage(data, dataLength, fileId, recordKey);
+storageOperationResult update_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
+  if (delete_data_from_storage(fileId, recordKey) == FAILURE) return FAILURE;
+  return set_data_in_storage(data, dataLength, fileId, recordKey);
 }
 

@@ -21,5 +21,6 @@ void led_teal_bright();
 void led_yellow_bright();
 void led_white_bright(void);
 void led_blue_dim(void);
+void led_red_dim(void);
 
 void flash_color(int rainbow_led_counter);

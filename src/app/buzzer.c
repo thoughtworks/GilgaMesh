@@ -55,7 +55,7 @@ static void add_pause() {
 }
 
 static void turn_buzzer_on() {
-  EC(sys_pwm_init(buzzerPWM, tonesToPlay[currentTone].period, BUZZER_PIN_NUMBER, false));
+  EC(sys_pwm_init(buzzerPWM, tonesToPlay[currentTone].period, false, BUZZER_PIN_NUMBER, 0));
   sys_pwm_enable(buzzerPWM);
   EC(sys_pwm_channel_duty_set(buzzerPWM, 0, BUZZER_VOLUME));
   start_timer(&buzzerTimer, tonesToPlay[currentTone++].duration, make_noise);

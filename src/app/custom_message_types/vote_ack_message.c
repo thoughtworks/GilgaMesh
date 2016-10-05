@@ -2,6 +2,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <app/feedback.h>
+#include <system/log.h>
 
 #include "app/storage.h"
 #include "app/custom_message_types/vote_message.h"
@@ -18,9 +20,13 @@ void vote_ack_message_initialize() {
 }
 
 static void delete_vote_and_send_next_vote(userVoteAck *voteAck) {
-  userVote *matchingVote = get_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck->voterId);
-  if (matchingVote != NULL && rtc_is_equal_timestamp(voteAck->timestamp, matchingVote->timeOfLastVote)) {
-    delete_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck->voterId);
+  userVote matchingVote;
+  storageOperationResult result = get_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck->voterId, &matchingVote, sizeof(matchingVote));
+  if (result == SUCCESS && rtc_is_equal_timestamp(voteAck->timestamp, matchingVote.timeOfLastVote)) {
+    result = delete_data_from_storage(VOTES_STORAGE_FILE_ID, voteAck->voterId);
+  }
+  if (result == FAILURE) {
+    display_failure_feedback();
   }
   send_vote_message();
 }

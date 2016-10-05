@@ -75,13 +75,17 @@ static void Storage_get_data_finds_opens_closes_and_returns_data() {
   will_return(fds_record_open, FDS_SUCCESS);
 
   expect_any(fds_record_close, p_desc);
-  assert_string_equal(get_data_from_storage(fileId, recordKey), "foo");
+  char result[4];
+  assert_int_equal(SUCCESS, get_data_from_storage(fileId, recordKey, result, sizeof(result)));
+  assert_string_equal(result, "foo");
 }
 
 static void Storage_get_data_should_not_open_or_close_or_return_value_when_record_not_found() {
   will_return(fds_record_find, FDS_ERR_NOT_FOUND);
 
-  assert_null(get_data_from_storage(fileId, recordKey));
+  char result[4] = "bar";
+  assert_int_equal(NOT_FOUND, get_data_from_storage(fileId, recordKey, result, sizeof(result)));
+  assert_string_equal(result, "bar");
   assert_false(fds_open_called);
   assert_false(fds_close_called);
 }
@@ -90,7 +94,9 @@ static void Storage_get_data_should_not_close_or_return_value_when_record_not_op
   will_return(fds_record_find, FDS_SUCCESS);
   will_return(fds_record_open, FDS_ERR_NOT_FOUND);
 
-  assert_null(get_data_from_storage(fileId, recordKey));
+  char result[4] = "bar";
+  assert_int_equal(FAILURE, get_data_from_storage(fileId, recordKey, result, sizeof(result)));
+  assert_string_equal(result, "bar");
   assert_false(fds_close_called);
 }
 

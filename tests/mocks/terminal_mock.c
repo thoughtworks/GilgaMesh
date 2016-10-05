@@ -1,7 +1,10 @@
 #include "terminal.h"
 #include "cmocka_includes.h"
 
-void terminal_initialize(void) { }
+bool terminal_initialize(void) {
+  return true;
+}
+
 void terminal_putstring(char* string) {
   check_expected_ptr(string);
 }

@@ -1,4 +1,6 @@
 #include "softdevice.h"
 #include "cmocka_includes.h"
 
-void softdevice_initialize() { }
+bool softdevice_initialize() {
+  return true;
+}

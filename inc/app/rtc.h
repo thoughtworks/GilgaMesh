@@ -126,7 +126,7 @@ typedef uint8_t timestamp_t[TIMESTAMP_SIZE];
 #define TIMESTRING_SIZE_INCLUDING_NULL 17
 typedef char timestring_t[TIMESTRING_SIZE_INCLUDING_NULL];
 
-void rtc_init();
+bool rtc_initialize();
 clock_time_t rtc_get_current_time();
 uint64_t rtc_get_seconds_since_boot();
 void rtc_print_status();
@@ -137,7 +137,6 @@ void rtc_timestamp_to_timestring(timestamp_t stamp, timestring_t string);
 void rtc_timestring_to_timestamp(timestring_t string, timestamp_t stamp);
 bool rtc_is_equal_timestamp(timestamp_t a, timestamp_t b);
 
-void rtc_sysclock_timer_initialize();
 void rtc_periodic_update_handler();
 
 void print_help_rtc();

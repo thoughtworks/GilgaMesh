@@ -16,13 +16,17 @@ SYS_TIMER_DEF(votingHeartbeatTimer);
 
 static BleMessageType votingHeartbeatMessageType;
 
-void voting_heartbeat_message_initialize() {
+bool voting_heartbeat_message_initialize() {
   votingHeartbeatMessageType = register_message_type(receive_voting_heartbeat_message);
 
 #ifdef IS_PROD_BOARD
-  create_repeated_timer(&votingHeartbeatTimer);
-  start_timer(&votingHeartbeatTimer, VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS, send_voting_heartbeat_message);
+  if(!execute_succeeds(create_repeated_timer(&votingHeartbeatTimer))) return false;
+  if(!execute_succeeds(start_timer(&votingHeartbeatTimer,
+                                   VOTING_MESSAGE_HEARTBEAT_FREQUENCY_IN_MS,
+                                   send_voting_heartbeat_message))) return false;
 #endif
+
+  return true;
 }
 
 static void log_voting_heartbeat_info(BleMessageVotingHeartbeatReq *request) {

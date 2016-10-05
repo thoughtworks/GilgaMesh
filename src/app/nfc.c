@@ -313,17 +313,17 @@ const char* get_nfc_status_string(nfcStatus status) {
   return "ENABLED";
 }
 
-void nfc_initialize(void) {
+bool nfc_initialize(void) {
   uint32_t err_code;
   err_code = adafruit_pn532_init(false);
-  APP_ERROR_CHECK(err_code);
 
-  if(!err_code) {
+  if(execute_succeeds(err_code)) {
+    if(!execute_succeeds(create_repeated_timer(&nfcScanTimer))) return nfcEnabled;
+    if(!execute_succeeds(start_timer(&nfcScanTimer, NFC_SCAN_FREQUENCY_IN_MS, nfc_scan))) return nfcEnabled;
     nfcEnabled = true;
-
-    create_repeated_timer(&nfcScanTimer);
-    start_timer(&nfcScanTimer, NFC_SCAN_FREQUENCY_IN_MS, nfc_scan);
   } else {
     nfcErrorCondition = true;
   }
+
+  return nfcEnabled;
 }

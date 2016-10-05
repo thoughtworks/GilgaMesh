@@ -11,6 +11,6 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageHandshakeReq;
 
 
-void handshake_message_initialize(void);
+bool handshake_message_initialize(void);
 void send_handshake_message(connection *targetConnection);
 MessagePropagationType receive_handshake_message(uint16_t connectionHandle, uint8_t *dataPacket);

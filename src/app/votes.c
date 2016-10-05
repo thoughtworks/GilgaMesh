@@ -2,7 +2,6 @@
 
 #include <sdk_common.h>
 #include <stdlib.h>
-#include <system/log.h>
 
 #include "app/feedback.h"
 #include "app/storage.h"
@@ -17,10 +16,11 @@ static userVote bufferForStorage __attribute__((aligned(4))) = { 0 };
 
 SYS_TIMER_DEF(clearBufferTimer);
 
-void votes_initialize() {
+bool votes_initialize() {
   mesh_add_terminal_command("vote", "Register a vote", save_vote_from_command_line);
 
-  create_single_shot_timer(&clearBufferTimer);
+  if (!execute_succeeds(create_single_shot_timer(&clearBufferTimer))) return false;
+  return true;
 }
 
 void vote_six_times() {

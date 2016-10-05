@@ -1,19 +1,23 @@
-#include <ble_conn_state.h>
-#include <system/log.h>
 #include "connection.h"
+
+#include <ble_conn_state.h>
+
+#include "system/log.h"
 #include "device.h"
 #include "gap.h"
 
 
 static connection (*activeConnections)[MAX_TOTAL_CONNECTIONS];
 
-void connections_initialize() {
+bool connections_initialize() {
   activeConnections = malloc(sizeof(*activeConnections));
   memset(activeConnections, 0, sizeof(*activeConnections));
 
   char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
   get_short_hex_device_id(get_raw_device_id(), short_hex_device_id);
   MESH_LOG("DeviceId: pretty: %s, raw: %u\r\n", short_hex_device_id, get_raw_device_id());
+
+  return true;
 }
 
 

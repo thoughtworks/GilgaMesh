@@ -33,7 +33,7 @@ static void print_prompt() {
   terminal_putstring(TERMINAL_PROMPT);
 }
 
-void terminal_initialize(void) {
+bool terminal_initialize(void) {
   is_terminal_initialized = true;
 
   char mainVersion[4];
@@ -59,6 +59,8 @@ void terminal_initialize(void) {
 
   terminal_putstring(", nRF51s ");
   terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
+
+  return is_terminal_initialized;
 }
 
 static uint8_t find_arguments(char** parsedCommandArray, char* readBuffer) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #define PN532_CONFIG_TWI_INSTANCE 1
 #define PN532_CHIP_RESET          8
 #define PN532_IRQ                 9
@@ -31,7 +33,7 @@ typedef enum {
   NFC_STATUS_ERROR
 } nfcStatus;
 
-void nfc_initialize(void);
+bool nfc_initialize(void);
 void nfc_scan(void);
 nfcStatus get_nfc_status(void);
 const char* get_nfc_status_string(nfcStatus status);

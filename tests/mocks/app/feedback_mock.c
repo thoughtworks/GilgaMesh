@@ -3,7 +3,10 @@
 
 bool displayed_group_value_feedback = false;
 
-void feedback_initialize(void) {}
+bool feedback_initialize(void) {
+  return true;
+}
+
 void display_successful_start_up_feedback(void) {}
 void display_vote_recorded_feedback(void) {}
 void display_group_value_change_feedback(void) {

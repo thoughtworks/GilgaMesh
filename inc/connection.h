@@ -1,13 +1,11 @@
 #pragma once
 
-#include <stdbool.h>
-
 #include <ble_gap.h>
 #include <nrf_soc.h>
 
 #include "conversion.h"
-#include "message_types/message.h"
 #include "queue.h"
+#include "message_types/message.h"
 
 #define MAX_CENTRAL_CONNECTIONS        1
 #define MAX_PERIPHERAL_CONNECTIONS     3
@@ -26,7 +24,7 @@ typedef struct
     transmissionPacketQueue unsentMessages;
 }__attribute__ ((packed)) connection;
 
-void connections_initialize(void);
+bool connections_initialize(void);
 connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType);
 ConnectionType unset_connection(uint16_t connectionHandle);
 void print_all_connections(char** commandArray, uint8_t numCommands);

@@ -2,7 +2,9 @@
 
 #include "cmocka_includes.h"
 
-void connections_initialize(void) { }
+bool connections_initialize(void) {
+  return true;
+}
 
 connection* set_connection(uint16_t connectionHandle, ConnectionType connectionType) {
   check_expected(connectionHandle);

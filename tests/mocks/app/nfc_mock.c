@@ -1,7 +1,10 @@
 #include "app/nfc.h"
 #include "cmocka_includes.h"
 
-void nfc_initialize(void) { }
+bool nfc_initialize(void) {
+  return true;
+}
+
 void nfc_scan(void) { }
 
 nfcStatus get_nfc_status(void) {

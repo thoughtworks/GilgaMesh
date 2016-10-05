@@ -14,9 +14,14 @@ void app_error_fault_handler(uint32_t id, uint32_t pc, uint32_t info)
 
   error_info_t *error_info = (error_info_t *) info;
   if(error_info->err_code != NRF_SUCCESS){
-    MESH_LOG("ERROR: ERROR CODE %d, in file %s@%d\r\n",
+    MESH_LOG_ERROR("ERROR: ERROR CODE %d, in file %s@%d\r\n",
                    error_info->err_code, error_info->p_file_name, error_info->line_num);
   }
+}
+
+bool execute_succeeds(ret_code_t return_code) {
+  EC(return_code);
+  return return_code == NRF_SUCCESS;
 }
 
 const char* getBleEventNameString(uint16_t bleEventId) {

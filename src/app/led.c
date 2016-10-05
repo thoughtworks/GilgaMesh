@@ -36,16 +36,17 @@ static void set_rgb_leds(uint8_t redDutyCycle, uint8_t greenDutyCycle, uint8_t b
   set_non_pwm_led(BSP_LED_1, greenDutyCycle);
 }
 
-void led_initialize() {
+bool led_initialize() {
   ledPWM = create_led_pwm_instance();
 
-  EC(sys_pwm_init(ledPWM, LED_DEFAULT_PERIOD, INVERT_LEDS, BSP_LED_2, BSP_LED_0));
+  if (!execute_succeeds(sys_pwm_init(ledPWM, LED_DEFAULT_PERIOD, INVERT_LEDS, BSP_LED_2, BSP_LED_0))) return false;
   sys_pwm_enable(ledPWM);
-  EC(sys_pwm_channel_duty_set(ledPWM, 0, LED_OFF_DUTY_CYCLE));
-  EC(sys_pwm_channel_duty_set(ledPWM, 1, LED_OFF_DUTY_CYCLE));
+  if (!execute_succeeds(sys_pwm_channel_duty_set(ledPWM, 0, LED_OFF_DUTY_CYCLE))) return false;
+  if (!execute_succeeds(sys_pwm_channel_duty_set(ledPWM, 1, LED_OFF_DUTY_CYCLE))) return false;
 
   sys_gpio_cfg_output(BSP_LED_1);
   sys_gpio_pin_clear(BSP_LED_1);
+  return true;
 }
 
 void flash_color(int rainbow_led_counter) {

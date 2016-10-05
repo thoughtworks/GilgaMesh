@@ -1,9 +1,9 @@
 #include "app/storage.h"
 
-#include <stdbool.h>
 #include <stddef.h>
 #include <fds.h>
 #include <string.h>
+#include <error.h>
 #include "system/log.h"
 
 static void fds_evt_handler(fds_evt_t const * const p_fds_evt) {
@@ -16,12 +16,11 @@ static void fds_evt_handler(fds_evt_t const * const p_fds_evt) {
   }
 }
 
-void storage_initialize() {
-  ret_code_t ret = fds_register(fds_evt_handler);
-  if (ret != FDS_SUCCESS) MESH_LOG("ERROR: Flash storage callback registration failed!\r\n");
+bool storage_initialize() {
+  if (!execute_succeeds(fds_register(fds_evt_handler))) return false;
+  if (!execute_succeeds(fds_init())) return false;
 
-  ret = fds_init();
-  if (ret != FDS_SUCCESS) MESH_LOG("ERROR: Flash storage initialization failed!\r\n");
+  return true;
 }
 
 static uint16_t get_length_in_words(uint16_t dataLength) {

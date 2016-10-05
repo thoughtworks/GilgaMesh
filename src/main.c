@@ -26,13 +26,17 @@
 volatile uint32_t m_uicr_bootloader_start_address __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
 #endif
 
+static bool init_failed = false;
+
 void HardFault_Handler(void) {
   display_failure_feedback();
 }
 
-static void init_module(char* module_name, void (*function)()) {
+static void init_module(char* module_name, bool (*function)()) {
+  if (init_failed) return;
+
   MESH_LOG_DEBUG("Initializing %s... \r\n", module_name);
-  (*function)();
+  init_failed = !((*function)());
 }
 
 static void initialize() {
@@ -55,7 +59,7 @@ static void initialize() {
   init_module("feedback", feedback_initialize);
   init_module("storage", storage_initialize);
   init_module("votes", votes_initialize);
-  init_module("RTC", rtc_init);
+  init_module("RTC", rtc_initialize);
   init_module("connections", connections_initialize);
   init_module("GATT", gatt_initialize);
   init_module("GAP", gap_initialize);
@@ -72,22 +76,24 @@ static void initialize() {
   mesh_add_terminal_command("rec", "Print recs in storage", whats_in_storage_right_now);
   mesh_add_terminal_command("vote6", "vote 6 times", vote_six_times);
 
-  MESH_LOG("System ready.\r\n");
+  if (init_failed) {
+    display_failure_feedback();
+  } else {
+    MESH_LOG("System ready.\r\n");
+    display_successful_start_up_feedback();
+  }
 }
 
 static void run() {
   terminal_process_input();
   app_sched_execute();
 
-  EC(sd_app_evt_wait());
+  sd_app_evt_wait();
 }
 
 #ifndef TESTING // exclude entry point from unit tests
 int main() {
   initialize();
-  display_successful_start_up_feedback();
-  //determine if there was a failure and then try to give "failure" feedback
-  //display_catastrophic_failure_feedback();
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"

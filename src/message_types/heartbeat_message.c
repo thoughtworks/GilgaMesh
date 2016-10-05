@@ -12,11 +12,15 @@ SYS_TIMER_DEF(heartbeatTimer);
 
 static BleMessageType heartbeatMessageType;
 
-void heartbeat_message_initialize() {
+bool heartbeat_message_initialize() {
   heartbeatMessageType = register_message_type(receive_heartbeat_message);
 
-  create_repeated_timer(&heartbeatTimer);
-  start_timer(&heartbeatTimer, HEARTBEAT_MESSAGE_FREQUENCY_IN_MS, send_heartbeat_message);
+  if(!execute_succeeds(create_repeated_timer(&heartbeatTimer))) return false;
+  if(!execute_succeeds(start_timer(&heartbeatTimer,
+                                   HEARTBEAT_MESSAGE_FREQUENCY_IN_MS,
+                                   send_heartbeat_message))) return false;
+
+  return true;
 }
 
 void log_heartbeat_info(BleMessageHeartbeatReq *request) {

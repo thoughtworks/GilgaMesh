@@ -4,7 +4,9 @@
 void* mockStoredData;
 bool delete_data_called;
 
-void storage_initialize() { }
+bool storage_initialize() {
+  return true;
+}
 
 storageOperationResult get_data_from_storage(uint16_t fileId, uint16_t recordKey, void* storedData, uint16_t dataLength) {
   storageOperationResult result = mock_type(storageOperationResult);

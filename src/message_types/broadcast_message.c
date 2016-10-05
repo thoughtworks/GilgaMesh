@@ -4,8 +4,10 @@
 
 static BleMessageType broadcastMessageType;
 
-void broadcast_message_initialize() {
+bool broadcast_message_initialize() {
   broadcastMessageType = register_message_type(receive_broadcast_message);
+
+  return true;
 }
 
 void send_broadcast_message(char **parsedCommandArray, uint8_t numCommands) {

@@ -9,11 +9,13 @@
 
 static BleMessageType groupValueMessageType;
 
-void group_value_message_initialize() {
+bool group_value_message_initialize() {
   groupValueMessageType = register_message_type(receive_group_value_message);
 
   mesh_add_terminal_command("grp", "Update group", send_group_value_message);
   mesh_add_terminal_command("val", "Update value", send_group_value_message);
+
+  return true;
 }
 
 void send_group_value_message(char **parsedCommandArray, uint8_t numCommands) {

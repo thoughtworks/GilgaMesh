@@ -12,8 +12,6 @@ SYS_TIMER_DEF(SYSCLOCK_TIMER); // register timer that updates the system clock
 #include <app_twi.h>
 #include <app_util_platform.h>
 #include <stdlib.h>
-#include <app/rtc.h>
-#include "error.h"
 
 #define MAX_PENDING_TRANSACTIONS 8
 #define RTC_TWI_ADDR 81
@@ -23,7 +21,7 @@ static bool is_seeed_rtc_connected = false;
 
 static PCF85063TPState_t rtc_state;
 
-static void read_seeed_rtc_state() {
+static ret_code_t read_seeed_rtc_state() {
 
   uint32_t err_code;
 
@@ -55,13 +53,10 @@ static void read_seeed_rtc_state() {
 
     err_code = app_twi_perform(&rtcTwiInstance, readRtcTransfers,
                                     sizeof(readRtcTransfers) / sizeof(readRtcTransfers[0]), NULL);
-    APP_ERROR_CHECK(err_code);
 
-    if(err_code != NRF_SUCCESS) {
-      is_seeed_rtc_connected = false;
-    } else {
-      is_seeed_rtc_connected = true;
-    }
+  is_seeed_rtc_connected = (err_code == NRF_SUCCESS);
+
+  return err_code;
 }
 
 static void print_seeed_rtc_state() {
@@ -90,8 +85,8 @@ static void print_seeed_rtc_state() {
   }
 };
 
-static void seeed_rtc_init() {
-  uint32_t err_code;
+static ret_code_t seeed_rtc_init() {
+  ret_code_t err_code;
 
   nrf_drv_twi_config_t const twi_config = {
     .scl                = 14,
@@ -101,10 +96,11 @@ static void seeed_rtc_init() {
   };
 
   APP_TWI_INIT(&rtcTwiInstance, &twi_config, MAX_PENDING_TRANSACTIONS, err_code);
-  APP_ERROR_CHECK(err_code);
+  if(err_code != NRF_SUCCESS) return err_code;
 
   memset(&rtc_state, 0, sizeof(rtc_state));
-  read_seeed_rtc_state();
+
+  return read_seeed_rtc_state();
 }
 
 static void update_system_time_from_seeed_rtc(void * p_event_data, uint16_t event_size) {
@@ -126,11 +122,6 @@ static void update_system_time_from_seeed_rtc(void * p_event_data, uint16_t even
 
 #endif // SEEED_RTC
 
-void rtc_sysclock_timer_initialize() {
-  create_repeated_timer(&SYSCLOCK_TIMER);
-  start_timer(&SYSCLOCK_TIMER, MS_RATE_TO_UPDATE_SYSTEM_CLOCK, rtc_periodic_update_handler);
-}
-
 static void execute_rtc_command(char **parsedCommandArray, uint8_t numCommands) {
   if (numCommands >= 2 && strcmp(parsedCommandArray[1], "info") == 0) {
     rtc_print_status();
@@ -144,7 +135,7 @@ static void execute_rtc_command(char **parsedCommandArray, uint8_t numCommands) 
   print_help_rtc();
 }
 
-void rtc_init() {
+bool rtc_initialize() {
   system_time.clock_time.day = 1;
   system_time.clock_time.month = 1;
   system_time.clock_time.year = 2000;
@@ -154,12 +145,17 @@ void rtc_init() {
   }
 
 #ifdef SEEED_RTC
-  seeed_rtc_init();
+  if (!execute_succeeds(seeed_rtc_init())) return false;
 #endif // SEEED_RTC
 
-  rtc_sysclock_timer_initialize();
+  if (!execute_succeeds(create_repeated_timer(&SYSCLOCK_TIMER))) return false;
+  if (!execute_succeeds(start_timer(&SYSCLOCK_TIMER,
+                                    MS_RATE_TO_UPDATE_SYSTEM_CLOCK,
+                                    rtc_periodic_update_handler))) return false;
 
   mesh_add_terminal_command("rtc",  "Real time clock commands", execute_rtc_command);
+
+  return true;
 }
 
 clock_time_t rtc_get_current_time() {

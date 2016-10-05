@@ -1,7 +1,10 @@
 #include "app/votes.h"
 #include "cmocka_includes.h"
 
-void votes_initialize(void) { }
+bool votes_initialize(void) {
+  return true;
+}
+
 void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands) { }
 
 void save_vote(uint16_t voterId) {

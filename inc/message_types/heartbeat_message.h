@@ -14,6 +14,6 @@ typedef struct {
 }__attribute__ ((packed)) BleMessageHeartbeatReq;
 
 
-void heartbeat_message_initialize(void);
+bool heartbeat_message_initialize(void);
 void send_heartbeat_message(void);
 MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint8_t *dataPacket);

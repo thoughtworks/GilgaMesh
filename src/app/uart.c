@@ -2,11 +2,11 @@
 
 #include <app_scheduler.h>
 #include <app_uart.h>
-#include <terminal.h>
 
 #include "system/log.h"
 #include "boards.h"
 #include "error.h"
+#include "terminal.h"
 
 #define ENTER_KEY 0xA
 #define CARRIAGE_RETURN_KEY 0xD
@@ -15,39 +15,8 @@ static bool is_uart_initialized = false;
 static char readBuffer[UART_BUFFER_SIZE] = {0};
 static int readBufferIndex = 0;
 
-static void uart_event_handle(app_uart_evt_t * p_event);
-
 static bool char_ends_message(char someCharacter) {
   return someCharacter == ENTER_KEY || someCharacter == CARRIAGE_RETURN_KEY;
-}
-
-void uart_initialize() {
-  uint32_t err_code;
-  const app_uart_comm_params_t comm_params = {
-          RX_PIN_NUMBER,
-          TX_PIN_NUMBER,
-          RTS_PIN_NUMBER,
-          CTS_PIN_NUMBER,
-          APP_UART_FLOW_CONTROL_DISABLED,
-          false,
-          UART_BAUDRATE_BAUDRATE_Baud38400
-  };
-
-  APP_UART_INIT(&comm_params,
-                uart_event_handle,
-                APP_IRQ_PRIORITY_LOW,
-                err_code);
-  EC(err_code);
-  is_uart_initialized = true;
-}
-
-void log_to_uart(char *logMessage, uint16_t messageLength) {
-  if (!is_uart_initialized) { return; }
-
-  for (int i = 0; i < messageLength; i++) {
-    while (app_uart_put((uint8_t) logMessage[i]) != NRF_SUCCESS);
-    if (logMessage[i] == '\0') break;
-  }
 }
 
 static void append_char_to_buffer(char new_character) {
@@ -78,5 +47,35 @@ static void uart_event_handle(app_uart_evt_t * p_event) {
       break;
     default:
       break;
+  }
+}
+
+bool uart_initialize() {
+  const app_uart_comm_params_t comm_params = {
+          RX_PIN_NUMBER,
+          TX_PIN_NUMBER,
+          RTS_PIN_NUMBER,
+          CTS_PIN_NUMBER,
+          APP_UART_FLOW_CONTROL_DISABLED,
+          false,
+          UART_BAUDRATE_BAUDRATE_Baud38400
+  };
+
+  ret_code_t err_code;
+  APP_UART_INIT(&comm_params,
+                uart_event_handle,
+                APP_IRQ_PRIORITY_LOW,
+                err_code);
+
+  if (execute_succeeds(err_code)) is_uart_initialized = true;
+  return is_uart_initialized;
+}
+
+void log_to_uart(char *logMessage, uint16_t messageLength) {
+  if (!is_uart_initialized) return;
+
+  for (int i = 0; i < messageLength; i++) {
+    while (app_uart_put((uint8_t) logMessage[i]) != NRF_SUCCESS);
+    if (logMessage[i] == '\0') break;
   }
 }

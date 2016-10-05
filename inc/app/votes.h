@@ -23,7 +23,7 @@ typedef struct {
 }__attribute__ ((packed)) userVoteAck;
 
 
-void votes_initialize(void);
+bool votes_initialize(void);
 void save_vote(uint16_t voterId);
 void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands);
 uint16_t get_vote_count(void);

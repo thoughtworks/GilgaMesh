@@ -70,10 +70,10 @@ static uint8_t currentEventBuffer[sizeof(ble_evt_t) + BLE_L2CAP_MTU_DEF];
 static ble_evt_t* currentEvent = (ble_evt_t *) currentEventBuffer;
 static const uint16_t sizeOfEvent = sizeof(currentEventBuffer);
 
-void gap_initialize(void);
-void set_advertising_data(void);
-void start_advertising(void);
-void start_scanning(void);
+bool gap_initialize(void);
+ret_code_t set_advertising_data(void);
+ret_code_t start_advertising(void);
+ret_code_t start_scanning(void);
 void check_advertising_status(char **parsedCommandArray, uint8_t numCommands);
 void check_scanning_status(char **parsedCommandArray, uint8_t numCommands);
 void disconnect_from_peer(uint16_t connectionHandle);

@@ -30,7 +30,7 @@ static void print_help(char **parsedCommandArray, uint8_t numCommands) {
   terminal_putstring("\r\n");
 }
 
-void command_initialize() {
+bool command_initialize() {
   commands = NULL;
   commandCount = 0;
 
@@ -39,6 +39,8 @@ void command_initialize() {
   mesh_add_terminal_command("cons", "Print all connections",    print_all_connections);
   mesh_add_terminal_command("adv",  "Check advertising status", check_advertising_status);
   mesh_add_terminal_command("scan", "Check scanning status",    check_scanning_status);
+
+  return true;
 }
 
 void command_execute(char **parsedCommandArray, uint8_t numberOfItems) {

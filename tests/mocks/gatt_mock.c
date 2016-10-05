@@ -19,7 +19,10 @@ void send_to_single_connection(connection *targetConnection, uint8_t *data, uint
   check_expected(dataLength);
 }
 
-void gatt_initialize(void) { }
+bool gatt_initialize(void) {
+  return true;
+}
+
 void propagate_message(ble_gatts_evt_t *gattsEvent) { }
 void send_message_from_connection_queue(connection *targetConnection){ }
 void handle_write_event(void * data, uint16_t dataLength) { }

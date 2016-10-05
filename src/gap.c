@@ -50,32 +50,33 @@ const ble_gap_scan_params_t meshConnectionScanningParams =
 };
 
 
-void gap_initialize(void){
-  EC(sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE));
-  EC(sd_power_mode_set(NRF_POWER_MODE_LOWPWR));
+bool gap_initialize(void){
+  if(!execute_succeeds(sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE))) return false;
+  if(!execute_succeeds(sd_power_mode_set(NRF_POWER_MODE_LOWPWR))) return false;
 
   ble_gap_conn_sec_mode_t secPermissionOpen;
   BLE_GAP_CONN_SEC_MODE_SET_OPEN(&secPermissionOpen);
 
   char short_hex_device_id[HEX_DEVICE_ID_LENGTH];
   char *deviceName = get_short_hex_device_id(get_raw_device_id(), short_hex_device_id);
-  EC(sd_ble_gap_device_name_set(&secPermissionOpen, (const uint8_t *)deviceName, (uint16_t)(strlen(deviceName) + 1)));
-  EC(sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER));
-  EC(sd_ble_gap_ppcp_set(&meshConnectionParams));
+  if(!execute_succeeds(sd_ble_gap_device_name_set(&secPermissionOpen,
+                                                  (const uint8_t *)deviceName,
+                                                  (uint16_t)(strlen(deviceName) + 1)))) return false;
+  if(!execute_succeeds((sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER)))) return false;
+  if(!execute_succeeds(sd_ble_gap_ppcp_set(&meshConnectionParams))) return false;
 
 #ifdef IS_PROD_BOARD
   MESH_LOG("Start BLE advertising... \r\n");
-  start_advertising();
+  if(!execute_succeeds(start_advertising())) return false;
 #else
   MESH_LOG("Start BLE scanning... \r\n");
-  start_scanning();
+  if(!execute_succeeds(start_scanning())) return false;
 #endif
 
-
+  return true;
 }
 
-
-void set_advertising_data() {
+ret_code_t set_advertising_data() {
   advertisingManufacturerData manufacturerData;
   manufacturerData.length = sizeof(manufacturerData) - 1;
   manufacturerData.typeDefinition = BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA;
@@ -101,14 +102,19 @@ void set_advertising_data() {
   scanResponseData scanData;
   scanData.serviceData = serviceData;
 
-  EC(sd_ble_gap_adv_data_set((const uint8_t *)&advData, sizeof(advData), (const uint8_t *)&scanData, sizeof(scanData)));
+  return sd_ble_gap_adv_data_set((const uint8_t *)&advData,
+                                 sizeof(advData),
+                                 (const uint8_t *)&scanData,
+                                 sizeof(scanData));
 }
 
 
-void start_advertising(void) {
+ret_code_t start_advertising(void) {
 #ifdef IS_PROD_BOARD
-  set_advertising_data();
-  EC(sd_ble_gap_adv_start(&meshAdvertisingParams));
+  ret_code_t errorCode = set_advertising_data();
+  if(errorCode != NRF_SUCCESS) return errorCode;
+
+  return sd_ble_gap_adv_start(&meshAdvertisingParams);
 #endif
 }
 
@@ -160,8 +166,8 @@ bool should_connect_to_advertiser(ble_gap_evt_adv_report_t *adv_report) {
 }
 
 
-void start_scanning(void) {
-  EC(sd_ble_gap_scan_start(&meshScanningParams));
+ret_code_t start_scanning(void) {
+  return sd_ble_gap_scan_start(&meshScanningParams);
 }
 
 

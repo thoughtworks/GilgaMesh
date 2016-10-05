@@ -1,7 +1,10 @@
 #include "app/rtc.h"
 #include "cmocka_includes.h"
 
-void rtc_init() {}
+bool rtc_initialize() {
+  return true;
+}
+
 clock_time_t rtc_get_current_time() {}
 
 uint64_t rtc_get_seconds_since_boot() {

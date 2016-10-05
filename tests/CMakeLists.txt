@@ -73,7 +73,6 @@ list(APPEND TestFramework_SOURCES "mocks/sdk12/components/toolchain/cmsis/cmsis_
 
 #add system shim mock implementations
 list(APPEND TestFramework_SOURCES "mocks/system/delay_mock.c")
-list(APPEND TestFramework_SOURCES "mocks/system/error_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/gpio_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/platform_mock.c")
 list(APPEND TestFramework_SOURCES "mocks/system/pwm_mock.c")
@@ -95,6 +94,7 @@ target_link_libraries(BroadcastMessageTest cmocka)
 GEN_OUTPUTS(BroadcastMessageTest)
 
 add_executable(BuzzerTest ${TestFramework_SOURCES}
+        mocks/error_mock.c
         ${SRC_PATH}/app/buzzer.c
         unit/app/BuzzerTest.c)
 target_link_libraries(BuzzerTest cmocka)
@@ -127,9 +127,11 @@ GEN_OUTPUTS(CommandTest)
 add_executable(FeedbackTest ${TestFramework_SOURCES}
         mocks/app/buzzer_mock.c
         mocks/app/led_mock.c
+        mocks/app/nfc_mock.c
         mocks/app/vote_config_mock.c
         mocks/app/votes_mock.c
         mocks/command_mock.c
+        mocks/error_mock.c
         ${SRC_PATH}/app/feedback.c
         unit/app/FeedbackTest.c)
 target_link_libraries(FeedbackTest cmocka)
@@ -140,6 +142,7 @@ add_executable(GattTest ${TestFramework_SOURCES}
         mocks/message_types/heartbeat_message_mock.c
         mocks/message_types/handshake_message_mock.c
         mocks/connection_mock.c
+        mocks/error_mock.c
         mocks/gap_mock.c
         mocks/queue_mock.c
         ${SRC_PATH}/gatt.c
@@ -169,6 +172,7 @@ GEN_OUTPUTS(HandshakeMessageTest)
 add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
+        mocks/error_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/conversion.c
@@ -178,6 +182,7 @@ target_link_libraries(HeartbeatMessageTest cmocka)
 GEN_OUTPUTS(HeartbeatMessageTest)
 
 add_executable(LedTest ${TestFramework_SOURCES}
+        mocks/error_mock.c
         ${SRC_PATH}/app/led.c
         unit/app/LedTest.c)
 target_link_libraries(LedTest cmocka)
@@ -225,6 +230,7 @@ target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
 
 add_executable(StorageTest ${TestFramework_SOURCES}
+        mocks/error_mock.c
         ${SRC_PATH}/app/storage.c
         unit/app/StorageTest.c)
 target_link_libraries(StorageTest cmocka)
@@ -256,6 +262,7 @@ add_executable(VoteMessageTest ${TestFramework_SOURCES}
         mocks/app/rtc_mock.c
         mocks/app/storage_mock.c
         mocks/device_mock.c
+        mocks/error_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/app/custom_message_types/vote_message.c
@@ -268,6 +275,7 @@ add_executable(VotingHeartbeatMessageTest ${TestFramework_SOURCES}
         mocks/app/vote_config_mock.c
         mocks/app/votes_mock.c
         mocks/device_mock.c
+        mocks/error_mock.c
         mocks/gatt_mock.c
         mocks/terminal_mock.c
         ${SRC_PATH}/app/custom_message_types/voting_heartbeat_message.c

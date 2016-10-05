@@ -2,6 +2,7 @@
 
 #include <nrf51.h>
 #include <nrf51_bitfields.h>
+#include <stdbool.h>
 
 #define LED_BRIGHT_DUTY_CYCLE         100
 #define LED_DIM_DUTY_CYCLE            3
@@ -11,7 +12,7 @@
 #define INVERT_LEDS                   false
 #endif
 
-void led_initialize(void);
+bool led_initialize();
 
 void led_red_bright(void);
 void led_green_bright(void);

@@ -2,7 +2,10 @@
 
 #include <cmocka_includes.h>
 
-void heartbeat_message_initialize() { }
+bool heartbeat_message_initialize() {
+  return true;
+}
+
 void send_heartbeat_message(void) { }
 
 MessagePropagationType receive_heartbeat_message(uint16_t connectionHandle, uint8_t *dataPacket){

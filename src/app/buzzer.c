@@ -8,7 +8,6 @@
 #include "system/timer.h"
 #include "system/util.h"
 #include "boards.h"
-#include "error.h"
 
 #define MAX_SIZE_BUZZER_TONES_ARRAY   20
 #define BUZZER_VOLUME                 50
@@ -26,12 +25,14 @@ static const void* buzzerPWM;
 
 static void make_noise(void * p_event_data, uint16_t event_size);
 
-void buzzer_initialize() {
-  buzzerEnabled = true;
-  buzzerPWM = create_buzzer_pwm_instance();
+bool buzzer_initialize() {
+  if (execute_succeeds(create_single_shot_timer(&buzzerTimer))) {
+    buzzerPWM = create_buzzer_pwm_instance();
+    sys_gpio_pin_clear(BUZZER_PIN_NUMBER);
+    buzzerEnabled = true;
+  }
 
-  create_single_shot_timer(&buzzerTimer);
-  sys_gpio_pin_clear(BUZZER_PIN_NUMBER);
+  return buzzerEnabled;
 }
 
 static void resetTones() {
@@ -41,7 +42,7 @@ static void resetTones() {
 }
 
 static void appendNewBuzzerTones(uint16_t* toneInstructions, uint8_t numTones) {
-    for (int i = 0; i < numTones; i++) {
+  for (int i = 0; i < numTones; i++) {
     tonesToPlay[numStoredTones].duration = toneInstructions[i*2];
     tonesToPlay[numStoredTones].period = toneInstructions[i*2 + 1];
     numStoredTones++;
@@ -76,8 +77,7 @@ static void make_noise(void * p_event_data, uint16_t event_size) {
 
   if(currentTone < MAX_SIZE_BUZZER_TONES_ARRAY && (tonesToPlay[currentTone].duration > 0 || tonesToPlay[currentTone].period > 0)) {
     turn_buzzer_on();
-  }
-  else {
+  } else {
     buzzerPlaying = false;
   }
 }

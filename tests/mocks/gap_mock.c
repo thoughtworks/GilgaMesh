@@ -12,7 +12,10 @@ void check_scanning_status(char **parsedCommandArray, uint8_t numCommands) {
   check_expected_ptr(parsedCommandArray);
 }
 
-void gap_initialize(void) { }
+bool gap_initialize(void) {
+  return true;
+}
+
 void set_advertising_data(void) { }
 void start_advertising(void) { }
 void start_scanning(void) { }

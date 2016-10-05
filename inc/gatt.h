@@ -15,7 +15,7 @@
 
 typedef MessagePropagationType (*write_event_handler)(uint16_t connectionHandle, uint8_t *dataPacket);
 
-void gatt_initialize(void);
+bool gatt_initialize(void);
 void propagate_message(ble_gatts_evt_t *gattsEvent);
 void send_message_from_connection_queue(connection *targetConnection);
 void send_to_single_connection(connection *targetConnection, uint8_t *data, uint16_t dataLength);

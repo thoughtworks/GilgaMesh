@@ -2,8 +2,8 @@
 
 #include <sdk_common.h>
 #include <stdlib.h>
-#include <app/feedback.h>
 
+#include "app/feedback.h"
 #include "app/storage.h"
 #include "app/uart.h"
 #include "system/log.h"
@@ -15,11 +15,15 @@ SYS_TIMER_DEF(voteMessageTimer);
 
 static BleMessageType voteMessageType;
 
-void vote_message_initialize() {
+bool vote_message_initialize() {
   voteMessageType = register_message_type(receive_vote_message);
 
-  create_single_shot_timer(&voteMessageTimer);
-  start_timer(&voteMessageTimer, VOTE_MESSAGE_FREQUENCY_IN_MS, send_vote_message);
+  if(!execute_succeeds(create_single_shot_timer(&voteMessageTimer))) return false;
+  if(!execute_succeeds(start_timer(&voteMessageTimer,
+                                   VOTE_MESSAGE_FREQUENCY_IN_MS,
+                                   send_vote_message))) return false;
+
+  return true;
 }
 
 static void log_vote(BleMessageVoteReq *request) {

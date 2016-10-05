@@ -16,17 +16,19 @@ ble_gatts_char_handles_t characteristicHandles;
 static writeEvent** writeEvents;
 
 
-void gatt_initialize() {
+bool gatt_initialize() {
   ble_uuid_t serviceUUID;
   memset(&serviceUUID, 0, sizeof(serviceUUID));
 
   ble_uuid128_t baseUUID128 = { FOO_SERVICE_UUID };
 
-  EC(sd_ble_uuid_vs_add(&baseUUID128, &serviceUUID.type));
+  if(!execute_succeeds(sd_ble_uuid_vs_add(&baseUUID128, &serviceUUID.type))) return false;
 
   uint16_t serviceHandle = 0;
 
-  EC(sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &serviceUUID, &serviceHandle));
+  if(!execute_succeeds(sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
+                                                &serviceUUID,
+                                                &serviceHandle))) return false;
 
   ble_gatts_attr_md_t characteristicConfigurationDescriptor;
   memset(&characteristicConfigurationDescriptor, 0, sizeof(characteristicConfigurationDescriptor));
@@ -69,7 +71,12 @@ void gatt_initialize() {
 
   memset(&characteristicHandles, 0, sizeof(characteristicHandles));
 
-  EC(sd_ble_gatts_characteristic_add(serviceHandle, &characteristicMetadata, &characteristicAttribute, &characteristicHandles));
+  if(!execute_succeeds(sd_ble_gatts_characteristic_add(serviceHandle,
+                                                       &characteristicMetadata,
+                                                       &characteristicAttribute,
+                                                       &characteristicHandles))) return false;
+
+  return true;
 }
 
 

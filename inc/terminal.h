@@ -10,7 +10,7 @@
 #define TERMINAL_BUFFER_SIZE 48
 #define MAX_ARGUMENTS 8
 
-void terminal_initialize(void);
+bool terminal_initialize(void);
 void terminal_putstring(char* string);
 void terminal_process_input(void);
 void terminal_execute_command(char* string);

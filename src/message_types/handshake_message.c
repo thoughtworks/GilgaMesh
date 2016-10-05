@@ -5,8 +5,10 @@
 
 static BleMessageType handshakeMessageType;
 
-void handshake_message_initialize() {
+bool handshake_message_initialize() {
   handshakeMessageType = register_message_type(receive_handshake_message);
+
+  return true;
 }
 
 void send_handshake_message(connection *targetConnection) {

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <app/feedback.h>
-#include <system/log.h>
 
 #include "app/storage.h"
 #include "app/custom_message_types/vote_message.h"
@@ -13,10 +12,12 @@
 
 static BleMessageType voteAckMessageType;
 
-void vote_ack_message_initialize() {
+bool vote_ack_message_initialize() {
   voteAckMessageType = register_message_type(receive_vote_acknowledgement);
 
   mesh_add_terminal_command("vack", "Broadcast vote ack", broadcast_vote_ack_from_cmd_line);
+
+  return true;
 }
 
 static void delete_vote_and_send_next_vote(userVoteAck *voteAck) {

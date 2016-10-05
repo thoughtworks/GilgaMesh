@@ -10,6 +10,6 @@ typedef struct {
   userVote vote;
 }__attribute__ ((packed)) BleMessageVoteReq;
 
-void vote_message_initialize(void);
+bool vote_message_initialize(void);
 void send_vote_message(void);
 MessagePropagationType receive_vote_message(uint16_t connectionHandle, uint8_t *dataPacket);

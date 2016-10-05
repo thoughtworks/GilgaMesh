@@ -3,13 +3,13 @@
 #include <ble_types.h>
 #include <string.h>
 
+#include "app/uart.h"
 #include "app/votes.h"
 #include "system/log.h"
 #include "system/timer.h"
 #include "system/util.h"
 #include "device.h"
 #include "gatt.h"
-#include "terminal.h"
 
 
 SYS_TIMER_DEF(votingHeartbeatTimer);

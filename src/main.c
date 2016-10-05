@@ -5,11 +5,11 @@
 #include "app/custom_message_types/vote_ack_message.h"
 #include "app/custom_message_types/vote_message.h"
 #include "app/custom_message_types/voting_heartbeat_message.h"
-#include <app/buzzer.h>
+#include "app/buzzer.h"
 #include "app/feedback.h"
 #include "app/led.h"
-#include "app/nfc.h"
 #include "app/storage.h"
+#include "app/uart.h"
 #include "message_types/broadcast_message.h"
 #include "message_types/handshake_message.h"
 #include "message_types/heartbeat_message.h"
@@ -43,6 +43,9 @@ static void initialize() {
   init_module("softdevice", softdevice_initialize);
   init_module("timer", timer_initialize);
   init_module("terminal", terminal_initialize);
+#ifndef IS_PROD_BOARD
+  init_module("uart", uart_initialize);
+#endif
   init_module("commands", command_initialize);
   init_module("leds", led_initialize);
 #ifdef IS_PROD_BOARD

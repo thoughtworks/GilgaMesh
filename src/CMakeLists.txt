@@ -212,6 +212,7 @@ list(APPEND MeshyMesh_SOURCES "app/led.c")
 list(APPEND MeshyMesh_SOURCES "app/nfc.c")
 list(APPEND MeshyMesh_SOURCES "app/rtc.c")
 list(APPEND MeshyMesh_SOURCES "app/storage.c")
+list(APPEND MeshyMesh_SOURCES "app/uart.c")
 list(APPEND MeshyMesh_SOURCES "app/votes.c")
 list(APPEND MeshyMesh_SOURCES "app/vote_config.c")
 

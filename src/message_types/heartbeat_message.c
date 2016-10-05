@@ -1,14 +1,12 @@
 #include "message_types/heartbeat_message.h"
 
 #include <stdlib.h>
-#include <nrf51.h>
-#include <app_uart.h>
 
+#include "app/uart.h"
 #include "system/log.h"
 #include "system/timer.h"
 #include "device.h"
 #include "gatt.h"
-#include "terminal.h"
 
 SYS_TIMER_DEF(heartbeatTimer);
 

@@ -4,11 +4,11 @@
 #include <stdlib.h>
 
 #include "app/storage.h"
+#include "app/uart.h"
 #include "system/log.h"
 #include "system/timer.h"
 #include "device.h"
 #include "gatt.h"
-#include "terminal.h"
 
 SYS_TIMER_DEF(voteMessageTimer);
 

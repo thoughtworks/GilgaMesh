@@ -59,6 +59,7 @@ static void initialize() {
   init_module("feedback", feedback_initialize);
   init_module("storage", storage_initialize);
   init_module("votes", votes_initialize);
+  init_module("vote config", vote_config_initialize);
   init_module("RTC", rtc_initialize);
   init_module("connections", connections_initialize);
   init_module("GATT", gatt_initialize);
@@ -66,7 +67,6 @@ static void initialize() {
   init_module("broadcast messages", broadcast_message_initialize);
   init_module("handshake messages", handshake_message_initialize);
   init_module("heartbeat messages", heartbeat_message_initialize);
-  init_module("group-value messages", group_value_message_initialize);
   init_module("vote messages", vote_message_initialize);
   init_module("vote acknowledgement messages", vote_ack_message_initialize);
   init_module("voting heartbeat messages", voting_heartbeat_message_initialize);

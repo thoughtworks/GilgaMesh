@@ -200,7 +200,6 @@ list(APPEND MeshyMesh_SOURCES "queue.c")
 list(APPEND MeshyMesh_SOURCES "main.c")
 
 # add application sources
-list(APPEND MeshyMesh_SOURCES "app/custom_message_types/group_value_message.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_message.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/vote_ack_message.c")
 list(APPEND MeshyMesh_SOURCES "app/custom_message_types/voting_heartbeat_message.c")

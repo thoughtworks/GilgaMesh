@@ -12,6 +12,13 @@ static int test_setup(void **state) {
   return 0;
 }
 
+static void VoteConfig_initialize_creates_group_and_value_commands() {
+  expect_string(mesh_add_terminal_command, commandName, "group");
+  expect_string(mesh_add_terminal_command, commandName, "value");
+
+  vote_config_initialize();
+}
+
 static void VoteConfig_updates_voting_group_and_displays_feedback() {
   will_return(update_data_in_storage, SUCCESS);
 
@@ -59,6 +66,7 @@ static void VoteConfig_update_result_with_stored_config_if_it_exists() {
 
 int RunVoteConfigTest(void) {
   const struct CMUnitTest tests[] = {
+      cmocka_unit_test_setup(VoteConfig_initialize_creates_group_and_value_commands, test_setup),
       cmocka_unit_test_setup(VoteConfig_updates_voting_group_and_displays_feedback, test_setup),
       cmocka_unit_test_setup(VoteConfig_updates_voting_value_and_displays_feedback, test_setup),
       cmocka_unit_test_setup(VoteConfig_update_result_with_null_vote_config_when_no_config_exists, test_setup),

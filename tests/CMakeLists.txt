@@ -150,16 +150,6 @@ add_executable(GattTest ${TestFramework_SOURCES}
 target_link_libraries(GattTest cmocka)
 GEN_OUTPUTS(GattTest)
 
-add_executable(GroupValueMessageTest ${TestFramework_SOURCES}
-        mocks/command_mock.c
-        mocks/device_mock.c
-        mocks/gatt_mock.c
-        mocks/app/vote_config_mock.c
-        ${SRC_PATH}/app/custom_message_types/group_value_message.c
-        unit/app/custom_message_types/GroupValueMessageTest.c)
-target_link_libraries(GroupValueMessageTest cmocka)
-GEN_OUTPUTS(GroupValueMessageTest)
-
 add_executable(HandshakeMessageTest ${TestFramework_SOURCES}
         mocks/connection_mock.c
         mocks/device_mock.c
@@ -190,7 +180,6 @@ GEN_OUTPUTS(LedTest)
 
 #add_executable(MainTest ${TestFramework_SOURCES}
 #        mocks/app/custom_message_types/vote_message_mock.c
-#        mocks/app/custom_message_types/group_value_message_mock.c
 #        mocks/app/custom_message_types/vote_ack_message_mock.c
 #        mocks/app/custom_message_types/voting_heartbeat_message_mock.c
 #        mocks/app/feedback_mock.c
@@ -239,6 +228,7 @@ GEN_OUTPUTS(StorageTest)
 add_executable(VoteConfigTest ${TestFramework_SOURCES}
         mocks/app/feedback_mock.c
         mocks/app/storage_mock.c
+        mocks/command_mock.c
         ${SRC_PATH}/app/vote_config.c
         unit/app/VoteConfigTest.c)
 target_link_libraries(VoteConfigTest cmocka)

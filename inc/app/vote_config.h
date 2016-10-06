@@ -15,6 +15,7 @@ typedef struct {
   uint8_t value;
 }__attribute__ ((packed)) voteConfiguration;
 
+bool vote_config_initialize(void);
 void update_voting_group(uint8_t newGroup);
 void update_voting_value(uint8_t newValue);
 bool get_vote_configuration(voteConfiguration *result);

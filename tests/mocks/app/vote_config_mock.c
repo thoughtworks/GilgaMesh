@@ -1,6 +1,10 @@
 #include "app/vote_config.h"
 #include "cmocka_includes.h"
 
+bool vote_config_initialize() {
+  return true;
+}
+
 bool get_vote_configuration(voteConfiguration *result) {
   check_expected(result);
   return true;

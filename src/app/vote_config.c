@@ -1,12 +1,20 @@
 #include "app/vote_config.h"
 
 #include <stdlib.h>
+#include <command.h>
 
 #include "system/util.h"
 #include "app/feedback.h"
 #include "app/storage.h"
 
 uint8_t tempVal __attribute__((aligned(4)));
+
+bool vote_config_initialize() {
+  mesh_add_terminal_command("group", "Update group for this node", set_vote_config_group);
+  mesh_add_terminal_command("value", "Update value for this node", set_vote_config_value);
+
+  return true;
+}
 
 static void update_vote_config_field(uint8_t newVal, uint16_t recordKey) {
   tempVal = newVal;

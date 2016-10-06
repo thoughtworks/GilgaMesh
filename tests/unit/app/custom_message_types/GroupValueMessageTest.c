@@ -19,6 +19,8 @@ static void GroupValueMessage_initialize_registers_message_and_adds_terminal_com
 
   expect_string(mesh_add_terminal_command, commandName, "grp");
   expect_string(mesh_add_terminal_command, commandName, "val");
+  expect_string(mesh_add_terminal_command, commandName, "group");
+  expect_string(mesh_add_terminal_command, commandName, "value");
   group_value_message_initialize();
 }
 

@@ -1,5 +1,8 @@
 #include "app/vote_config.h"
 
+#include <stdlib.h>
+
+#include "system/util.h"
 #include "app/feedback.h"
 #include "app/storage.h"
 
@@ -42,3 +45,14 @@ bool vote_config_is_set() {
   return true;
 #endif
 }
+
+void set_vote_config_group(char **parsedCommandArray, uint8_t numCommands) {
+  SYS_UNUSED_PARAMETER(numCommands);
+  update_voting_group((uint8_t) atoi(parsedCommandArray[1]));
+}
+
+void set_vote_config_value(char **parsedCommandArray, uint8_t numCommands) {
+  SYS_UNUSED_PARAMETER(numCommands);
+  update_voting_value((uint8_t) atoi(parsedCommandArray[1]));
+}
+

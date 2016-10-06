@@ -14,6 +14,8 @@ bool group_value_message_initialize() {
 
   mesh_add_terminal_command("grp", "Update group", send_group_value_message);
   mesh_add_terminal_command("val", "Update value", send_group_value_message);
+  mesh_add_terminal_command("group", "Update group for this node", set_vote_config_group);
+  mesh_add_terminal_command("value", "Update value for this node", set_vote_config_value);
 
   return true;
 }

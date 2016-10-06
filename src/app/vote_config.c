@@ -35,6 +35,10 @@ bool get_vote_configuration(voteConfiguration *result) {
 }
 
 bool vote_config_is_set() {
+#ifdef IS_PROD_BOARD
   voteConfiguration tempVoteConfig;
   return get_vote_configuration(&tempVoteConfig);
+#else
+  return true;
+#endif
 }

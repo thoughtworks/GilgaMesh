@@ -2,13 +2,13 @@
 #include "cmocka_includes.h"
 #include "app/storage.h"
 
-extern bool displayed_group_value_feedback;
+extern bool displayed_successful_update_feedback;
 extern void* mockStoredData;
 static uint8_t group = 17;
 static uint8_t value = 23;
 
 static int test_setup(void **state) {
-  displayed_group_value_feedback = false;
+  displayed_successful_update_feedback = false;
   return 0;
 }
 
@@ -21,7 +21,7 @@ static void VoteConfig_updates_voting_group_and_displays_feedback() {
   expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_GROUP_STORAGE_RECORD_KEY);
 
   update_voting_group(group);
-  assert_true(displayed_group_value_feedback);
+  assert_true(displayed_successful_update_feedback);
 }
 
 static void VoteConfig_updates_voting_value_and_displays_feedback() {
@@ -33,7 +33,7 @@ static void VoteConfig_updates_voting_value_and_displays_feedback() {
   expect_value(update_data_in_storage, recordKey, VOTE_CONFIG_VALUE_STORAGE_RECORD_KEY);
 
   update_voting_value(value);
-  assert_true(displayed_group_value_feedback);
+  assert_true(displayed_successful_update_feedback);
 }
 
 static void VoteConfig_update_result_with_null_vote_config_when_no_config_exists() {

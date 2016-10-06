@@ -82,7 +82,7 @@ void display_successful_start_up_feedback() {
   initialization_completed = true;
 }
 
-void display_group_value_change_feedback() {
+void display_successful_update_feedback() {
   if(!initialization_completed) return;
 
   led_green_bright();

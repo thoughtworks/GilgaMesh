@@ -111,6 +111,7 @@ bool vote_storage_is_full() {
 
 void clear_all_votes() {
   delete_file_from_storage(VOTES_STORAGE_FILE_ID);
+  display_successful_update_feedback();
 
   if(!local_vote_buffer_is_empty()) {
     stop_clear_buffer_timeout();

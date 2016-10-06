@@ -13,7 +13,7 @@ static void update_vote_config_field(uint8_t newVal, uint16_t recordKey) {
   if(update_data_in_storage(&tempVal, sizeof(tempVal), VOTE_CONFIG_STORAGE_FILE_ID, recordKey) != SUCCESS) {
     display_failure_feedback();
   } else {
-    display_group_value_change_feedback();
+    display_successful_update_feedback();
   }
 }
 

@@ -1,7 +1,6 @@
 #include "main.h"
 
 #include <nrf_log_ctrl.h>
-#include "app/custom_message_types/group_value_message.h"
 #include "app/custom_message_types/vote_ack_message.h"
 #include "app/custom_message_types/vote_message.h"
 #include "app/custom_message_types/voting_heartbeat_message.h"

@@ -17,5 +17,5 @@ void update_voting_value(uint8_t newValue) {
 }
 
 bool vote_config_is_set() {
-  return true;
+  return mock_type(bool);
 }

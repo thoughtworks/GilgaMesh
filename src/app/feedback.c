@@ -31,16 +31,19 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
 
   displaying_fun_feedback = false;
 
-  if (get_nfc_status() == NFC_STATUS_ERROR) {  // nfc is broken, display bright red
+  if (!initialization_completed) {                    // init failed, display bright red
     led_red_bright();
 
-  } else if (vote_storage_is_full()) {         // votes reached maximum, display bright red
+  } else if (get_nfc_status() == NFC_STATUS_ERROR) {  // nfc is broken, display bright red
     led_red_bright();
 
-  } else if (!vote_config_is_set()) {          // no vote config, display dim red
+  } else if (vote_storage_is_full()) {                // votes reached maximum, display bright red
+    led_red_bright();
+
+  } else if (!vote_config_is_set()) {                 // no vote config, display dim red
     led_red_dim();
 
-  } else {                                     // neutral state, display dim blue
+  } else {                                            // neutral state, display dim blue
     led_blue_dim();
   }
 }

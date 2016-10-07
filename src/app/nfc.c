@@ -58,6 +58,7 @@ static void after_read_delay(uint32_t scans_to_skip) {
  * within a Tag are read.
  */
 static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size) {
+  memset(buffer, 0, buffer_size);
   ret_code_t err_code;
 
   // Buffer for UID.
@@ -88,21 +89,18 @@ static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size) {
     return NRF_ERROR_NOT_SUPPORTED;
   }
 
-
   uint8_t cmd_buf[2];
-  uint8_t response_len = 16;
+  uint8_t bytesPerRead = 16;
+  uint8_t pageSize = 4;
+  uint8_t numberOfHeaderPages = 4;
+  uint8_t numberOfReads = 4;
 
   cmd_buf[0] = MIFARE_CMD_READ;
-  cmd_buf[1] = 8;
 
-  uint8_t ourBuffer[response_len * 2];
-  EC(adafruit_pn532_in_data_exchange(cmd_buf, 2, ourBuffer, &response_len));
-  cmd_buf[1] = 12;
-  EC(adafruit_pn532_in_data_exchange(cmd_buf, 2, ourBuffer + response_len, &response_len));
-
-  MESH_LOG("Read %u bytes: %s\r\n", response_len*2, ourBuffer);
-
-  memcpy(buffer, ourBuffer, 32);
+  for (int i = 0; i < numberOfReads; i++) {
+    cmd_buf[1] = (pageSize * i) + numberOfHeaderPages;
+    EC(adafruit_pn532_in_data_exchange(cmd_buf, 2, buffer + (bytesPerRead * i), &bytesPerRead));
+  }
 
   return NRF_SUCCESS;
 }
@@ -198,6 +196,7 @@ static ret_code_t nfc_command_tag_read_rest(uint8_t * buffer, uint32_t buffer_si
 
   if (data_bytes_in_tag + T2T_FIRST_DATA_BLOCK_OFFSET > buffer_size)
   {
+    //TODO: handle errors returned from this function!!
     return NRF_ERROR_NO_MEM;
   }
 
@@ -229,7 +228,7 @@ static void nfc_process_command_tag(uint8_t* buffer, uint32_t data_size) {
   }
   else if (err_code != NRF_SUCCESS)
   {
-    MESH_LOG_ERROR("Error during parsing a tag.\r\n");
+    MESH_LOG_ERROR("Error during parsing a tag: %u\r\n", err_code);
   }
 
   tlv_block_t * p_tlv_block = test_type_2_tag->p_tlv_block_array;
@@ -249,7 +248,7 @@ static void nfc_process_tag(uint8_t* tag_data, uint32_t data_size) {
 
   memcpy(urlstr, tag_data, data_size);
   for(int i = 0 ; i < url_length + 1 ; i++) {
-    urlstr[i] == 0 ? urlstr[i] = 0xFF : false; // replace any terminating characters with 0xFF
+    if (urlstr[i] == 0) urlstr[i] = 0xFF; // replace any terminating characters with 0xFF
   }
 
   urlstr[url_length] = '\0'; // null terminate the url data at the end

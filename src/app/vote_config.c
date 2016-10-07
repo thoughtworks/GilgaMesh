@@ -9,13 +9,6 @@
 
 uint8_t tempVal __attribute__((aligned(4)));
 
-bool vote_config_initialize() {
-  mesh_add_terminal_command("group", "Update group for this node", set_vote_config_group);
-  mesh_add_terminal_command("value", "Update value for this node", set_vote_config_value);
-
-  return true;
-}
-
 static void update_vote_config_field(uint8_t newVal, uint16_t recordKey) {
   tempVal = newVal;
   if(update_data_in_storage(&tempVal, sizeof(tempVal), VOTE_CONFIG_STORAGE_FILE_ID, recordKey) != SUCCESS) {
@@ -29,6 +22,20 @@ static uint8_t get_stored_vote_config(uint16_t recordKey) {
   uint8_t storedVoteConfig = INVALID_VOTE_CONFIG;
   get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, recordKey, &storedVoteConfig, sizeof(storedVoteConfig));
   return storedVoteConfig;
+}
+
+static void clear_vote_config(char **parsedCommandArray, uint8_t numCommands) {
+  SYS_UNUSED_PARAMETER(parsedCommandArray);
+  SYS_UNUSED_PARAMETER(numCommands);
+  delete_file_from_storage(VOTE_CONFIG_STORAGE_FILE_ID);
+}
+
+bool vote_config_initialize() {
+  mesh_add_terminal_command("group", "Update group for this node", set_vote_config_group);
+  mesh_add_terminal_command("value", "Update value for this node", set_vote_config_value);
+  mesh_add_terminal_command("clrvc", "Clear vote configuration", clear_vote_config);
+
+  return true;
 }
 
 void update_voting_group(uint8_t newGroup) {
@@ -63,4 +70,3 @@ void set_vote_config_value(char **parsedCommandArray, uint8_t numCommands) {
   SYS_UNUSED_PARAMETER(numCommands);
   update_voting_value((uint8_t) atoi(parsedCommandArray[1]));
 }
-

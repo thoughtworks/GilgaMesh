@@ -15,6 +15,7 @@ static int test_setup(void **state) {
 static void VoteConfig_initialize_creates_group_and_value_commands() {
   expect_string(mesh_add_terminal_command, commandName, "group");
   expect_string(mesh_add_terminal_command, commandName, "value");
+  expect_string(mesh_add_terminal_command, commandName, "clrvc");
 
   vote_config_initialize();
 }

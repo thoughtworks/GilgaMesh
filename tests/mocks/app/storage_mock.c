@@ -30,3 +30,8 @@ storageOperationResult update_data_in_storage(void *data, uint16_t dataLength, u
   check_expected(recordKey);
   return mock_type(storageOperationResult);
 }
+
+void delete_file_from_storage(uint16_t fileId) {
+  check_expected(fileId);
+}
+

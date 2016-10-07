@@ -7,8 +7,10 @@
 #include "app/rtc.h"
 #include "vote_config.h"
 
+// NOTE: we can store approx. 50 votes per fds page
+// If you increase the below setting, also increase FDS_VIRTUAL_PAGES
+#define MAX_VOTE_COUNT            350
 #define VOTES_STORAGE_FILE_ID     0x0002
-#define MAX_VOTE_COUNT            500 // if you change this, you must also change PSTORAGE_NUM_OF_PAGES
 
 typedef struct {
   uint16_t voterId;

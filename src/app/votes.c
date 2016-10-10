@@ -70,7 +70,6 @@ void save_vote(uint16_t voterId) {
 
   if (buffer.voterId == voterId) {
     buffer.hitCount++;
-    display_vote_hit_recorded_feedback();
   } else {
     if (!save_and_clear_vote_buffer_content()) {
       display_failure_feedback();

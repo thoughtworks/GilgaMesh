@@ -4,6 +4,7 @@
 #include <nfc_ndef_msg_parser.h>
 #include <stdlib.h>
 #include <error.h>
+#include <app/feedback.h>
 
 #include "app/nfc.h"
 #include "app/pn532/adafruit_pn532.h"
@@ -99,7 +100,9 @@ static ret_code_t tag_data_read(uint8_t * buffer, uint32_t buffer_size) {
 
   for (int i = 0; i < numberOfReads; i++) {
     cmd_buf[1] = (pageSize * i) + numberOfHeaderPages;
-    EC(adafruit_pn532_in_data_exchange(cmd_buf, 2, buffer + (bytesPerRead * i), &bytesPerRead));
+    if (adafruit_pn532_in_data_exchange(cmd_buf, 2, buffer + (bytesPerRead * i), &bytesPerRead) != NRF_SUCCESS) {
+      return NRF_ERROR_INVALID_DATA;
+    };
   }
 
   return NRF_SUCCESS;
@@ -215,20 +218,16 @@ static ret_code_t nfc_command_tag_read_rest(uint8_t * buffer, uint32_t buffer_si
   return NRF_SUCCESS;
 }
 
-static void nfc_process_command_tag(uint8_t* buffer, uint32_t data_size) {
+static ret_code_t nfc_process_command_tag(uint8_t* buffer, uint32_t data_size) {
   ret_code_t err_code;
 
   NFC_TYPE_2_TAG_DESC_DEF(test_1, MAX_COMMAND_TAG_TLV_BLOCKS);
   type_2_tag_t * test_type_2_tag = &NFC_TYPE_2_TAG_DESC(test_1);
 
   err_code = type_2_tag_parse(test_type_2_tag, buffer);
-  if (err_code == NRF_ERROR_NO_MEM)
+  if (err_code != NRF_SUCCESS)
   {
-    MESH_LOG_WARNING("Not enough memory to read whole tag.\r\n");
-  }
-  else if (err_code != NRF_SUCCESS)
-  {
-    MESH_LOG_ERROR("Error during parsing a tag: %u\r\n", err_code);
+    return err_code;
   }
 
   tlv_block_t * p_tlv_block = test_type_2_tag->p_tlv_block_array;
@@ -240,29 +239,31 @@ static void nfc_process_command_tag(uint8_t* buffer, uint32_t data_size) {
     ndef_data_analyze(p_tlv_block);
     p_tlv_block++;
   }
+  return err_code;
 }
 
-static void nfc_process_tag(uint8_t* tag_data, uint32_t data_size) {
-  int url_length = data_size + 1; // reserve space for null termination
+static bool nfc_process_tag(uint8_t* tag_data, uint32_t data_size) {
+  uint32_t url_length = data_size + 1; // reserve space for null termination
   char urlstr[url_length];
 
   memcpy(urlstr, tag_data, data_size);
   for(int i = 0 ; i < url_length + 1 ; i++) {
-    if (urlstr[i] == 0) urlstr[i] = 0xFF; // replace any terminating characters with 0xFF
+    if (urlstr[i] == 0) urlstr[i] = (char) 0xFF; // replace any terminating characters with 0xFF
   }
 
   urlstr[url_length] = '\0'; // null terminate the url data at the end
 
   if(strstr(urlstr, COMMAND_TAG_STRING) != NULL) {
     MESH_LOG("Command tag detected. Reading NDEF data.\r\n");
-    nfc_command_tag_read_rest(tag_data, data_size); // command tag, read it fully
-    nfc_process_command_tag(tag_data, data_size);
+    if(nfc_command_tag_read_rest(tag_data, data_size) != NRF_SUCCESS) return false; // command tag, read it fully
+    if(nfc_process_command_tag(tag_data, data_size) != NRF_SUCCESS) return false;
     after_read_delay(TAG_AFTER_COMMAND_DELAY);
   }
   else { // accelerated (non-NDEF compliant) vote processing forks from here
-    nfc_submit_vote(urlstr, url_length);
+    nfc_submit_vote((uint8_t *) urlstr, url_length);
     after_read_delay(TAG_AFTER_VOTE_DELAY);
   }
+  return true;
 }
 
 void nfc_scan(void) {
@@ -276,23 +277,27 @@ void nfc_scan(void) {
       err_code = tag_data_read(tag_data, TAG_DATA_BUFFER_SIZE);
       switch (err_code) {
         case NRF_SUCCESS:
-          MESH_LOG_INFO("NFC tag present.\r\n");
-          nfc_process_tag(tag_data, TAG_DATA_BUFFER_SIZE);
+          MESH_LOG_DEBUG("NFC tag present.\r\n");
+          if(nfc_process_tag(tag_data, TAG_DATA_BUFFER_SIZE) == false) {
+            display_failure_feedback();
+            after_read_delay(TAG_AFTER_ERROR_DELAY);
+          }
           break;
         case NRF_ERROR_NO_MEM:
           MESH_LOG_WARNING("Declared buffer is too small to store tag data.\r\n");
+          display_failure_feedback();
           after_read_delay(TAG_AFTER_ERROR_DELAY);
           break;
         case NRF_ERROR_NOT_FOUND:
-        MESH_LOG_DEBUG("No Tag found.\r\n");
-          // No delay here as we want to search for another tag immediately.
+          MESH_LOG_DEBUG("No Tag found.\r\n");
           break;
         case NRF_ERROR_NOT_SUPPORTED:
           MESH_LOG_WARNING("Tag not supported.\r\n");
+          display_failure_feedback();
           after_read_delay(TAG_AFTER_ERROR_DELAY);
           break;
         default:
-          MESH_LOG_WARNING("Tag removed.\r\n");
+          MESH_LOG_DEBUG("Tag removed before full read.\r\n");
           adafruit_pn532_field_off();
           break;
       }

@@ -220,6 +220,8 @@ GEN_OUTPUTS(QueueTest)
 
 add_executable(StorageTest ${TestFramework_SOURCES}
         mocks/error_mock.c
+        mocks/queue_mock.c
+        mocks/app/rtc_mock.c
         ${SRC_PATH}/app/storage.c
         unit/app/StorageTest.c)
 target_link_libraries(StorageTest cmocka)

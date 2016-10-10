@@ -4,13 +4,25 @@
 #include <fds.h>
 #include <string.h>
 #include <error.h>
+#include <app/votes.h>
+#include <queue.h>
+#include <stdlib.h>
 #include "system/log.h"
+
+static transmissionPacketQueue writeDataQueue;
 
 static void fds_evt_handler(fds_evt_t const * const p_fds_evt) {
   switch (p_fds_evt->id) {
     case FDS_EVT_INIT:
       if (p_fds_evt->result != FDS_SUCCESS) MESH_LOG("ERROR: Flash storage initialization failed!\r\n");
       break;
+    case FDS_EVT_WRITE:
+      if (p_fds_evt->result != FDS_ERR_NO_SPACE_IN_QUEUES) {
+        void *ourData;
+        peek_from_queue(&writeDataQueue, &ourData, sizeof(ourData));
+        free(ourData);
+        pop_from_queue(&writeDataQueue);
+      }
     default:
       break;
   }
@@ -55,13 +67,25 @@ void whats_in_storage_right_now() {
   fds_find_token_t p_token = { 0 };
   while(fds_record_iterate(&record_desc, &p_token) == FDS_SUCCESS) {
     fds_flash_record_t flash_record;
-    fds_record_open(&record_desc, &flash_record);
+    if (fds_record_open(&record_desc, &flash_record) == FDS_SUCCESS) {
+      MESH_LOG("RECORD! File id %u, record key %u\r\n", flash_record.p_header->ic.file_id, flash_record.p_header->tl.record_key);
+      if (flash_record.p_header->ic.file_id == VOTES_STORAGE_FILE_ID) {
+        userVote *vote = flash_record.p_data;
+        timestring_t timestring;
+        rtc_timestamp_to_timestring(vote->timeOfLastVote, timestring);
+        MESH_LOG("VOTE! Voter id %u, timestamp %s\r\n", vote->voterId, timestring);
+      }
+    }
   }
 }
 
 storageOperationResult set_data_in_storage(void *data, uint16_t dataLength, uint16_t fileId, uint16_t recordKey) {
+  void *tempDataHolder __attribute__((aligned(4))) = malloc(dataLength);
+  memcpy(tempDataHolder, data, dataLength);
+  push_onto_queue(&writeDataQueue, &tempDataHolder, sizeof(tempDataHolder));
+
   fds_record_chunk_t record_chunk = {
-          .p_data       = data,
+          .p_data       = tempDataHolder,
           .length_words = get_length_in_words(dataLength)
   };
 

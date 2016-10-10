@@ -4,21 +4,17 @@
 
 
 bool push_onto_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t dataLength) {
-  check_expected_ptr(queue);
-  return mock_type(bool);
+  return true;
 }
 
 bool peek_from_queue(transmissionPacketQueue *queue, uint8_t *data, uint16_t *dataLength) {
-  check_expected_ptr(queue);
-  return mock_type(bool);
+  return true;
 }
 
 bool pop_from_queue(transmissionPacketQueue *queue) {
-  check_expected_ptr(queue);
-  return mock_type(bool);
+  return true;
 }
 
 bool queue_is_empty(transmissionPacketQueue *queue) {
-  check_expected_ptr(queue);
-  return mock_type(bool);
+  return true;
 }

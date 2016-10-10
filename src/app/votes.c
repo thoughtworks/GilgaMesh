@@ -12,7 +12,6 @@
 #define CLEAR_VOTE_BUFFER_DURATION_IN_MS 3000
 
 static userVote buffer = { 0 };
-static userVote bufferForStorage __attribute__((aligned(4))) = { 0 };
 
 SYS_TIMER_DEF(clearBufferTimer);
 
@@ -63,8 +62,7 @@ static bool save_and_clear_vote_buffer_content() {
 }
 
 storageOperationResult save_buffer_content_to_storage() {
-  memcpy(&bufferForStorage, &buffer, sizeof(buffer));
-  return set_data_in_storage(&bufferForStorage, sizeof(bufferForStorage), VOTES_STORAGE_FILE_ID, bufferForStorage.voterId);
+  return set_data_in_storage(&buffer, sizeof(buffer), VOTES_STORAGE_FILE_ID, buffer.voterId);
 }
 
 void save_vote(uint16_t voterId) {

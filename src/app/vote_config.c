@@ -19,9 +19,10 @@ static void update_vote_config_field(uint8_t newVal, uint16_t recordKey) {
 }
 
 static uint8_t get_stored_vote_config(uint16_t recordKey) {
-  uint8_t storedVoteConfig = INVALID_VOTE_CONFIG;
-  get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, recordKey, &storedVoteConfig, sizeof(storedVoteConfig));
-  return storedVoteConfig;
+//  uint8_t storedVoteConfig = INVALID_VOTE_CONFIG;
+//  get_data_from_storage(VOTE_CONFIG_STORAGE_FILE_ID, recordKey, &storedVoteConfig, sizeof(storedVoteConfig));
+//  return storedVoteConfig;
+    return 1;
 }
 
 static void clear_vote_config(char **parsedCommandArray, uint8_t numCommands) {

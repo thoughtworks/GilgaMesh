@@ -1649,14 +1649,14 @@
  
 
 #ifndef APP_FIFO_ENABLED
-#define APP_FIFO_ENABLED 1
+#define APP_FIFO_ENABLED 0
 #endif
 
 // <q> APP_MAILBOX_ENABLED  - app_mailbox - Thread safe mailbox
  
 
 #ifndef APP_MAILBOX_ENABLED
-#define APP_MAILBOX_ENABLED 1
+#define APP_MAILBOX_ENABLED 0
 #endif
 
 // <q> APP_PWM_ENABLED  - app_pwm - PWM functionality
@@ -1683,7 +1683,7 @@
  
 
 #ifndef APP_SCHEDULER_WITH_PROFILER
-#define APP_SCHEDULER_WITH_PROFILER 1
+#define APP_SCHEDULER_WITH_PROFILER 0
 #endif
 
 #endif //APP_SCHEDULER_ENABLED
@@ -1699,7 +1699,7 @@
  
 
 #ifndef APP_TIMER_WITH_PROFILER
-#define APP_TIMER_WITH_PROFILER 1
+#define APP_TIMER_WITH_PROFILER 0
 #endif
 
 // <q> APP_TIMER_KEEPS_RTC_ACTIVE  - Enable RTC always on
@@ -1764,7 +1764,7 @@
  
 
 #ifndef ECC_ENABLED
-#define ECC_ENABLED 1
+#define ECC_ENABLED 0
 #endif
 
 // <e> FDS_ENABLED - fds - Flash data storage module
@@ -1796,7 +1796,7 @@
 // <i> @ref FDS_VIRTUAL_PAGE_SIZE * 4 bytes.
 
 #ifndef FDS_VIRTUAL_PAGES
-#define FDS_VIRTUAL_PAGES 8
+#define FDS_VIRTUAL_PAGES 92
 #endif
 
 // <o> FDS_VIRTUAL_PAGE_SIZE  - The size of a virtual page of flash memory, expressed in number of 4-byte words.
@@ -1975,7 +1975,7 @@
 // <e> MEM_MANAGER_ENABLED - mem_manager - Dynamic memory allocator
 //==========================================================
 #ifndef MEM_MANAGER_ENABLED
-#define MEM_MANAGER_ENABLED 1
+#define MEM_MANAGER_ENABLED 0
 #endif
 #if  MEM_MANAGER_ENABLED
 // <o> MEMORY_MANAGER_SMALL_BLOCK_COUNT - Size of each memory blocks identified as 'small' block.  <0-255> 

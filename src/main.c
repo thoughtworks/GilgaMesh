@@ -73,7 +73,6 @@ static void initialize() {
   mesh_add_terminal_command("clr", "Clear all votes", clear_all_votes);
   mesh_add_terminal_command("stat", "Get storage statistics", check_fds_stats);
   mesh_add_terminal_command("rec", "Print recs in storage", whats_in_storage_right_now);
-  mesh_add_terminal_command("vote6", "vote 6 times", vote_six_times);
 
   if (init_failed) {
     display_failure_feedback();

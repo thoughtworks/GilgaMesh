@@ -15,6 +15,6 @@ uint16_t get_vote_count(void) {
   return mock_type(uint16_t);
 }
 
-bool vote_storage_is_full(void) {
+bool max_votes_recorded(void) {
   return mock_type(bool);
 }

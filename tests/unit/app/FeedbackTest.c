@@ -75,7 +75,7 @@ static void Feedback_initialize_displays_failure_when_nfc_is_in_error_state() {
 static void Feedback_initialize_displays_failure_when_vote_storage_is_full() {
   will_return(buzzer_is_on, false);
   will_return(get_nfc_status, NFC_STATUS_WORKING);
-  will_return(vote_storage_is_full, true);
+  will_return(max_votes_recorded, true);
 
   successful_startup_with_expectations();
   initialize_with_expectations();
@@ -86,7 +86,7 @@ static void Feedback_initialize_displays_failure_when_vote_storage_is_full() {
 static void Feedback_initialize_displays_unready_state_when_vote_config_is_missing() {
   will_return(buzzer_is_on, false);
   will_return(get_nfc_status, NFC_STATUS_WORKING);
-  will_return(vote_storage_is_full, false);
+  will_return(max_votes_recorded, false);
   will_return(vote_config_is_set, false);
 
   successful_startup_with_expectations();
@@ -98,7 +98,7 @@ static void Feedback_initialize_displays_unready_state_when_vote_config_is_missi
 static void Feedback_initialize_displays_success_when_no_errors_occur() {
   will_return(buzzer_is_on, false);
   will_return(get_nfc_status, NFC_STATUS_WORKING);
-  will_return(vote_storage_is_full, false);
+  will_return(max_votes_recorded, false);
   will_return(vote_config_is_set, true);
 
   successful_startup_with_expectations();

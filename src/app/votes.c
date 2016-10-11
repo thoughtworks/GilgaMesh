@@ -22,13 +22,7 @@ bool votes_initialize() {
   return true;
 }
 
-void vote_six_times() {
-  for(int i = 1; i <= 6; i++) {
-    save_vote(i);
-  }
-}
-
-static bool save_and_clear_vote_buffer_content();
+static void save_and_clear_vote_buffer_content();
 
 storageOperationResult save_buffer_content_to_storage();
 
@@ -44,25 +38,33 @@ static bool local_vote_buffer_is_empty() {
   return buffer.voterId == 0 && buffer.hitCount == 0;
 }
 
-static bool save_and_clear_vote_buffer_content() {
-  if (local_vote_buffer_is_empty()) return true;
+static bool vote_storage_is_full() {
+  return get_record_count_in_storage(VOTES_STORAGE_FILE_ID) >= MAX_VOTE_COUNT;
+}
 
-  if (vote_storage_is_full()) {
+static void save_and_clear_vote_buffer_content() {
+  if (local_vote_buffer_is_empty()) return;
+
+  if (vote_storage_is_full() || (save_buffer_content_to_storage() == SUCCESS)) {
+    memset(&buffer, 0, sizeof(buffer));
+  } else {
     start_clear_buffer_timeout();
-    return false;
   }
-
-  if(save_buffer_content_to_storage() != SUCCESS) {
-    start_clear_buffer_timeout();
-    return false;
-  }
-
-  memset(&buffer, 0, sizeof(buffer));
-  return true;
 }
 
 storageOperationResult save_buffer_content_to_storage() {
   return set_data_in_storage(&buffer, sizeof(buffer), VOTES_STORAGE_FILE_ID, buffer.voterId);
+}
+
+static ret_code_t save_new_vote_to_buffer(uint16_t voterId) {
+  if (!get_vote_configuration(&buffer.config)) {
+    display_failure_feedback();
+    return NRF_ERROR_INTERNAL;
+  }
+  buffer.voterId = voterId;
+  buffer.hitCount = 1;
+  rtc_get_timestamp(buffer.timeOfLastVote);
+  return NRF_SUCCESS;
 }
 
 void save_vote(uint16_t voterId) {
@@ -70,23 +72,23 @@ void save_vote(uint16_t voterId) {
 
   if (buffer.voterId == voterId) {
     buffer.hitCount++;
-  } else {
-    if (!save_and_clear_vote_buffer_content()) {
-      display_failure_feedback();
-      return;
-    }
-
-    if (!get_vote_configuration(&buffer.config)) {
-      display_failure_feedback();
-      return;
-    }
-
-    buffer.voterId = voterId;
-    buffer.hitCount = 1;
-
-    display_vote_recorded_feedback();
   }
-  rtc_get_timestamp(buffer.timeOfLastVote);
+  else {
+    if (vote_storage_is_full()) {
+      if (save_new_vote_to_buffer(voterId) == NRF_SUCCESS) {
+        display_failure_feedback();
+      }
+    }
+    else {
+      if (local_vote_buffer_is_empty() || save_buffer_content_to_storage() == SUCCESS) {
+        if (save_new_vote_to_buffer(voterId) == NRF_SUCCESS) {
+          display_vote_recorded_feedback();
+        }
+      } else {
+        display_failure_feedback();
+      }
+    }
+  }
 
   start_clear_buffer_timeout();
 }
@@ -99,11 +101,12 @@ void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands)
 
 uint16_t get_vote_count() {
   uint16_t storedVotes = get_record_count_in_storage(VOTES_STORAGE_FILE_ID);
+  if (storedVotes == MAX_VOTE_COUNT) return storedVotes;
   return (uint16_t) (storedVotes + (local_vote_buffer_is_empty() ? 0 : 1));
 }
 
-bool vote_storage_is_full() {
-  return get_vote_count() > MAX_VOTE_COUNT;
+bool max_votes_recorded() {
+  return get_vote_count() >= MAX_VOTE_COUNT;
 }
 
 void clear_all_votes() {

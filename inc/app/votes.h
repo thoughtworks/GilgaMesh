@@ -7,7 +7,7 @@
 #include "app/rtc.h"
 #include "vote_config.h"
 
-// NOTE: we can store approx. 50 votes per fds page
+// NOTE: we can store approx. 36 votes per fds page
 // If you increase the below setting, also increase FDS_VIRTUAL_PAGES
 #define MAX_VOTE_COUNT            350
 #define VOTES_STORAGE_FILE_ID     0x0002
@@ -29,6 +29,6 @@ bool votes_initialize(void);
 void save_vote(uint16_t voterId);
 void save_vote_from_command_line(char** parsedCommandArray, uint8_t numCommands);
 uint16_t get_vote_count(void);
-bool vote_storage_is_full(void);
+bool max_votes_recorded(void);
 void clear_all_votes(void);
 void vote_six_times();

@@ -37,7 +37,7 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
   } else if (get_nfc_status() == NFC_STATUS_ERROR) {  // nfc is broken, display bright red
     led_red_bright();
 
-  } else if (vote_storage_is_full()) {                // votes reached maximum, display bright red
+  } else if (max_votes_recorded()) {                  // votes reached maximum, display bright red
     led_red_bright();
 
   } else if (!vote_config_is_set()) {                 // no vote config, display dim red

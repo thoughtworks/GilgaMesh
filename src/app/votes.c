@@ -116,6 +116,5 @@ void clear_all_votes() {
   if(!local_vote_buffer_is_empty()) {
     stop_clear_buffer_timeout();
     memset(&buffer, 0, sizeof(buffer));
-    start_clear_buffer_timeout();
   }
 }

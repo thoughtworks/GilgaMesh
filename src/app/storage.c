@@ -52,6 +52,7 @@ static void garbage_collect_if_storage_is_limited() {
 }
 
 void check_fds_stats() {
+  MESH_LOG("Maximum number of votes: %u\r\n", MAX_VOTE_COUNT);
   fds_stat_t fds_statistics;
   fds_stat(&fds_statistics);
   MESH_LOG("total words: %u\r\n", ((FDS_VIRTUAL_PAGES -1) * FDS_VIRTUAL_PAGE_SIZE));

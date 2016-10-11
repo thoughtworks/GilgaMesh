@@ -78,7 +78,7 @@ static void initialize() {
     display_failure_feedback();
   } else {
     MESH_LOG("System ready.\r\n");
-    display_fun_feedback();
+    display_successful_start_up_feedback();
   }
 }
 

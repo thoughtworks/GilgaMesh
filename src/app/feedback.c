@@ -9,13 +9,11 @@
 #include "app/votes.h"
 
 #define FEEDBACK_REFRESH_RATE_IN_MS 100
-#define MAX_LED_COLORS              3
-#define TICKS_PER_COLOR             4
+#define MAX_LED_COLORS              6
 
 SYS_TIMER_DEF(feedbackTimer);
 
 static int rainbow_led_counter = 0;
-static int rainbow_led_ticker = 0;
 static bool displaying_fun_feedback = false;
 static bool initialization_completed = false;
 
@@ -25,12 +23,8 @@ static void display_general_user_feedback(void *data, uint16_t dataLength) {
 
   if (buzzer_is_on()) {
     if (displaying_fun_feedback) {
-      if (rainbow_led_ticker == 0) {
-        flash_color(rainbow_led_counter++);
-        rainbow_led_counter %= MAX_LED_COLORS;
-      }
-      rainbow_led_ticker++;
-      rainbow_led_ticker %= TICKS_PER_COLOR;
+      flash_color(rainbow_led_counter++);
+      rainbow_led_counter %= MAX_LED_COLORS;
     }
     return;// do nothing, wait for buzzer to stop
   }
@@ -95,11 +89,10 @@ void display_failure_feedback() {
 }
 
 void display_fun_feedback() {
-  initialization_completed = true;
+  if(!initialization_completed) return;
 
   displaying_fun_feedback = true;
   rainbow_led_counter = 0;
-  rainbow_led_ticker = 0;
   uint16_t countdown_tones[24] = {150, 902, 150, 1012, 500, 902, 1000, 1351, 300, 0, 150, 851, 150, 902, 200, 851, 100, 0, 200, 902, 100, 0, 600, 1012};
   play_tones(countdown_tones, 12);
 }

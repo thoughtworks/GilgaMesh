@@ -1,9 +1,7 @@
 #include "gap.h"
-
 #include <app_scheduler.h>
 #include <ble_conn_state.h>
-
-#include "system/log.h"
+#include <system/log.h>
 #include "message_types/handshake_message.h"
 
 
@@ -24,9 +22,9 @@ const ble_gap_adv_params_t meshAdvertisingParams =
   0x0200,                              //interval
   0,                                   //timeout
   {
-    1,                                 //channel_mask.ch_37_off
+    0,                                 //channel_mask.ch_37_off
     1,                                 //channel_mask.ch_38_off
-    0                                  //channel_mask.ch_39_off
+    1                                  //channel_mask.ch_39_off
   }
 };
 
@@ -66,11 +64,6 @@ bool gap_initialize(void){
                                                   (uint16_t)(strlen(deviceName) + 1)))) return false;
   if(!execute_succeeds((sd_ble_gap_appearance_set(BLE_APPEARANCE_GENERIC_COMPUTER)))) return false;
   if(!execute_succeeds(sd_ble_gap_ppcp_set(&meshConnectionParams))) return false;
-
-  uint8_t channelMap[5] = { 0x00, 0x00, 0x10, 0x00, 0x01 }; // enabling channels 0 and 20 only
-  ble_opt_t channelMapOptions;
-  memcpy(channelMapOptions.gap_opt.ch_map.ch_map, channelMap, sizeof(channelMap));
-  if(!execute_succeeds(sd_ble_opt_set(BLE_GAP_OPT_CH_MAP, &channelMapOptions))) return false;
 
 #ifdef IS_PROD_BOARD
   MESH_LOG("Start BLE advertising... \r\n");

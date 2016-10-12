@@ -1,0 +1,9 @@
+device nrf51822
+if swd
+speed 4000
+w4 4001e504 2
+w4 4001e50c 1
+loadfile softdevice/s130_nrf51_2.0.1_softdevice.hex
+loadfile ../_build/Debug/MeshyMesh.hex
+r
+g

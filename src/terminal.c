@@ -38,19 +38,18 @@ bool terminal_initialize(void) {
 
   char mainVersion[4];
   char subVersion[4];
-  terminal_putstring("\n\r--------------------------------------------------------\n\r");
+  terminal_putstring("\n\r----------------------------------------------------------\n\r");
 
-  terminal_putstring("    __  __        _        __  __        _\r\n");
-  terminal_putstring("   |  \\/  |___ __| |_ _  _|  \\/  |___ __| |_\r\n");
-  terminal_putstring("   | |\\/| / -_|_-< ' \\ || | |\\/| / -_|_-< ' \\ \r\n");
-  terminal_putstring("   |_|  |_\\___/__/_||_\\_, |_|  |_\\___/__/_||_| ");
+  terminal_putstring("    ________                  __   __  __  ___        __\r\n");
+  terminal_putstring("   /_  __/ /  ___  __ _____ _/ /  / /_/  |/  /__ ___ / /\r\n");
+  terminal_putstring("    / / / _ \\/ _ \\/ // / _ `/ _ \\/ __/ /|_/ / -_|_-</ _ \\\r\n");
+  terminal_putstring("   /_/ /_//_/\\___/\\_,_/\\_, /_//_/\\__/_/  /_/\\__/___/_//_/\r\n");
+  terminal_putstring("                      /___/                          ");
   terminal_putstring("v");
   terminal_putstring(itoa(APP_VERSION_MAIN, mainVersion, 10));
   terminal_putstring(".");
   terminal_putstring(itoa(APP_VERSION_SUB, subVersion, 10));
   terminal_putstring("\r\n");
-  terminal_putstring("                      |__/\r\n");
-
 
   terminal_putstring("  compile date: ");
   terminal_putstring(__DATE__);
@@ -58,7 +57,7 @@ bool terminal_initialize(void) {
   terminal_putstring(__TIME__);
 
   terminal_putstring(", nRF51s ");
-  terminal_putstring("\r\n-----------| ESC to pause into command mode |-----------\r\n");
+  terminal_putstring("\r\n------------| ESC to pause into command mode |------------\r\n");
 
   return is_terminal_initialized;
 }

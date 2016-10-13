@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 
-#include "app/uart.h"
 #include "system/log.h"
 #include "system/timer.h"
 #include "device.h"
@@ -39,15 +38,14 @@ void log_heartbeat_info(BleMessageHeartbeatReq *request) {
 
 
   MESH_LOG("%s", heartbeatLog);
-  log_to_uart(heartbeatLog, sizeof(heartbeatLog));
 }
 
 void send_heartbeat_message() {
   BleMessageHeartbeatReq request;
   memset(&request, 0, sizeof(request));
   request.messageType = heartbeatMessageType;
-  request.majorVersion = APP_VERSION_MAIN;
-  request.minorVersion = APP_VERSION_SUB;
+  request.majorVersion = 0;
+  request.minorVersion = 1;
   request.deviceId = get_raw_device_id();
   request.centralConnectionDeviceId = get_central_connection_device_id();
 

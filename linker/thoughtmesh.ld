@@ -5,7 +5,7 @@ GROUP(-lgcc -lc -lnosys)
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x32000, LENGTH = 0xd000
+  FLASH (rx) : ORIGIN = 0x1b000, LENGTH = 0x25000
   RAM (rwx) :  ORIGIN = 0x20002e40, LENGTH = 0x51c0
 
   /** Location in UICR where bootloader start address is stored. */

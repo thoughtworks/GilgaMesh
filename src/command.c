@@ -1,7 +1,6 @@
 #include <sdk_common.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "app/rtc.h"
 #include "message_types/broadcast_message.h"
 #include "command.h"
 #include "connection.h"

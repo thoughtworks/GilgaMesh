@@ -93,15 +93,7 @@ add_executable(BroadcastMessageTest ${TestFramework_SOURCES}
 target_link_libraries(BroadcastMessageTest cmocka)
 GEN_OUTPUTS(BroadcastMessageTest)
 
-add_executable(BuzzerTest ${TestFramework_SOURCES}
-        mocks/error_mock.c
-        ${SRC_PATH}/app/buzzer.c
-        unit/app/BuzzerTest.c)
-target_link_libraries(BuzzerTest cmocka)
-GEN_OUTPUTS(BuzzerTest)
-
 add_executable(ConnectionTest ${TestFramework_SOURCES}
-        mocks/app/led_mock.c
         mocks/device_mock.c
         mocks/gap_mock.c
         mocks/gatt_mock.c
@@ -112,7 +104,6 @@ target_link_libraries(ConnectionTest cmocka)
 GEN_OUTPUTS(ConnectionTest)
 
 add_executable(CommandTest ${TestFramework_SOURCES}
-        mocks/app/rtc_mock.c
         mocks/message_types/broadcast_message_mock.c
         mocks/message_types/heartbeat_message_mock.c
         mocks/connection_mock.c
@@ -123,19 +114,6 @@ add_executable(CommandTest ${TestFramework_SOURCES}
         unit/CommandTest.c)
 target_link_libraries(CommandTest cmocka)
 GEN_OUTPUTS(CommandTest)
-
-add_executable(FeedbackTest ${TestFramework_SOURCES}
-        mocks/app/buzzer_mock.c
-        mocks/app/led_mock.c
-        mocks/app/nfc_mock.c
-        mocks/app/vote_config_mock.c
-        mocks/app/votes_mock.c
-        mocks/command_mock.c
-        mocks/error_mock.c
-        ${SRC_PATH}/app/feedback.c
-        unit/app/FeedbackTest.c)
-target_link_libraries(FeedbackTest cmocka)
-GEN_OUTPUTS(FeedbackTest)
 
 add_executable(GattTest ${TestFramework_SOURCES}
         mocks/message_types/broadcast_message_mock.c
@@ -171,107 +149,10 @@ add_executable(HeartbeatMessageTest ${TestFramework_SOURCES}
 target_link_libraries(HeartbeatMessageTest cmocka)
 GEN_OUTPUTS(HeartbeatMessageTest)
 
-add_executable(LedTest ${TestFramework_SOURCES}
-        mocks/error_mock.c
-        ${SRC_PATH}/app/led.c
-        unit/app/LedTest.c)
-target_link_libraries(LedTest cmocka)
-GEN_OUTPUTS(LedTest)
-
-#add_executable(MainTest ${TestFramework_SOURCES}
-#        mocks/app/custom_message_types/vote_message_mock.c
-#        mocks/app/custom_message_types/vote_ack_message_mock.c
-#        mocks/app/custom_message_types/voting_heartbeat_message_mock.c
-#        mocks/app/feedback_mock.c
-#        mocks/app/led_mock.c
-#        mocks/app/rtc_mock.c
-#        mocks/app/storage_mock.c
-#        mocks/app/vote_config_mock.c
-#        mocks/app/votes_mock.c
-#        mocks/message_types/heartbeat_message_mock.c
-#        mocks/system/timer_mock.c
-#        mocks/connection_mock.c
-#        mocks/command_mock.c
-#        mocks/error_mock.c
-#        mocks/gap_mock.c
-#        mocks/gatt_mock.c
-#        mocks/softdevice_mock.c
-#        mocks/terminal_mock.c
-#        ${SRC_PATH}/conversion.c
-#        ${SRC_PATH}/main.c
-#        unit/MainTest.c)
-#target_link_libraries(MainTest cmocka)
-#GEN_OUTPUTS(MainTest)
-
-#add_executable(RTCTest ${TestFramework_SOURCES}
-#        mocks/command_mock.c
-#        mocks/terminal_mock.c
-#        ${SRC_PATH}/conversion.c
-#        ${SRC_PATH}/app/rtc.c
-#        unit/app/RTCTest.c)
-#target_link_libraries(RTCTest cmocka)
-#GEN_OUTPUTS(RTCTest)
-
 add_executable(QueueTest ${TestFramework_SOURCES}
         ${SRC_PATH}/queue.c
         unit/QueueTest.c)
 target_link_libraries(QueueTest cmocka)
 GEN_OUTPUTS(QueueTest)
 
-add_executable(StorageTest ${TestFramework_SOURCES}
-        mocks/error_mock.c
-        mocks/queue_mock.c
-        mocks/app/rtc_mock.c
-        ${SRC_PATH}/app/storage.c
-        unit/app/StorageTest.c)
-target_link_libraries(StorageTest cmocka)
-GEN_OUTPUTS(StorageTest)
-
-add_executable(VoteConfigTest ${TestFramework_SOURCES}
-        mocks/app/feedback_mock.c
-        mocks/app/storage_mock.c
-        mocks/command_mock.c
-        ${SRC_PATH}/app/vote_config.c
-        unit/app/VoteConfigTest.c)
-target_link_libraries(VoteConfigTest cmocka)
-GEN_OUTPUTS(VoteConfigTest)
-
-add_executable(VoteAckMessageTest ${TestFramework_SOURCES}
-        mocks/app/custom_message_types/vote_message_mock.c
-        mocks/app/feedback_mock.c
-        mocks/app/rtc_mock.c
-        mocks/app/storage_mock.c
-        mocks/command_mock.c
-        mocks/device_mock.c
-        mocks/gatt_mock.c
-        ${SRC_PATH}/app/custom_message_types/vote_ack_message.c
-        unit/app/custom_message_types/VoteAckMessageTest.c)
-target_link_libraries(VoteAckMessageTest cmocka)
-GEN_OUTPUTS(VoteAckMessageTest)
-
-add_executable(VoteMessageTest ${TestFramework_SOURCES}
-        mocks/app/feedback_mock.c
-        mocks/app/rtc_mock.c
-        mocks/app/storage_mock.c
-        mocks/device_mock.c
-        mocks/error_mock.c
-        mocks/gatt_mock.c
-        mocks/terminal_mock.c
-        ${SRC_PATH}/app/custom_message_types/vote_message.c
-        unit/app/custom_message_types/VoteMessageTest.c)
-target_link_libraries(VoteMessageTest cmocka)
-GEN_OUTPUTS(VoteMessageTest)
-
-add_executable(VotingHeartbeatMessageTest ${TestFramework_SOURCES}
-        mocks/app/nfc_mock.c
-        mocks/app/vote_config_mock.c
-        mocks/app/votes_mock.c
-        mocks/device_mock.c
-        mocks/error_mock.c
-        mocks/gatt_mock.c
-        mocks/terminal_mock.c
-        ${SRC_PATH}/app/custom_message_types/voting_heartbeat_message.c
-        unit/app/custom_message_types/VotingHeartbeatMessageTest.c)
-target_link_libraries(VotingHeartbeatMessageTest cmocka)
-GEN_OUTPUTS(VotingHeartbeatMessageTest)
 

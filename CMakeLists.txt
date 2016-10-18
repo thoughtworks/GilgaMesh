@@ -8,15 +8,19 @@ get_filename_component(INC_PATH inc ABSOLUTE)
 get_filename_component(CONFIG_PATH config ABSOLUTE)
 
 #set common variables
-SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_12_0)
+SET(SDK_BASE                ${DEPLOY_PATH}/sdk/nrf_sdk_12_1)
 SET(COMPONENTS              ${SDK_BASE}/components)
 SET(EXTERNAL                ${SDK_BASE}/external)
 SET(EXTERNAL                ${SDK_BASE}/external)
-SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf51_2.0.1_API)
 SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 
-# set target hardware type
-SET(TARGET_BOARD       BOARD_PCA10028)
+if(NOT ${TARGET_ARCH} MATCHES "NRF52")
+  SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf52_3.0.0_API)
+  SET(TARGET_BOARD       BOARD_PCA10040)
+else() #build for NRF51 by default
+  SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf51_2.0.1_API)
+  SET(TARGET_BOARD       BOARD_PCA10028)
+endif()
 
 project(ThoughtMesh)
 if(IS_TEST_BUILD AND UNIX) #build tests on linux or osx

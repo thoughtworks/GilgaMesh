@@ -15,8 +15,9 @@ You can customize this basic mesh by adding new message types or new mesh-formin
 
 ### Firmware/Chip Information
 Our mesh implementation is based on Nordic's SDK12 for the NRF51/52 chip, version 2.0.1 of the S130 softdevice, and does not require a bootloader. This was tested on the nRF51822 chip, which is the largest in its chip family. You might need to do some fine tuning make it work on chips with smaller RAM and processing power, like the nRF51422, for example.
-![](nordic_chip.png)
-
+<br> 
+<img height=300 src="https://github.com/IOTWorks/MeshyMesh/blob/opensource/nordic_chip.jpg" />
+</br>
 ## Usage example
 
 Here we will outline the use case that motivated the development of this mesh:
@@ -24,8 +25,9 @@ Here we will outline the use case that motivated the development of this mesh:
 We developed this mesh to link together a set of our custom-made PCBs that run off of Nordic Semiconductor's nRF51822 chip. These "devices" need to be able to communicate about their current state (e.g. what data they have received from external NFC tag reads) between each other. Eventually, this information has to be passed up to a central device (our gateway node) which is a nRF51822 dongle running a server one of our personal machines. This gateway aggregates the information it collects from all the other devices in the mesh and presents it via a web interface.
 
 We wanted our mesh to rebuild itself continuously because it is being used in an environment where people will constantly be moving around and between the devices (water - a.k.a. humans - interrupt BLE signals). We needed all devices to communicate back to a single device because data visualization via a web interface was a requirement. But maybe your requirements are different! Play with the mesh to make it work best for your needs.
-
-![](devices_talking.png)
+<br> 
+<img height=300 src="https://github.com/IOTWorks/MeshyMesh/blob/opensource/devices_talking.jpg" />
+</br>
 
 ## Installation and development setup
 

@@ -30,20 +30,23 @@ else
 	exit
 fi
 
-## should check if you do not have wget
-#fix folder layout
-
 # ******************************* #
 # * JLINK Deployer and Debugger * #
 # ******************************* #
-if [[ $platform == 'osx' ]]; then
+JLINK_PKG_MAC=JLink_MacOSX_V610f.pkg
+JLINK_DEB_LINUX=jlink_6.0.7_x86_64.deb
+if [[ $platform == 'osx' && (! -f '$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC') ]]; then
 	mkdir -p $DEPLOY_RESOURCES/jlink
-	wget --post-data="agree=1&confirm=yes" "https://www.segger.com/downloads/jlink/Setup_JLink_V600g.zip" -O $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V600g.pkg
+	wget --post-data="accept_license_agreement=accepted&submit=Download&nbspsoftware" "https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC" -O $DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC
 	# should check checksum
-	open $DEPLOY_RESOURCES/jlink/JLink_MacOSX_V600g.pkg
+	if [ ! -f '$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC' ]; then
+	    echo '**********************************************************************************************************'
+        echo 'Manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC'
+        echo '**********************************************************************************************************'
+    fi
 elif [[ $platform == 'linux' ]]; then	
 	echo '**********************************************************************************************************'
-	echo 'For linux, manually install JLink tools from https://www.segger.com/downloads/jlink/jlink_6.0.7_x86_64.deb'
+	echo 'For linux, manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_DEB_LINUX'
 	echo '**********************************************************************************************************'
 fi
 
@@ -122,7 +125,7 @@ if [ ! -d "$CMOCKA" ]; then
 fi
 mkdir -p $CMOCKA/build
 cd $CMOCKA/build
-cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
 make
 make install
 cd -

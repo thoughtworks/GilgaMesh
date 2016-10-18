@@ -15,6 +15,7 @@ You can customize this basic mesh by adding new message types or new mesh-formin
 
 ### Firmware/Chip Information
 Our mesh implementation is based on Nordic's SDK12 for the NRF51/52 chip, version 2.0.1 of the S130 softdevice, and does not require a bootloader. This was tested on the nRF51822 chip, which is the largest in its chip family. You might need to do some fine tuning make it work on chips with smaller RAM and processing power, like the nRF51422, for example.
+![](nordic_chip.png)
 
 ## Usage example
 
@@ -24,7 +25,7 @@ We developed this mesh to link together a set of our custom-made PCBs that run o
 
 We wanted our mesh to rebuild itself continuously because it is being used in an environment where people will constantly be moving around and between the devices (water - a.k.a. humans - interrupt BLE signals). We needed all devices to communicate back to a single device because data visualization via a web interface was a requirement. But maybe your requirements are different! Play with the mesh to make it work best for your needs.
 
-![](photo_of_c4_mesh.png)??
+![](devices_talking.png)
 
 ## Installation and development setup
 
@@ -57,7 +58,7 @@ We use CMocka (v.1.1.0) to run our unit tests. If you would like to contribute t
 
 ## Release History
 
-* 0.4.0
+* 0.5.0
     * first O.S. release
 
 ## Meta

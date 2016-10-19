@@ -42,7 +42,9 @@ brew install gcc
 
 NOTE: Installing gcc can take a long time (sometimes on the order of hours). It will appear to get stuck at "make bootstrap" step. Don't worry, be patient, it's just working hard in the background!
 
-Then, to quickly setup the workspace, run:
+At this point, if you are on MacOS, make sure that your version of gcc resides at `/usr/local/bin/gcc`. If it doesn't, you can create a symlink that resides at that location and points to your version of gcc. 
+
+Then, to setup the workspace, run:
 ```
 ./setup.sh
 ```

@@ -65,6 +65,12 @@ function compile-deploy-peripheral {
     cd -
 }
 
+function deploy {
+    cd deploy
+    $JLINK deploy.jlink
+    cd -
+}
+
 function compile-full-deploy-root {
     compile-root
     cd deploy
@@ -88,6 +94,7 @@ function helptext {
     echo "    cp                Compile for peripheral"
     echo "    dr                Compile and deploy current code to root"
     echo "    dp                Compile and deploy current code to peripheral"
+    echo "    d                 Deploy current code to any device"
     echo "    fr                Reset, compile, deploy softdevice, and deploy current code to root"
     echo "    fp                Reset, compile, deploy softdevice, and deploy current code to peripheral"
     echo "    r                 Resets one device to factory settings"
@@ -110,6 +117,8 @@ case "$1" in
     dr) compile-deploy-root
     ;;
     dp) compile-deploy-peripheral
+    ;;
+    d) deploy
     ;;
     fr) compile-full-deploy-root
     ;;

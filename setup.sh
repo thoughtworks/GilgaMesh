@@ -30,26 +30,6 @@ else
 	exit
 fi
 
-# ******************************* #
-# * JLINK Deployer and Debugger * #
-# ******************************* #
-JLINK_PKG_MAC=JLink_MacOSX_V610f.pkg
-JLINK_DEB_LINUX=jlink_6.0.7_x86_64.deb
-if [[ $platform == 'osx' && (! -f '$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC') ]]; then
-	mkdir -p $DEPLOY_RESOURCES/jlink
-	wget --post-data="accept_license_agreement=accepted&submit=Download&nbspsoftware" "https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC" -O $DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC
-	# should check checksum
-	if [ ! -f '$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC' ]; then
-	    echo '**********************************************************************************************************'
-        echo 'Manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC'
-        echo '**********************************************************************************************************'
-    fi
-elif [[ $platform == 'linux' ]]; then	
-	echo '**********************************************************************************************************'
-	echo 'For linux, manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_DEB_LINUX'
-	echo '**********************************************************************************************************'
-fi
-
 # ********************* #
 # * GCC ARM Toolchain * #
 # ********************* #
@@ -125,7 +105,8 @@ if [ ! -d "$CMOCKA" ]; then
 fi
 mkdir -p $CMOCKA/build
 cd $CMOCKA/build
-cmake -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_C_COMPILER=/usr/bin/gcc
+cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
 make
 make install
 cd -
@@ -134,4 +115,26 @@ if [[ $platform == 'osx' ]]; then
 	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.0.dylib /usr/local/lib/libcmocka.0.dylib
 elif [[ $platform == 'linux' ]]; then
 	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.so.0.4.0 /usr/local/lib/libcmocka.so.0
+fi
+
+# ******************************* #
+# * JLINK Deployer and Debugger * #
+# ******************************* #
+# should check checksum
+JLINK_PKG_MAC=JLink_MacOSX_V610f.pkg
+JLINK_DEB_LINUX=jlink_6.0.7_x86_64.deb
+if [[ $platform == 'osx' ]]; then
+    if [ ! -f "$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC" ]; then
+	    mkdir -p $DEPLOY_RESOURCES/jlink
+	    wget --post-data="accept_license_agreement=accepted&submit=Download&nbspsoftware" "https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC" -O $DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC
+	fi
+	if [ ! -f "$DEPLOY_RESOURCES/jlink/$JLINK_PKG_MAC" ]; then
+	    echo '**********************************************************************************************************'
+        echo 'Manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_PKG_MAC'
+        echo '**********************************************************************************************************'
+    fi
+elif [[ $platform == 'linux' ]]; then
+	echo '**********************************************************************************************************'
+	echo 'For Linux, manually install JLink tools from https://www.segger.com/downloads/jlink/$JLINK_DEB_LINUX'
+	echo '**********************************************************************************************************'
 fi

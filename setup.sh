@@ -25,6 +25,8 @@ if [[ "$unamestr" == 'Linux' ]]; then
    platform='linux'
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='osx'
+elif [[ "$unamestr" == 'MSYS_NT-10.0' ]]; then
+   platform='windows'
 else
 	echo 'Unknown platform, aborting.'
 	exit
@@ -35,6 +37,7 @@ fi
 # ********************* #
 GCC_ARM_TAR_FILE_MAC=gcc-arm-none-eabi-5_4-2016q3-20160926-mac.tar.bz2
 GCC_ARM_TAR_FILE_LINUX=gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+GCC_ARM_TAR_FILE_WIN=gcc-arm-none-eabi-5_4-2016q3-20160926-win32.zip
 mkdir -p $GCC_ARM_TOOLCHAIN
 #should check checksum
 #should get the latest gcc-arm-none-eabi
@@ -49,6 +52,11 @@ if [ ! -d "$GCC_ARM_TOOLCHAIN/lib/gcc/arm-none-eabi/5.4.1" ]; then
         tar -C $GCC_ARM_TOOLCHAIN -xjf $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_LINUX
         mv -f $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q3/* $GCC_ARM_TOOLCHAIN
         rm -r $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_LINUX $GCC_ARM_TOOLCHAIN/gcc-arm-none-eabi-5_4-2016q3/
+    elif [[ $platform == 'windows' ]]; then
+        wget -O $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_WIN https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/$GCC_ARM_TAR_FILE_WIN
+        unzip $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_WIN -d $GCC_ARM_TOOLCHAIN
+        cp -rf $GCC_ARM_TOOLCHAIN/arm-none-eabi/* $GCC_ARM_TOOLCHAIN
+        rm -rf $GCC_ARM_TOOLCHAIN/$GCC_ARM_TAR_FILE_WIN $GCC_ARM_TOOLCHAIN/arm-none-eabi
     fi
 fi
 
@@ -105,7 +113,9 @@ if [ ! -d "$CMOCKA" ]; then
 fi
 mkdir -p $CMOCKA/build
 cd $CMOCKA/build
-cmake -DCMAKE_C_COMPILER=/usr/bin/gcc
+if [[ $platform == 'osx' ]] || [[ $platform == 'linux' ]]; then
+  cmake -DCMAKE_C_COMPILER=/usr/bin/gcc
+fi
 cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../ -DCMAKE_BUILD_TYPE=Debug ..
 make
 make install
@@ -115,6 +125,8 @@ if [[ $platform == 'osx' ]]; then
 	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.0.dylib /usr/local/lib/libcmocka.0.dylib
 elif [[ $platform == 'linux' ]]; then
 	sudo cp `pwd`/deploy/cmocka/lib/libcmocka.so.0.4.0 /usr/local/lib/libcmocka.so.0
+elif [[ $platform == 'windows' ]]; then
+    cp `pwd`/deploy/cmocka/lib/libcmocka.dll.a /usr/lib/
 fi
 
 # ******************************* #

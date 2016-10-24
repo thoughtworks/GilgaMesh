@@ -8,6 +8,8 @@ if [[ "$unamestr" == 'Linux' ]]; then
    platform='linux'
 elif [[ "$unamestr" == 'Darwin' ]]; then
    platform='osx'
+elif [[ "$unamestr" == 'MSYS_NT-10.0' ]]; then
+   platform='windows'
 else
 	echo 'Unknown platform, aborting.'
 	exit
@@ -102,7 +104,7 @@ function compile-full-deploy-peripheral {
 }
 
 function helptext {
-    echo "Usage: ./go <command>"
+    echo "Usage: ./build.sh <command>"
     echo ""
     echo "Available commands are:"
     echo "    ut                Run all unit tests"

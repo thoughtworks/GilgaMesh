@@ -1,6 +1,6 @@
 device nrf51822
 if swd
 speed 4000
-loadfile ../_build/Debug/MeshyMesh.hex
+loadfile ../_build/MinSizeRel/GilgaMesh.hex
 r
 g

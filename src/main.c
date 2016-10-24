@@ -9,6 +9,8 @@
 #include "softdevice.h"
 #include "terminal.h"
 
+#include "app/blinky_app.h"
+
 // This variable ensures that the linker script will write the bootloader start
 // address to the UICR register. This value will be written in the HEX file and
 // thus written to UICR when ThoughtMesh is flashed into the chip. */
@@ -45,6 +47,9 @@ static void initialize() {
   init_module("broadcast messages", broadcast_message_initialize);
   init_module("handshake messages", handshake_message_initialize);
   init_module("heartbeat messages", heartbeat_message_initialize);
+
+  // Application initialization
+  init_module("blinky example", blinky_initialize);
 
   if (init_failed) {
     // TODO: halt

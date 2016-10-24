@@ -2,7 +2,23 @@
 
 set -e
 
-JLINK=jlinkexe
+platform='unknown'
+unamestr=`uname`
+if [[ "$unamestr" == 'Linux' ]]; then
+   platform='linux'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+   platform='osx'
+else
+	echo 'Unknown platform, aborting.'
+	exit
+fi
+
+if [[ $platform == 'osx' ]]; then
+	JLINK=jlinkexe
+else
+	JLINK=JLinkExe
+fi
+
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
 GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
 BOARD=PCA10028

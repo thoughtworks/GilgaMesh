@@ -22,7 +22,7 @@ else() #build for NRF51 by default
   SET(TARGET_BOARD       BOARD_PCA10028)
 endif()
 
-project(ThoughtMesh)
+project(GilgaMesh)
 if(IS_TEST_BUILD AND UNIX) #build tests on linux or osx
     add_subdirectory(tests)
 else() #build for real hardware

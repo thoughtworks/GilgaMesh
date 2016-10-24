@@ -14,7 +14,7 @@ Our current mesh algorithm forms a root-reliant mesh, which requires the presenc
 You can customize this basic mesh by adding new message types or new mesh-forming algorithms that work best for your use case. In terms of hardware, you can also develop your own PCBs to interact with the nRF51. For example, we connected our chip to 6 RGB LEDs, a buzzer, and an NFC reader because this is what our use case required.
 
 ### Firmware/Chip Information
-Our mesh implementation is based on Nordic's SDK12 for the NRF51/52 chip, version 2.0.1 of the S130 softdevice, and does not require a bootloader. This was tested on the nRF51822 chip, which is the largest in its chip family. You might need to do some fine tuning make it work on chips with smaller RAM and processing power, like the nRF51422, for example.
+Our mesh implementation is based on Nordic's SDK12 for the NRF51/52 chip, version 2.0.1 of the S130 softdevice, and does not require a separate bootloader image. This was tested on the nRF51822 chip, which is the largest in its chip family. You might need to do some fine tuning make it work on chips with smaller RAM and processing power, like the nRF51422, for example.
 <br> 
 <img height=300 src="https://github.com/IOTWorks/MeshyMesh/blob/opensource/nordic_chip.jpg" />
 </br>
@@ -50,17 +50,20 @@ Then, to setup the workspace, run:
 ```
 
 ## How to develop and deploy
-This mesh does not yet support over-the-air updates, but with the go script, updating the firmware on a single device is simple. Just connect to the device via a USB port and deploy via the go script. To incorporate the changes you make to the source code, make sure to deploy the newest version of your code to every device in the mesh
+This mesh does not yet support over-the-air updates, but with the build script, updating the firmware on a single device is simple. Just connect to the device via a USB port and deploy via the build script. To incorporate the changes you make to the source code, make sure to deploy the newest version of your code to every device in the mesh
 
-The go script allows you to easily compile and deploy the firmware, run unit tests, and perform other useful actions. To see the possible commands, run:
+The build script allows you to easily compile and deploy the firmware, run unit tests, and perform other useful actions. To see the possible commands, run:
 ```sh
-./go
+./build
 ```
 
 ## Testing
 We use CMocka (v.1.1.0) to run our unit tests. If you would like to contribute to this project, please write tests for any features you develop and follow the patterns we have used in the test directory for guidance.
 
 ## Release History
+
+* 0.6.0
+    * Added a blinking led default example app
 
 * 0.5.0
     * first O.S. release

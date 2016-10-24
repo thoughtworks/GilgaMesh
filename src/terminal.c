@@ -39,17 +39,18 @@ bool terminal_initialize(void) {
   char mainVersion[4];
   char subVersion[4];
   terminal_putstring("\n\r----------------------------------------------------------\n\r");
+  terminal_putstring("    ____ _ _             __  __           _\r\n");
+  terminal_putstring("   / ___(_) | __ _  __ _|  \\/  | ___  ___| |__\r\n");
+  terminal_putstring("  | |  _| | |/ _` |/ _` | |\\/| |/ _ \\/ __| '_ \\\r\n");
+  terminal_putstring("  | |_| | | | (_| | (_| | |  | |  __/\\__ \\ | | |\r\n");
+  terminal_putstring("   \\____|_|_|\\__, |\\__,_|_|  |_|\\___||___/_| |_|\r\n");
+  terminal_putstring("              |___/                    ");
 
-  terminal_putstring("    ________                  __   __  __  ___        __\r\n");
-  terminal_putstring("   /_  __/ /  ___  __ _____ _/ /  / /_/  |/  /__ ___ / /\r\n");
-  terminal_putstring("    / / / _ \\/ _ \\/ // / _ `/ _ \\/ __/ /|_/ / -_|_-</ _ \\\r\n");
-  terminal_putstring("   /_/ /_//_/\\___/\\_,_/\\_, /_//_/\\__/_/  /_/\\__/___/_//_/\r\n");
-  terminal_putstring("                      /___/                          ");
   terminal_putstring("v");
   terminal_putstring(itoa(APP_VERSION_MAIN, mainVersion, 10));
   terminal_putstring(".");
   terminal_putstring(itoa(APP_VERSION_SUB, subVersion, 10));
-  terminal_putstring("\r\n");
+  terminal_putstring(" beta \r\n");
 
   terminal_putstring("  compile date: ");
   terminal_putstring(__DATE__);

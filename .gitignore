@@ -1,0 +1,7 @@
+_build/*
+deploy/cmocka/*
+deploy/EHAL/*
+deploy/gcc-arm-none-eabi/*
+deploy/sdk/*
+deploy/softdevice/*
+

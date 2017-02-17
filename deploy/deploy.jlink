@@ -1,0 +1,6 @@
+device nrf52
+if swd
+speed 4000
+loadfile ../_build/MinSizeRel/GilgaMesh.hex
+r
+g

@@ -5,11 +5,8 @@ GROUP(-lgcc -lc -lnosys)
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x1b000, LENGTH = 0x25000
-  RAM (rwx) :  ORIGIN = 0x20002e40, LENGTH = 0x51c0
-
-  /** Location in UICR where bootloader start address is stored. */
-  UICR_BOOTLOADER (r) : ORIGIN = 0x10001014, LENGTH = 0x04
+  FLASH (rx) : ORIGIN = 0x1f000, LENGTH = 0x61000
+  RAM (rwx) :  ORIGIN = 0x200030e8, LENGTH = 0xcf18
 }
 
 SECTIONS
@@ -20,12 +17,6 @@ SECTIONS
     KEEP(*(.fs_data))
     PROVIDE(__stop_fs_data = .);
   } > RAM
-
-  /* Ensures the Bootloader start address in flash is written to UICR when flashing the image. */
-  .uicrBootStartAddress :
-  {
-    KEEP(*(.uicrBootStartAddress))
-  } > UICR_BOOTLOADER
 } INSERT AFTER .data;
 
 INCLUDE "nrf5x_common.ld"

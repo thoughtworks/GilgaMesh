@@ -1,7 +1,6 @@
 #include "softdevice.h"
 #include <ble_conn_state.h>
 #include <fstorage.h>
-#include <nrf52/nrf_mbr.h>
 #include <nrf_sdm.h>
 #include <nrf_log.h>
 #include <softdevice_handler_appsh.h>
@@ -10,6 +9,10 @@
 #include "connection.h"
 #include "error.h"
 #include "gap.h"
+#include <nrf_dfu_mbr.h>
+#include <nrf_bootloader_info.h>
+#include <nrf_bootloader.h>
+#include <nrf52/nrf_mbr.h>
 
 void softdevice_fault_callback(uint32_t id, uint32_t pc, uint32_t info) {
   app_error_fault_handler(id, pc, info); // delegate to error module
@@ -25,15 +28,7 @@ static void sys_evt_dispatch(uint32_t sys_evt) {
 }
 
 bool softdevice_initialize() {
-  sd_mbr_command_t com = {SD_MBR_COMMAND_INIT_SD, };
   nrf_clock_lf_cfg_t clock_lf_cfg = NRF_CLOCK_LFCLKSRC;
-
-  // Initialize SoftDevice.
-  MESH_LOG_DEBUG("  * mbr initialization\r\n");
-  if (!execute_succeeds(sd_mbr_command(&com))) return false;
-
-  MESH_LOG_DEBUG("  * vector table\r\n");
-  if (!execute_succeeds(sd_softdevice_vector_table_base_set(BOOTLOADER_REGION_START))) return false;
 
   // Initialize the SoftDevice handler module.
   MESH_LOG_DEBUG("  * softdevice handler\r\n");
@@ -50,6 +45,8 @@ bool softdevice_initialize() {
   // Enable BLE stack.
   MESH_LOG_DEBUG("  * enable softdevice\r\n");
   if (!execute_succeeds(softdevice_enable(&ble_enable_params))) return false;
+
+  CHECK_RAM_START_ADDR(MAX_CENTRAL_CONNECTIONS, MAX_PERIPHERAL_CONNECTIONS);
 
   // Register with the SoftDevice handler module for BLE events.
   MESH_LOG_DEBUG("  * register BLE event handler\r\n");

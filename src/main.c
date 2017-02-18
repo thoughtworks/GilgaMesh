@@ -11,14 +11,6 @@
 
 #include "app/blinky_app.h"
 
-// This variable ensures that the linker script will write the bootloader start
-// address to the UICR register. This value will be written in the HEX file and
-// thus written to UICR when ThoughtMesh is flashed into the chip. */
-
-#ifndef TESTING
-volatile uint32_t m_uicr_bootloader_start_address __attribute__ ((section(".uicrBootStartAddress"))) = BOOTLOADER_REGION_START;
-#endif
-
 static bool init_failed = false;
 
 void HardFault_Handler(void) {
@@ -37,16 +29,16 @@ static void initialize() {
   MESH_LOG("\r\n[[ GilgaMesh is booting ]]\r\n");
   APP_SCHED_INIT(SCHED_MAX_EVENT_DATA_SIZE, SCHED_QUEUE_SIZE);
 
-  //init_module("softdevice", softdevice_initialize);
   init_module("timer", timer_initialize);
+  init_module("softdevice", softdevice_initialize);
   init_module("terminal", terminal_initialize);
   init_module("commands", command_initialize);
-  //init_module("connections", connections_initialize);
-  //init_module("GATT", gatt_initialize);
-  //init_module("GAP", gap_initialize);
-  //init_module("broadcast messages", broadcast_message_initialize);
-  //init_module("handshake messages", handshake_message_initialize);
-  //init_module("heartbeat messages", heartbeat_message_initialize);
+  init_module("connections", connections_initialize);
+  init_module("GATT", gatt_initialize);
+  init_module("GAP", gap_initialize);
+  init_module("broadcast messages", broadcast_message_initialize);
+  init_module("handshake messages", handshake_message_initialize);
+  init_module("heartbeat messages", heartbeat_message_initialize);
 
   // Application initialization
   init_module("blinky example", blinky_initialize);

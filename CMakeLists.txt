@@ -14,13 +14,9 @@ SET(EXTERNAL                ${SDK_BASE}/external)
 SET(EXTERNAL                ${SDK_BASE}/external)
 SET(EHAL_PATH               ${DEPLOY_PATH}/EHAL)
 
-if(NOT ${TARGET_ARCH} MATCHES "NRF52")
-  SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf52_3.0.0_API)
-  SET(TARGET_BOARD       BOARD_PCA10040)
-else() #build for NRF51 by default
-  SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf51_2.0.1_API)
-  SET(TARGET_BOARD       BOARD_PCA10028)
-endif()
+SET(SOFTDEVICE              ${DEPLOY_PATH}/softdevice/s130_nrf52_3.0.0_API)
+SET(TARGET_BOARD       BOARD_PCA10040)
+
 
 project(GilgaMesh)
 if(IS_TEST_BUILD AND UNIX) #build tests on linux or osx

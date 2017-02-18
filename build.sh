@@ -23,7 +23,7 @@ fi
 
 GCC_ARM_TOOLCHAIN=deploy/gcc-arm-none-eabi/
 GCC_ARM_SIZE=$GCC_ARM_TOOLCHAIN/bin/arm-none-eabi-size
-BOARD=PCA10028
+BOARD=PCA10040
 
 function compile-root {
     cd _build
@@ -122,7 +122,7 @@ function helptext {
     echo "    size              Show the size of the currently compiled firmware"
     echo ""
     echo "Available board is:"
-    echo "    PCA10028"
+    echo "    PCA10040"
 }
 
 case "$1" in

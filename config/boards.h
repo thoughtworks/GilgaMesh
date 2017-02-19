@@ -12,9 +12,7 @@
 #ifndef BOARDS_H
 #define BOARDS_H
 
-#ifndef TESTING
 #include "nrf_gpio.h"
-#endif
 
 #if defined(BOARD_NRF6310)
   #include "nrf6310.h"
@@ -32,18 +30,27 @@
   #include "pca10028.h"
 #elif defined(BOARD_PCA10031)
   #include "pca10031.h"
+#elif defined(BOARD_PCA10036)
+  #include "pca10036.h"
+#elif defined(BOARD_PCA10040)
+  #include "pca10040.h"
 #elif defined(BOARD_WT51822)
   #include "wt51822.h"
+#elif defined(BOARD_N5DK1)
+  #include "n5_starterkit.h"
+#elif defined (BOARD_D52DK1)
+  #include "d52_starterkit.h"
+#elif defined (BOARD_ARDUINO_PRIMO)
+  #include "arduino_primo.h"
 #elif defined(BOARD_CUSTOM)
   #include "custom_board.h"
-#elif defined(BOARD_BLE400)
-  #include "ble400.h"
-#elif defined(BOARD_SEEED)
-  #define BOARD_SEED
-  #include "seeed.h"
 #else
 #error "Board is not defined"
 
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #define LEDS_OFF(leds_mask) do {  NRF_GPIO->OUTSET = (leds_mask) & (LEDS_MASK & LEDS_INV_MASK); \
@@ -62,5 +69,10 @@
                                   for (pin = 0; pin < 32; pin++) \
                                       if ( (leds_mask) & (1 << pin) )   \
                                           nrf_gpio_cfg_output(pin); } while (0)
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

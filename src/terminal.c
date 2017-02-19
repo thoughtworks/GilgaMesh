@@ -57,7 +57,7 @@ bool terminal_initialize(void) {
   terminal_putstring(" ");
   terminal_putstring(__TIME__);
 
-  terminal_putstring(", nRF51s ");
+  terminal_putstring(", nRF52 ");
   terminal_putstring("\r\n------------| ESC to pause into command mode |------------\r\n");
 
   return is_terminal_initialized;
